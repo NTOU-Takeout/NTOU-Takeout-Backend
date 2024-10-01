@@ -36,15 +36,23 @@ public class StoreService {
                         store.getName().toLowerCase().contains(keyword.toLowerCase()))
                 .collect(Collectors.toList());
 
-        Comparator<Store> comparator = switch (sortBy.toLowerCase()) {
-            case "rank" -> Comparator.comparingDouble(Store::getRank);
-            case "averagePrice" -> Comparator.comparingDouble(Store::getAveragePrice);
-            case "name" -> Comparator.comparing(Store::getName);
-            default -> throw new IllegalArgumentException("Invalid sort field: " + sortBy);
-        };
+        Comparator<Store> comparator = Comparator.comparing(Store::getName);
 
-        if ("desc".equalsIgnoreCase(sortDir)) {
-            comparator = comparator.reversed();
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy.toLowerCase()) {
+                case "rank" -> comparator = Comparator.comparing(Store::getRank);
+                case "averageprice" -> comparator = Comparator.comparingDouble(Store::getAveragePrice);
+                case "name" -> comparator = Comparator.comparing(Store::getName);
+                default -> comparator = Comparator.comparing(Store::getName);
+            }
+        }
+
+        if(sortDir == null || sortDir.isEmpty() ) {
+
+        }else{
+            if ("desc".equalsIgnoreCase(sortDir)) {
+                comparator = comparator.reversed();
+            }
         }
 
         filteredStores.sort(comparator);
