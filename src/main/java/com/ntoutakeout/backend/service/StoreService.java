@@ -24,10 +24,31 @@ public class StoreService {
         return storeRepository.getStoreList();
     }
 
-    // Search stores by name (case-insensitive partial match)
     public List<Store> findStoresByName(String name) {
         return storeRepository.getStoreList().stream()
                 .filter(store -> store.getName().toLowerCase().contains(name.toLowerCase()))
                 .collect(Collectors.toList());
+    }
+
+    public List<Store> getStoresFilteredAndSorted(String keyword, String sortBy, String sortDir) {
+        List<Store> filteredStores = storeRepository.getStoreList().stream()
+                .filter(store -> keyword == null || keyword.isEmpty() ||
+                        store.getName().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
+
+        Comparator<Store> comparator = switch (sortBy.toLowerCase()) {
+            case "rank" -> Comparator.comparingDouble(Store::getRank);
+            case "averagePrice" -> Comparator.comparingDouble(Store::getAveragePrice);
+            case "name" -> Comparator.comparing(Store::getName);
+            default -> throw new IllegalArgumentException("Invalid sort field: " + sortBy);
+        };
+
+        if ("desc".equalsIgnoreCase(sortDir)) {
+            comparator = comparator.reversed();
+        }
+
+        filteredStores.sort(comparator);
+
+        return filteredStores;
     }
 }
