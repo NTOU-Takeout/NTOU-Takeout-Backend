@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StoreService {
@@ -21,5 +22,12 @@ public class StoreService {
 
     public List<Store> getStoresSortedByTime() {
         return storeRepository.getStoreList();
+    }
+
+    // Search stores by name (case-insensitive partial match)
+    public List<Store> findStoresByName(String name) {
+        return storeRepository.getStoreList().stream()
+                .filter(store -> store.getName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
     }
 }
