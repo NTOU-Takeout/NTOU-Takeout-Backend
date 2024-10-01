@@ -19,6 +19,8 @@ public class StoreRepository {
         storeList.add(a);
         storeList.add(b);
         storeList.add(c);
+        storeList.add(d);
+        storeList.add(e);
     }
     public ArrayList<Store> getStoreList() {
         return storeList;
