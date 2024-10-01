@@ -23,7 +23,7 @@ public class StoreController {
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortDir", required = false) String sortDir) {
-            // defaultValue = "rating" ,defaultValue = "desc"
+            // defaultValue = "rank" / "time" ,defaultValue = "desc" / "asc"
         // 調用 StoreService 的方法來過濾和排序店家
         List<Store> storeList = storeService.getStoresFilteredAndSorted(keyword, sortBy, sortDir);
 
