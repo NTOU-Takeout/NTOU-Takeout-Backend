@@ -15,13 +15,11 @@ public class StoreService {
 
     public List<Store> getStoresSortedByRating() {
         List<Store> storeList = storeRepository.getStoreList();
-        storeList.sort(Comparator.comparingDouble(Store::getRank).reversed()); // Sort descending by rating
+        storeList.sort(Comparator.comparingDouble(Store::getRank).reversed());
         return storeList;
     }
 
     public List<Store> getStoresSortedByTime() {
-        List<Store> storeList = storeRepository.getStoreList();
-        storeList.sort(Comparator.comparing(Store::getAddress)); // Sort by time in ascending order
-        return storeList;
+        return storeRepository.getStoreList();
     }
 }
