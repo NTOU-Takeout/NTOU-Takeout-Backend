@@ -41,7 +41,7 @@ public class StoreService {
         if (sortBy != null && !sortBy.isEmpty()) {
             switch (sortBy.toLowerCase()) {
                 case "rank" -> comparator = Comparator.comparing(Store::getRank);
-                case "averageprice" -> comparator = Comparator.comparingDouble(Store::getAveragePrice);
+                case "averagePrice" -> comparator = Comparator.comparingDouble(Store::getAveragePrice);
                 case "name" -> comparator = Comparator.comparing(Store::getName);
                 default -> comparator = Comparator.comparing(Store::getName);
             }
