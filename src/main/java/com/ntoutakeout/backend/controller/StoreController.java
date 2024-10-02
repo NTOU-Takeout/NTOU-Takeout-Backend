@@ -27,9 +27,7 @@ public class StoreController {
 
         List<Store> storeList = storeService.getStoresFilteredAndSorted(keyword, sortBy, sortDir);
 
-        return storeList.isEmpty()
-                ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-                : ResponseEntity.status(HttpStatus.OK).body(storeList);
+        return ResponseEntity.status(HttpStatus.OK).body(storeList);
     }
 
 }
