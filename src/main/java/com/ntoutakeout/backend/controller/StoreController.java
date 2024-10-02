@@ -24,7 +24,7 @@ public class StoreController {
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortDir", required = false) String sortDir) {
             // defaultValue = "rank" / "time" ,defaultValue = "desc" / "asc"
-        
+
         List<Store> storeList = storeService.getStoresFilteredAndSorted(keyword, sortBy, sortDir);
 
         return storeList.isEmpty()
