@@ -18,12 +18,12 @@ public class StoreController {
     private StoreService storeService;
 
 
-    @GetMapping("/stores")
+    @GetMapping("/getStores")
     public ResponseEntity<List<Store>> getStores(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortDir", required = false) String sortDir) {
-            // defaultValue = "rank" / "time" ,defaultValue = "desc" / "asc"
+            // sortBy = "rank" / "time" / "distance" ,sortDir = "desc" / "asc"
 
         List<Store> storeList = storeService.getStoresFilteredAndSorted(keyword, sortBy, sortDir);
 
