@@ -1,4 +1,4 @@
-      package com.ntoutakeout.backend.entity;
+package com.ntoutakeout.backend.entity;
 
 import java.util.ArrayList;
 
