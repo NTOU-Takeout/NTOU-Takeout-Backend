@@ -1,8 +1,15 @@
 package com.ntoutakeout.backend.entity;
 
-public class Dishes {
+import java.util.ArrayList;
+
+public class Dish {
     private String name;
     private int price;
+
+    public Dish(String name, int price) {
+        this.name = name;
+        this.price = price;
+    }
 
     public String getName() {
         return name;
