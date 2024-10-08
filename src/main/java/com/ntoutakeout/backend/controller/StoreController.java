@@ -35,9 +35,9 @@ public class StoreController {
 
     @GetMapping("/StoreAPI/getStores/{id}/menu")
     public ResponseEntity<List<Dish>> getMenu(
-            @RequestParam(value = "id", required = true) String storeId) {
+            @RequestParam(value = "id", required = true) String id) {
 
-        List<Dish> dishesList = storeService.getMenu(storeId);
+        List<Dish> dishesList = storeService.getMenu(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(dishesList);
     }
