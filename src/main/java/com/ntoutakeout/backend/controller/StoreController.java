@@ -33,7 +33,7 @@ public class StoreController {
         return ResponseEntity.status(HttpStatus.OK).body(storeList);
     }
 
-    @GetMapping("/StoreAPI/getStores/{storeId}/menu")
+    @GetMapping("/StoreAPI/getStores/{id}/menu")
     public ResponseEntity<List<Dish>> getMenu(
             @RequestParam(value = "id", required = true) String storeId) {
 

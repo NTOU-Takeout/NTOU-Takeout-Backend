@@ -12,13 +12,15 @@ import java.util.stream.Collectors;
 
 @Repository
 public class StoreRepository {
-    Store a = new Store("AStore","St.AAA",4.4,30);
-    Store b = new Store("BStore","St.BBB",4.2,60);
-    Store c = new Store("CStore","St.CCC",4.6,70);
-    Store d = new Store("DStore","St.DDD",2.9,20);
-    Store e = new Store("EStore","St.EEE",1.0,14);
-    Store f = new Store("ABreakfast","St.AAA",2.9,20);
-    Store g = new Store("BBreakfast","St.BBB",1.0,14);
+    Store a = new Store("testida","AStore","St.AAA",4.4,30)
+    Store b = new Store("testidb","BStore","St.BBB",4.2,60);
+    Store c = new Store("testida","CStore","St.CCC",4.6,70);
+    Store d = new Store("testidc","DStore","St.DDD",2.9,20);
+    Store e = new Store("testidd","EStore","St.EEE",1.0,14);
+    Store f = new Store("testide","ABreakfast","St.AAA",2.9,20);
+    Store g = new Store("testidf","BBreakfast","St.BBB",1.0,14);
+
+
     private final ArrayList<Store> storeList;
     private final ArrayList<Dish> DishList;
     // temp data

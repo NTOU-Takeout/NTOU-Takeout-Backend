@@ -26,6 +26,15 @@ public class Store {
         menu = new ArrayList<Dish>();
     }
 
+    public Store(String id, String name, String address, double rank, double averagePrice) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.rank = rank;
+        this.averagePrice = averagePrice;
+        menu = new ArrayList<Dish>();
+    }
+
     public String getName() {
         return name;
     }
