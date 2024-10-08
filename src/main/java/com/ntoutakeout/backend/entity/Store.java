@@ -3,13 +3,14 @@ package com.ntoutakeout.backend.entity;
 import java.util.ArrayList;
 
 public class Store {
+    private String storeId;
     private String name;
     private String address;
     private double rank;
     private double averagePrice;
-    private ArrayList<Dishes> menu;
+    private ArrayList<Dish> menu;
 
-    public Store(String name, String address, double rank, double averagePrice, ArrayList<Dishes> menu) {
+    public Store(String name, String address, double rank, double averagePrice, ArrayList<Dish> menu) {
         this.name = name;
         this.address = address;
         this.rank = rank;
@@ -22,7 +23,7 @@ public class Store {
         this.address = address;
         this.rank = rank;
         this.averagePrice = averagePrice;
-        menu = new ArrayList<Dishes>();
+        menu = new ArrayList<Dish>();
     }
 
     public String getName() {
@@ -57,11 +58,11 @@ public class Store {
         this.averagePrice = averagePrice;
     }
 
-    public ArrayList<Dishes> getMenu() {
+    public ArrayList<Dish> getMenu() {
         return menu;
     }
 
-    public void setMenu(ArrayList<Dishes> menu) {
+    public void setMenu(ArrayList<Dish> menu) {
         this.menu = menu;
     }
 
