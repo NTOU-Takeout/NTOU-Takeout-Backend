@@ -22,7 +22,7 @@ public class StoreRepository {
 
 
     private final ArrayList<Store> storeList;
-    private final ArrayList<Dish> DishList;
+    private final ArrayList<Dish> dishList;
     // temp data
     public StoreRepository() {
         storeList = new ArrayList<>();
