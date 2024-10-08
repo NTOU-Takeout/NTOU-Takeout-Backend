@@ -3,6 +3,7 @@ package com.ntoutakeout.backend.entity;
 import java.util.ArrayList;
 
 public class Dish {
+    private String id;  // Dish ID
     private String name;
     private int price;
 

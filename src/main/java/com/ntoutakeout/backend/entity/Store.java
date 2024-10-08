@@ -3,7 +3,7 @@ package com.ntoutakeout.backend.entity;
 import java.util.ArrayList;
 
 public class Store {
-    private String storeId;
+    private String id;  // Store ID
     private String name;
     private String address;
     private double rank;
