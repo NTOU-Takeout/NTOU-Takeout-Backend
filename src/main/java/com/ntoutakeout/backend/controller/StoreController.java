@@ -1,7 +1,7 @@
 package com.ntoutakeout.backend.controller;
 
 
-import com.ntoutakeout.backend.entity.Dishes;
+import com.ntoutakeout.backend.entity.Dish;
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +33,13 @@ public class StoreController {
         return ResponseEntity.status(HttpStatus.OK).body(storeList);
     }
 
-    @GetMapping("/StoreAPI/getStores/{id}/menu")
-    public ResponseEntity<List<Store>> getMenu(
-            @RequestParam(value = "id", required = true) String id) {
+    @GetMapping("/StoreAPI/getStores/{storeId}/menu")
+    public ResponseEntity<List<Dish>> getMenu(
+            @RequestParam(value = "id", required = true) String storeId) {
 
-
-        List<Dishes> dishesList = storeService.getMenu(id);
+        List<Dish> dishesList = storeService.getMenu(storeId);
 
         return ResponseEntity.status(HttpStatus.OK).body(dishesList);
-        return
     }
 
 }

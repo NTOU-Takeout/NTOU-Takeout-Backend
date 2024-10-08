@@ -1,5 +1,6 @@
 package com.ntoutakeout.backend.service;
 
+import com.ntoutakeout.backend.entity.Dish;
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,21 +15,21 @@ public class StoreService {
     @Autowired
     private StoreRepository storeRepository;
 
-    public List<Store> getStoresSortedByRating() {
-        List<Store> storeList = storeRepository.getStoreList();
-        storeList.sort(Comparator.comparingDouble(Store::getRank).reversed());
-        return storeList;
-    }
-
-    public List<Store> getStoresSortedByTime() {
-        return storeRepository.getStoreList();
-    }
-
-    public List<Store> findStoresByName(String name) {
-        return storeRepository.getStoreList().stream()
-                .filter(store -> store.getName().toLowerCase().contains(name.toLowerCase()))
-                .collect(Collectors.toList());
-    }
+//    public List<Store> getStoresSortedByRating() {
+//        List<Store> storeList = storeRepository.getStoreList();
+//        storeList.sort(Comparator.comparingDouble(Store::getRank).reversed());
+//        return storeList;
+//    }
+//
+//    public List<Store> getStoresSortedByTime() {
+//        return storeRepository.getStoreList();
+//    }
+//
+//    public List<Store> findStoresByName(String name) {
+//        return storeRepository.getStoreList().stream()
+//                .filter(store -> store.getName().toLowerCase().contains(name.toLowerCase()))
+//                .collect(Collectors.toList());
+//    }
 
     public List<Store> getStoresFilteredAndSorted(String keyword, String sortBy, String sortDir) {
         List<Store> filteredStores = storeRepository.getStoreList().stream()
@@ -58,5 +59,9 @@ public class StoreService {
         filteredStores.sort(comparator);
 
         return filteredStores;
+    }
+    public List<Dish> getMenu(String storeId) {
+        // Assuming StoreRepository has a method to get dishes by store ID
+        return storeRepository.findDishesByStoreId(storeId);
     }
 }

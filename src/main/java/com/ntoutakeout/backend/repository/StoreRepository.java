@@ -1,9 +1,14 @@
 package com.ntoutakeout.backend.repository;
 
+import com.ntoutakeout.backend.entity.Dish;
+import com.ntoutakeout.backend.entity.Dishes;
 import com.ntoutakeout.backend.entity.Store;
+import io.micrometer.common.KeyValues;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class StoreRepository {
@@ -15,6 +20,7 @@ public class StoreRepository {
     Store f = new Store("ABreakfast","St.AAA",2.9,20);
     Store g = new Store("BBreakfast","St.BBB",1.0,14);
     private final ArrayList<Store> storeList;
+    private final ArrayList<Dish> DishList;
     // temp data
     public StoreRepository() {
         storeList = new ArrayList<>();
@@ -28,5 +34,13 @@ public class StoreRepository {
     }
     public ArrayList<Store> getStoreList() {
         return storeList;
+    }
+    public List<Dish> findDishesByStoreId(String storeId) {
+
+
+        KeyValues dishList;
+        return dishList.stream()
+                .filter(dish -> dish.getStoreId().equals(storeId))
+                .collect(Collectors.toList());
     }
 }
