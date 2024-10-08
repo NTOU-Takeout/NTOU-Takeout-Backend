@@ -1,6 +1,7 @@
 package com.ntoutakeout.backend.controller;
 
 
+import com.ntoutakeout.backend.entity.Dishes;
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,17 @@ public class StoreController {
         List<Store> storeList = storeService.getStoresFilteredAndSorted(keyword, sortBy, sortDir);
 
         return ResponseEntity.status(HttpStatus.OK).body(storeList);
+    }
+
+    @GetMapping("/StoreAPI/getStores/{id}/menu")
+    public ResponseEntity<List<Store>> getMenu(
+            @RequestParam(value = "id", required = true) String id) {
+
+
+        List<Dishes> dishesList = storeService.getMenu(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(dishesList);
+        return
     }
 
 }
