@@ -6,6 +6,8 @@ public class Dish {
     private String id;  // Dish ID
     private String name;
     private int price;
+    ///private String storeId;  // Foreign key linking the dish to a store
+
 
     public Dish(String name, int price) {
         this.name = name;
