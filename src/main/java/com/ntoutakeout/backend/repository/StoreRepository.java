@@ -12,6 +12,8 @@ public class StoreRepository {
     Store c = new Store("CStore","St.CCC",4.6,70);
     Store d = new Store("DStore","St.DDD",2.9,20);
     Store e = new Store("EStore","St.EEE",1.0,14);
+    Store f = new Store("ABreakfast","St.AAA",2.9,20);
+    Store g = new Store("BBreakfast","St.BBB",1.0,14);
     private final ArrayList<Store> storeList;
     // temp data
     public StoreRepository() {
@@ -21,6 +23,8 @@ public class StoreRepository {
         storeList.add(c);
         storeList.add(d);
         storeList.add(e);
+        storeList.add(f);
+        storeList.add(g);
     }
     public ArrayList<Store> getStoreList() {
         return storeList;
