@@ -24,8 +24,8 @@ public class StoreController {
     @GetMapping("/getStores")
     public ResponseEntity<List<Store>> getStores(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
-            @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortDir", required = false) String sortDir) {
+            @RequestParam(value = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(value = "sortDir", required = false, defaultValue = "asc") String sortDir) {
 
         List<Store> storeList = storeService.getStoresFilteredAndSorted(keyword, sortBy, sortDir);
 

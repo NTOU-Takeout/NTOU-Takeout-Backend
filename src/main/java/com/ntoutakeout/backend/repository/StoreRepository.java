@@ -1,28 +1,15 @@
 package com.ntoutakeout.backend.repository;
 
 import com.ntoutakeout.backend.entity.Store;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Repository
-public class StoreRepository {
-    Store a = new Store("AStore","St.AAA",4.4,30);
-    Store b = new Store("BStore","St.BBB",4.2,60);
-    Store c = new Store("CStore","St.CCC",4.6,70);
-    Store d = new Store("DStore","St.DDD",2.9,20);
-    Store e = new Store("EStore","St.EEE",1.0,14);
-    private final ArrayList<Store> storeList;
-    // temp data
-    public StoreRepository() {
-        storeList = new ArrayList<>();
-        storeList.add(a);
-        storeList.add(b);
-        storeList.add(c);
-        storeList.add(d);
-        storeList.add(e);
-    }
-    public ArrayList<Store> getStoreList() {
-        return storeList;
-    }
+public interface StoreRepository extends MongoRepository<Store, String> {
+    List<Store> findByNameContainingOrderByRankAsc(String storeName);
+    List<Store> findByNameContainingOrderByRankDesc(String storeName);
+    List<Store> findByNameContainingOrderByNameAsc(String storeName);
+    List<Store> findByNameContainingOrderByNameDesc(String storeName);
 }
