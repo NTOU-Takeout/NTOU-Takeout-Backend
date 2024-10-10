@@ -18,7 +18,7 @@ public class StoreController {
     private StoreService storeService;
 
     // keyword: for searching keyword
-    // sortBy: input 'rank', 'name', 'averagePrice'
+    // sortBy: input 'rank', 'name'
     // sortDir: input 'desc', 'asc'
     @GetMapping("/getStores")
     public ResponseEntity<List<Store>> getStores(
