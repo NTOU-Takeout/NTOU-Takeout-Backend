@@ -3,8 +3,6 @@ package com.ntoutakeout.backend.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-
 @Document(collection = "Store")
 public class Store {
     @Id
@@ -13,12 +11,11 @@ public class Store {
     private String address;
     private double rank;
     private double averagePrice;
-    private ArrayList<Dishes> menu;
+    private Menu menu;
 
     public Store() {}
 
-    public Store(String id, String name, String address, double rank, double averagePrice, ArrayList<Dishes> menu) {
-        this.id = id;
+    public Store(String name, String address, double rank, double averagePrice, Menu menu) {
         this.name = name;
         this.address = address;
         this.rank = rank;
@@ -26,22 +23,7 @@ public class Store {
         this.menu = menu;
     }
 
-    public Store(String id, String name, String address, double rank, double averagePrice) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.rank = rank;
-        this.averagePrice = averagePrice;
-        menu = new ArrayList<Dishes>();
-    }
-
-    public Store(String name, String address, double rank, double averagePrice, ArrayList<Dishes> menu) {
-        this.name = name;
-        this.address = address;
-        this.rank = rank;
-        this.averagePrice = averagePrice;
-        this.menu = menu;
-    }
+    public String getId() { return id; }
 
     public String getName() {
         return name;
@@ -75,11 +57,11 @@ public class Store {
         this.averagePrice = averagePrice;
     }
 
-    public ArrayList<Dishes> getMenu() {
+    public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(ArrayList<Dishes> menu) {
+    public void setMenu(Menu menu) {
         this.menu = menu;
     }
 

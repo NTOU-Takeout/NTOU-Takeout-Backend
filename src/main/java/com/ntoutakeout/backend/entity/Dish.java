@@ -1,10 +1,10 @@
 package com.ntoutakeout.backend.entity;
 
-public class Dishes {
+public class Dish {
     private String name;
     private int price;
 
-    public Dishes(String name, int price) {
+    public Dish(String name, int price) {
         this.name = name;
         this.price = price;
     }

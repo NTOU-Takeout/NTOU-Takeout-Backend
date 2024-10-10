@@ -1,19 +1,18 @@
 package com.ntoutakeout.backend.controller;
 
+import com.ntoutakeout.backend.entity.Menu;
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.List;
 
 @RestController()
-@RequestMapping("/StoreAPI")
+@RequestMapping("/api/store")
 public class StoreController {
     @Autowired
     private StoreService storeService;
@@ -28,10 +27,15 @@ public class StoreController {
             @RequestParam(value = "sortDir", required = false, defaultValue = "asc") String sortDir) {
 
         List<Store> storeList = storeService.getStoresFilteredAndSorted(keyword, sortBy, sortDir);
-
-        return storeList.isEmpty()
-                ? ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-                : ResponseEntity.status(HttpStatus.OK).body(storeList);
+        return ResponseEntity.status(HttpStatus.OK).body(storeList);
     }
 
+    @GetMapping("/{storeId}/menu")
+    public ResponseEntity<Menu> getMenuByStoreId(@PathVariable String storeId) {
+        Optional<Menu> menu = storeService.getMenuById(storeId);
+        if (menu.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(menu.get());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
 }
