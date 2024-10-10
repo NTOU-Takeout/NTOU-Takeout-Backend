@@ -1,16 +1,17 @@
 package com.ntoutakeout.backend.model;
 
-import com.ntoutakeout.backend.entity.Dishes;
+import com.ntoutakeout.backend.entity.Dish;
+import com.ntoutakeout.backend.entity.Menu;
 import com.ntoutakeout.backend.entity.Store;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DataList {
+public class GenerateTestData {
     private ArrayList<Store> stores;
     private Random random;
 
-    public DataList() {
+    public GenerateTestData() {
         stores = new ArrayList<>();
         random = new Random();
     }
@@ -24,10 +25,10 @@ public class DataList {
         return builder.toString();
     }
 
-    public Dishes GenerateDishes() {
+    public Dish GenerateDish() {
         int price = random.nextInt(100) + 1;
         String name = getString() + "Name";
-        return new Dishes(name, price);
+        return new Dish(name, price);
     }
 
     public Store GenerateStore() {
@@ -35,11 +36,11 @@ public class DataList {
         String address = getString() + "Address";
         double rank = random.nextDouble(100);
         double averagePrice = random.nextDouble(200);
-        ArrayList<Dishes> menu = new ArrayList<>();
+        Menu menu = new Menu();
 
         int count = random.nextInt(10) + 1;
         for (int i = 0; i < count; i++) {
-            menu.add(GenerateDishes());
+            menu.addDish(GenerateDish());
         }
 
         return new Store(name, address, rank, averagePrice, menu);
