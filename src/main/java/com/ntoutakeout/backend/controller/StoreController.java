@@ -18,7 +18,7 @@ public class StoreController {
     private StoreService storeService;
 
     // keyword: for searching keyword
-    // sortBy: input 'rank', 'name'
+    // sortBy: input 'rating', 'name'
     // sortDir: input 'desc', 'asc'
     @GetMapping("/getStores")
     public ResponseEntity<List<Store>> getStores(
@@ -30,12 +30,12 @@ public class StoreController {
         return ResponseEntity.status(HttpStatus.OK).body(storeList);
     }
 
-    @GetMapping("/{storeId}/menu")
-    public ResponseEntity<Menu> getMenuByStoreId(@PathVariable String storeId) {
-        Optional<Menu> menu = storeService.getMenuById(storeId);
-        if (menu.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(menu.get());
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    }
+//    @GetMapping("/{storeId}/menu")
+//    public ResponseEntity<Menu> getMenuByStoreId(@PathVariable String storeId) {
+//        Optional<Menu> menu = storeService.getMenuById(storeId);
+//        if (menu.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.OK).body(menu.get());
+//        }
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//    }
 }
