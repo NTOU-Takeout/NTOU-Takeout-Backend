@@ -2,28 +2,34 @@ package com.ntoutakeout.backend.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.util.Pair;
 
-@Document(collection = "Store")
+import java.util.Arrays;
+import java.util.Date;
+
+@Document(collection = "store")
 public class Store {
     @Id
     private String id;
     private String name;
+    private String picture;
     private String address;
-    private double rank;
-    private double averagePrice;
-    private Menu menu;
+    private double rating;
+    private double averageSpend;
+    private String description;
+    private Pair<Date, Date>[][] businessHours;
 
-    public Store() {}
-
-    public Store(String name, String address, double rank, double averagePrice, Menu menu) {
-        this.name = name;
-        this.address = address;
-        this.rank = rank;
-        this.averagePrice = averagePrice;
-        this.menu = menu;
+    public Store() {
+        businessHours = new Pair[7][2];
     }
 
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -31,6 +37,14 @@ public class Store {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public String getAddress() {
@@ -41,36 +55,47 @@ public class Store {
         this.address = address;
     }
 
-    public double getRank() {
-        return rank;
+    public double getRating() {
+        return rating;
     }
 
-    public void setRank(double rank) {
-        this.rank = rank;
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 
-    public double getAveragePrice() {
-        return averagePrice;
+    public double getAverageSpend() {
+        return averageSpend;
     }
 
-    public void setAveragePrice(double averagePrice) {
-        this.averagePrice = averagePrice;
+    public void setAverageSpend(double averageSpend) {
+        this.averageSpend = averageSpend;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public String getDescription() {
+        return description;
     }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Pair<Date, Date>[][] getBusinessHours() {
+        return businessHours;
+    }
+
+    public void setBusinessHours(Pair<Date, Date>[][] businessHours) {
+        this.businessHours = businessHours;
     }
 
     @Override
     public String toString() {
-        return "Name: " + name +
-                "\nAddress: " + address +
-                "\nRank: " + rank +
-                "\nAverage Price: " + averagePrice +
-                "\nMenu: " + menu;
+        return "Id" + id +
+                "\nName" + name +
+                "\nPicture" + picture +
+                "\nAddress" + address +
+                "\nRank" + rating +
+                "\nAverageSpend" + averageSpend +
+                "\nDescription" + description +
+                "\nBusinessHours" + Arrays.deepToString(businessHours);
     }
 }
