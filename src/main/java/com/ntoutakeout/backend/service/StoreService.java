@@ -1,27 +1,34 @@
 package com.ntoutakeout.backend.service;
 
-import com.ntoutakeout.backend.entity.Menu;
 import com.ntoutakeout.backend.entity.Store;
-import com.ntoutakeout.backend.model.GenerateStoreData;
+import com.ntoutakeout.backend.model.GenerateTestData;
+import com.ntoutakeout.backend.repository.MenuRepository;
+import com.ntoutakeout.backend.repository.ReviewRepository;
 import com.ntoutakeout.backend.repository.StoreRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StoreService {
     @Autowired
     private StoreRepository storeRepository;
-    private final GenerateStoreData generateStoreData = new GenerateStoreData();
+    @Autowired
+    private MenuRepository menuRepository;
+    @Autowired
+    private ReviewRepository reviewRepository;
+    private final GenerateTestData generateTestData = new GenerateTestData();
 
     @PostConstruct
     public void init() {
-        generateStoreData.init();
         storeRepository.deleteAll();
-        storeRepository.saveAll(generateStoreData.getStores());
+        menuRepository.deleteAll();
+        reviewRepository.deleteAll();
+        storeRepository.saveAll(generateTestData.initStores());
+        menuRepository.saveAll(generateTestData.initMenu());
+        reviewRepository.saveAll(generateTestData.initReview());
     }
 
     public List<Store> getStoresFilteredAndSorted(String keyword, String sortBy, String sortDir) {

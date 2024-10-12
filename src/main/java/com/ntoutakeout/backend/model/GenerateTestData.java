@@ -1,17 +1,23 @@
 package com.ntoutakeout.backend.model;
 
 import com.ntoutakeout.backend.entity.Dish;
+import com.ntoutakeout.backend.entity.Menu;
+import com.ntoutakeout.backend.entity.Review;
 import com.ntoutakeout.backend.entity.Store;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class GenerateStoreData {
+public class GenerateTestData {
     private ArrayList<Store> stores;
+    private ArrayList<Menu> menus;
+    private ArrayList<Review> reviews;
     private Random random;
 
-    public GenerateStoreData() {
+    public GenerateTestData() {
         stores = new ArrayList<>();
+        menus = new ArrayList<>();
+        reviews = new ArrayList<>();
         random = new Random();
     }
 
@@ -37,6 +43,15 @@ public class GenerateStoreData {
         return dish;
     }
 
+    public Menu generateMenu() {
+        Menu menu = new Menu();
+        int count = random.nextInt(5) + 3;
+        for (int i = 0; i < count; i++) {
+            menu.getDishes().add(generateDish());
+        }
+        return menu;
+    }
+
     public Store generateStore() {
         Store store = new Store();
         store.setName(generateString());
@@ -44,15 +59,35 @@ public class GenerateStoreData {
         return store;
     }
 
-    public void init() {
+    public ArrayList<Store> initStores() {
         stores.clear();
         int count = random.nextInt(5) + 3;
         for (int i = 0; i < count; i++) {
             stores.add(generateStore());
         }
+        return stores;
     }
 
-    public ArrayList<Store> getStores() {
-        return stores;
+    public ArrayList<Menu> initMenu() {
+        menus.clear();
+        for (Store store : stores) {
+            Menu menu = generateMenu();
+            menu.setStoreId(store.getId());
+            menus.add(menu);
+        }
+        return menus;
+    }
+
+    public ArrayList<Review> initReview() {
+        reviews.clear();
+        for (Store store : stores) {
+            int count = random.nextInt(5);
+            for (int i = 0; i < count; i++) {
+                Review review = new Review();
+                review.setStoreId(store.getId());
+                reviews.add(review);
+            }
+        }
+        return reviews;
     }
 }
