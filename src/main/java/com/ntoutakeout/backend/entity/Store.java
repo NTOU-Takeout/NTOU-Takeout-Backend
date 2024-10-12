@@ -13,6 +13,7 @@ public class Store {
     private String id;
     private String name;
     private String picture;
+    private String phoneNumber;
     private String address;
     private double rating;
     private double averageSpend;
@@ -45,6 +46,14 @@ public class Store {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getAddress() {
@@ -92,6 +101,7 @@ public class Store {
         return "Id" + id +
                 "\nName" + name +
                 "\nPicture" + picture +
+                "\nPhoneNumber" + phoneNumber +
                 "\nAddress" + address +
                 "\nRank" + rating +
                 "\nAverageSpend" + averageSpend +
