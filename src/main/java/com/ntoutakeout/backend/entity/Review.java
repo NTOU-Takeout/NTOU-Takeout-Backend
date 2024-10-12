@@ -13,7 +13,7 @@ public class Review {
     private String userId;
     private String userName;
     private String comment;
-    private int rating;
+    private double rating;
     private Date date;
 
     public Review() {}
@@ -58,11 +58,11 @@ public class Review {
         this.comment = comment;
     }
 
-    public Integer getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 

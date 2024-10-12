@@ -7,7 +7,7 @@ public class Dish {
     private String name;
     private String description;
     private String picture;
-    private int price;
+    private double price;
     private String category;
     private int salesVolume;
     private List<DishAttribute> dishAttributes;
@@ -40,11 +40,11 @@ public class Dish {
         this.picture = picture;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

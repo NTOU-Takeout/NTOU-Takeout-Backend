@@ -2,11 +2,11 @@ package com.ntoutakeout.backend.entity;
 
 public class AttributeOption {
     private String name;
-    private int extraCost;
+    private double extraCost;
     private Boolean isChosen;
 
     public AttributeOption() {}
-    public AttributeOption(String name, int extraCost, Boolean isChosen) {
+    public AttributeOption(String name, Double extraCost, Boolean isChosen) {
         this.name = name;
         this.extraCost = extraCost;
         this.isChosen = isChosen;
@@ -20,11 +20,11 @@ public class AttributeOption {
         this.name = name;
     }
 
-    public int getExtraCost() {
+    public double getExtraCost() {
         return extraCost;
     }
 
-    public void setExtraCost(int extraCost) {
+    public void setExtraCost(double extraCost) {
         this.extraCost = extraCost;
     }
 
