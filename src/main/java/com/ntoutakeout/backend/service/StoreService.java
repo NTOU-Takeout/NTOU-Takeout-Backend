@@ -1,5 +1,7 @@
 package com.ntoutakeout.backend.service;
 
+import com.ntoutakeout.backend.entity.Menu;
+import com.ntoutakeout.backend.entity.Review;
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.model.GenerateTestData;
 import com.ntoutakeout.backend.repository.MenuRepository;
@@ -45,12 +47,32 @@ public class StoreService {
         };
     }
 
-//    public Optional<Menu> getMenuById(String id) {
-//        Optional<Store> store = storeRepository.findById(id);
-//        if (store.isPresent()) {
-//            Store storeObj = store.get();
-//            return Optional.ofNullable(storeObj.getMenu());
-//        }
-//        return Optional.empty();
-//    }
+    public List<String> getStoresIdFilteredAndSorted(String keyword, String sortBy, String sortDir) {
+        List<Store> stores;
+        switch (sortBy) {
+            case "name" -> stores = sortDir.equals("asc")
+                    ? storeRepository.findByNameContainingOnlyIdOrderByNameAsc(keyword)
+                    : storeRepository.findByNameContainingOnlyIdOrderByNameDesc(keyword);
+            case "rating" -> stores = sortDir.equals("asc")
+                    ? storeRepository.findByNameContainingOnlyIdOrderByRatingAsc(keyword)
+                    : storeRepository.findByNameContainingOnlyIdOrderByRatingDesc(keyword);
+            default -> stores = sortDir.equals("asc")
+                    ? storeRepository.findByNameContainingOnlyIdOrderByNameAsc(keyword)
+                    : storeRepository.findByNameContainingOnlyIdOrderByNameDesc(keyword);
+        }
+        return stores.stream().map(Store::getId).toList();
+    }
+
+    public List<Store> getStoreListByIds(List<String> ids) {
+        return storeRepository.findAllById(ids);
+    }
+
+    public List<Review> getReviewById(String storeId){
+        return reviewRepository.findByStoreId(storeId);
+    }
+
+    public List<Menu> getMenuById(String storeId){
+        return  menuRepository.findByStoreId(storeId);
+    }
+
 }

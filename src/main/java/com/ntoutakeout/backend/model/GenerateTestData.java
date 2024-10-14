@@ -46,9 +46,16 @@ public class GenerateTestData {
     public Menu generateMenu() {
         Menu menu = new Menu();
         int count = random.nextInt(5) + 3;
+        ArrayList<Dish> dishes = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            menu.getDishes().add(generateDish());
+            dishes.add(generateDish());
         }
+        menu.setDishes(dishes);
+        ArrayList<String> categories = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            categories.add(generateString());
+        }
+        menu.setCategories(categories);
         return menu;
     }
 

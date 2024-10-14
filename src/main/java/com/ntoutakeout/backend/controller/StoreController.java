@@ -1,6 +1,7 @@
 package com.ntoutakeout.backend.controller;
 
 import com.ntoutakeout.backend.entity.Menu;
+import com.ntoutakeout.backend.entity.Review;
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,36 +49,35 @@ public class StoreController {
     }
 
     @PostMapping("/getStoresByIdList")
-    public ResponseEntity<Map<String, List<String>>> getStoresByIdList(@RequestBody Map<String, List<String>> request) {
+    public ResponseEntity<Map<String, List<Store>>> getStoresByIdList(@RequestBody Map<String, List<String>> request) {
         List<String> storeIds = request.get("ids");
 
-        List<String> stores = getStoreListByIds(storeIds);
-        Map<String, List<String>> response = new HashMap<>();
+        List<Store> stores = storeService.getStoreListByIds(storeIds);
+        Map<String, List<Store>> response = new HashMap<>();
         response.put("stores", stores);
-
 
         return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/{storeId}/review")
-    public ResponseEntity<Map<String, List<String>>> getReviewByStoreId(@PathVariable String storeId) {
+    public ResponseEntity<Map<String, List<Review>>> getReviewByStoreId(@PathVariable String storeId) {
 
 
-        List<String> reviewList = storeService.getReviewById(storeId);
+        List<Review> reviewList = storeService.getReviewById(storeId);
 
-        Map<String, List<String>> response = new HashMap<>();
+        Map<String, List<Review>> response = new HashMap<>();
         response.put("reviews", reviewList);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{storeId}/menu")
-    public ResponseEntity<Map<String, List<String>>> getMenuByStoreId(@PathVariable String storeId) {
+    public ResponseEntity<Map<String, List<Menu>>> getMenuByStoreId(@PathVariable String storeId) {
 
-        List<String> dishList = storeService.getMenuById(storeId);
+        List<Menu> dishList = storeService.getMenuById(storeId);
 
-        Map<String, List<String>> response = new HashMap<>();
+        Map<String, List<Menu>> response = new HashMap<>();
         response.put("menu", dishList);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
