@@ -13,12 +13,13 @@ public interface StoreRepository extends MongoRepository<Store, String> {
     List<Store> findByNameContainingOrderByNameDesc(String storeName);
     List<Store> findByNameContainingOrderByRatingAsc(String storeName);
     List<Store> findByNameContainingOrderByRatingDesc(String storeName);
-    @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }")
+    @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }", sort = "{ 'name': 1 }")
     List<Store> findByNameContainingOnlyIdOrderByNameAsc(String keyword);
-    @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }")
+    @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }", sort = "{ 'name': -1 }")
     List<Store> findByNameContainingOnlyIdOrderByNameDesc(String keyword);
-    @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }")
+    @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }", sort = "{ 'rating': 1 }")
     List<Store> findByNameContainingOnlyIdOrderByRatingAsc(String keyword);
-    @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }")
+    @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }", sort = "{ 'rating': -1 }")
     List<Store> findByNameContainingOnlyIdOrderByRatingDesc(String keyword);
+
 }
