@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class StoreService {
@@ -41,9 +43,12 @@ public class StoreService {
             case "rating" -> sortDir.equals("asc")
                     ? storeRepository.findByNameContainingOrderByRatingAsc(keyword)
                     : storeRepository.findByNameContainingOrderByRatingDesc(keyword);
+            case "averageSpend" -> sortDir.equals("asc")
+                    ? storeRepository.findByNameContainingOrderByAverageSpend(keyword)
+                    : storeRepository.findByNameContainingOrderByAverageSpendDesc(keyword);
             default -> sortDir.equals("asc")
-                    ? storeRepository.findByNameContainingOrderByNameAsc(keyword)
-                    : storeRepository.findByNameContainingOrderByNameDesc(keyword);
+                    ? storeRepository.findByNameContainingOrderByAverageSpend(keyword)
+                    : storeRepository.findByNameContainingOrderByAverageSpendDesc(keyword);
         };
     }
 
@@ -56,15 +61,22 @@ public class StoreService {
             case "rating" -> stores = sortDir.equals("asc")
                     ? storeRepository.findByNameContainingOnlyIdOrderByRatingAsc(keyword)
                     : storeRepository.findByNameContainingOnlyIdOrderByRatingDesc(keyword);
+            case "averageSpend" -> stores = sortDir.equals("asc")
+                    ? storeRepository.findByNameContainingOnlyIdOrderByAverageSpendAsc(keyword)
+                    : storeRepository.findByNameContainingOnlyIdOrderByAverageSpendDesc(keyword);
             default -> stores = sortDir.equals("asc")
-                    ? storeRepository.findByNameContainingOnlyIdOrderByNameAsc(keyword)
-                    : storeRepository.findByNameContainingOnlyIdOrderByNameDesc(keyword);
+                    ? storeRepository.findByNameContainingOnlyIdOrderByAverageSpendAsc(keyword)
+                    : storeRepository.findByNameContainingOnlyIdOrderByAverageSpendDesc(keyword);
         }
         return stores.stream().map(Store::getId).toList();
     }
 
     public List<Store> getStoreListByIds(List<String> ids) {
-        return storeRepository.findAllById(ids);
+        return ids.stream()
+                .map(storeRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     public List<Review> getReviewById(String storeId){

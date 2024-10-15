@@ -35,7 +35,7 @@ public class StoreController {
     }
 
     @PostMapping("/getStoresByIdList")
-    public ResponseEntity<List<Store>> getStoresByIdList(@RequestBody List<String> storeIds) {
+    public ResponseEntity<List<Store>> getStoresByIdList(@RequestBody Map<String, List<String>> storeIds) {
 
         List<Store> stores = storeService.getStoreListByIds(storeIds);
 
