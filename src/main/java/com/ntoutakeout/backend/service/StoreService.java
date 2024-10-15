@@ -23,15 +23,15 @@ public class StoreService {
     private ReviewRepository reviewRepository;
     private final GenerateTestData generateTestData = new GenerateTestData();
 
-    @PostConstruct
-    public void init() {
-        storeRepository.deleteAll();
-        menuRepository.deleteAll();
-        reviewRepository.deleteAll();
-        storeRepository.saveAll(generateTestData.initStores());
-        menuRepository.saveAll(generateTestData.initMenu());
-        reviewRepository.saveAll(generateTestData.initReview());
-    }
+//    @PostConstruct
+//    public void init() {
+//        storeRepository.deleteAll();
+//        menuRepository.deleteAll();
+//        reviewRepository.deleteAll();
+//        storeRepository.saveAll(generateTestData.initStores());
+//        menuRepository.saveAll(generateTestData.initMenu());
+//        reviewRepository.saveAll(generateTestData.initReview());
+//    }
 
     public List<Store> getStoresFilteredAndSorted(String keyword, String sortBy, String sortDir) {
         return switch (sortBy) {
