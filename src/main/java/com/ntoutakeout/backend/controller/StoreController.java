@@ -17,11 +17,6 @@ public class StoreController {
     @Autowired
     private StoreService storeService;
 
-
-
-    // keyword: for searching keyword
-    // sortBy: input 'rating', 'averageSpend', 'name'
-    // sortDir: input 'desc', 'asc'
     @GetMapping("/getIdList")
     public ResponseEntity<List<String>> getIdList(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
@@ -30,14 +25,14 @@ public class StoreController {
 
         List<String> storeIdList = storeService.getStoresIdFilteredAndSorted(keyword, sortBy, sortDir);
 
+        if(storeIdList == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         return ResponseEntity.status(HttpStatus.OK).body(storeIdList);
     }
 
     @PostMapping("/getStoresByIdList")
     public ResponseEntity<List<Store>> getStoresByIdList(@RequestBody List<String> storeIds) {
-
         List<Store> stores = storeService.getStoreListByIds(storeIds);
-
         return ResponseEntity.ok(stores);
     }
 
@@ -45,9 +40,8 @@ public class StoreController {
     @GetMapping("/{storeId}/review")
     public ResponseEntity<List<Review>> getReviewByStoreId(@PathVariable String storeId) {
 
-        if (!storeService.storeExist(storeId)) {
+        if (!storeService.storeExist(storeId))
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 if not found
-        }
 
         List<Review> reviewList = storeService.getReviewById(storeId);
         return ResponseEntity.status(HttpStatus.OK).body(reviewList);
@@ -56,13 +50,10 @@ public class StoreController {
     @GetMapping("/{storeId}/menu")
     public ResponseEntity<List<Menu>> getMenuByStoreId(@PathVariable String storeId) {
 
-        if (!storeService.storeExist(storeId)) {
+        if (!storeService.storeExist(storeId))
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 if not found
-        }
 
         List<Menu> dishList = storeService.getMenuById(storeId);
         return ResponseEntity.status(HttpStatus.OK).body(dishList);
     }
-
-
 }

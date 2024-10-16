@@ -48,9 +48,9 @@ public class StoreService {
             case "averageSpend" -> stores = sortDir.equals("asc")
                     ? storeRepository.findByNameContainingOnlyIdOrderByAverageSpendAsc(keyword)
                     : storeRepository.findByNameContainingOnlyIdOrderByAverageSpendDesc(keyword);
-            default -> stores = sortDir.equals("asc")
-                    ? storeRepository.findByNameContainingOnlyIdOrderByAverageSpendAsc(keyword)
-                    : storeRepository.findByNameContainingOnlyIdOrderByAverageSpendDesc(keyword);
+            default -> {
+                return null;
+            }
         }
 
         return stores.stream().map(Store::getId).toList();
@@ -75,5 +75,4 @@ public class StoreService {
     public boolean storeExist(String storeId) {
         return storeRepository.findById(storeId).isPresent();
     }
-
 }
