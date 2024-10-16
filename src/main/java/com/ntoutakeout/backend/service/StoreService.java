@@ -87,4 +87,8 @@ public class StoreService {
         return  menuRepository.findByStoreId(storeId);
     }
 
+    public boolean storeExists(String storeId) {
+        return storeRepository.findById(storeId).isPresent();
+    }
+
 }
