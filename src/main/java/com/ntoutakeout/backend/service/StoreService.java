@@ -54,6 +54,12 @@ public class StoreService {
 
     public List<String> getStoresIdFilteredAndSorted(String keyword, String sortBy, String sortDir) {
         List<Store> stores;
+
+        // Handle empty keyword if needed
+        if (keyword.isEmpty()) {
+            return List.of(); // Return an empty list or modify logic if desired
+        }
+
         switch (sortBy) {
             case "name" -> stores = sortDir.equals("asc")
                     ? storeRepository.findByNameContainingOnlyIdOrderByNameAsc(keyword)
@@ -65,11 +71,13 @@ public class StoreService {
                     ? storeRepository.findByNameContainingOnlyIdOrderByAverageSpendAsc(keyword)
                     : storeRepository.findByNameContainingOnlyIdOrderByAverageSpendDesc(keyword);
             default -> stores = sortDir.equals("asc")
-                    ? storeRepository.findByNameContainingOnlyIdOrderByAverageSpendAsc(keyword)
-                    : storeRepository.findByNameContainingOnlyIdOrderByAverageSpendDesc(keyword);
+                    ? storeRepository.findByNameContainingOnlyIdOrderByNameAsc(keyword) // Default to sorting by name
+                    : storeRepository.findByNameContainingOnlyIdOrderByNameDesc(keyword);
         }
+
         return stores.stream().map(Store::getId).toList();
     }
+
 
     public List<Store> getStoreListByIds(List<String> ids) {
         return ids.stream()
