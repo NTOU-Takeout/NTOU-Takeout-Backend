@@ -20,12 +20,12 @@ public class StoreController {
 
 
     // keyword: for searching keyword
-    // sortBy: input 'rank', 'distance', 'averagePrice', 'name'
+    // sortBy: input 'rating', 'averageSpend', 'name'
     // sortDir: input 'desc', 'asc'
     @GetMapping("/getIdList")
     public ResponseEntity<List<String>> getIdList(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "name") String sortBy,
+            @RequestParam(value = "sortBy", required = false, defaultValue = "averageSpend") String sortBy,
             @RequestParam(value = "sortDir", required = false, defaultValue = "asc") String sortDir) {
 
         List<String> storeIdList = storeService.getStoresIdFilteredAndSorted(keyword, sortBy, sortDir);
