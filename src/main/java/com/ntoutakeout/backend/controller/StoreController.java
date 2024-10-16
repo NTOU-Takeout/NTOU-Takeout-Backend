@@ -45,7 +45,7 @@ public class StoreController {
     @GetMapping("/{storeId}/review")
     public ResponseEntity<List<Review>> getReviewByStoreId(@PathVariable String storeId) {
 
-        if (!storeService.storeExists(storeId)) {
+        if (!storeService.storeExist(storeId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 if not found
         }
 
@@ -56,7 +56,7 @@ public class StoreController {
     @GetMapping("/{storeId}/menu")
     public ResponseEntity<List<Menu>> getMenuByStoreId(@PathVariable String storeId) {
 
-        if (!storeService.storeExists(storeId)) {
+        if (!storeService.storeExist(storeId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Return 404 if not found
         }
 

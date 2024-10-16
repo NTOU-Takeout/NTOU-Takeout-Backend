@@ -35,23 +35,6 @@ public class StoreService {
 //        reviewRepository.saveAll(generateTestData.initReview());
 //    }
 
-    public List<Store> getStoresFilteredAndSorted(String keyword, String sortBy, String sortDir) {
-        return switch (sortBy) {
-            case "name" -> sortDir.equals("asc")
-                    ? storeRepository.findByNameContainingOrderByNameAsc(keyword)
-                    : storeRepository.findByNameContainingOrderByNameDesc(keyword);
-            case "rating" -> sortDir.equals("asc")
-                    ? storeRepository.findByNameContainingOrderByRatingAsc(keyword)
-                    : storeRepository.findByNameContainingOrderByRatingDesc(keyword);
-            case "averageSpend" -> sortDir.equals("asc")
-                    ? storeRepository.findByNameContainingOrderByAverageSpend(keyword)
-                    : storeRepository.findByNameContainingOrderByAverageSpendDesc(keyword);
-            default -> sortDir.equals("asc")
-                    ? storeRepository.findByNameContainingOrderByAverageSpend(keyword)
-                    : storeRepository.findByNameContainingOrderByAverageSpendDesc(keyword);
-        };
-    }
-
     public List<String> getStoresIdFilteredAndSorted(String keyword, String sortBy, String sortDir) {
         List<Store> stores;
 
@@ -73,7 +56,6 @@ public class StoreService {
         return stores.stream().map(Store::getId).toList();
     }
 
-
     public List<Store> getStoreListByIds(List<String> ids) {
         return ids.stream()
                 .map(storeRepository::findById)
@@ -90,7 +72,7 @@ public class StoreService {
         return  menuRepository.findByStoreId(storeId);
     }
 
-    public boolean storeExists(String storeId) {
+    public boolean storeExist(String storeId) {
         return storeRepository.findById(storeId).isPresent();
     }
 
