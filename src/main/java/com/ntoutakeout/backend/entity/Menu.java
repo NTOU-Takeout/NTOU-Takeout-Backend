@@ -11,8 +11,8 @@ public class Menu {
     @Id
     private String id;
     private String storeId;
-    private final List<String> categories;
-    private final List<Dish> dishes;
+    private List<String> categories;
+    private List<Dish> dishes;
 
     public Menu() {
         categories = new ArrayList<>();
@@ -39,8 +39,14 @@ public class Menu {
         return categories;
     }
 
-    public List<Dish> getDishes() {
-        return dishes;
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
+    }
+
+    public List<Dish> getDishes() {return dishes;}
+
+    public void setDishes(List<Dish> dishes) {
+        this.dishes = dishes;
     }
 
     @Override
