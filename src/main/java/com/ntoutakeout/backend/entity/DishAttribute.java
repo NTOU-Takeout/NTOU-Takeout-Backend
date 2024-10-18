@@ -11,7 +11,7 @@ public class DishAttribute {
     private List<AttributeOption> attributeOptions;
 
     public DishAttribute() {
-        attributeOptions = new ArrayList<AttributeOption>();
+        attributeOptions = new ArrayList<>();
     }
 
     public String getName() {
@@ -38,12 +38,12 @@ public class DishAttribute {
         this.type = type;
     }
 
-    public Boolean getRequired() {
+    public Boolean getIsRequired() {
         return isRequired;
     }
 
-    public void setRequired(Boolean required) {
-        isRequired = required;
+    public void setIsRequired(Boolean isRequired) {
+        this.isRequired = isRequired;
     }
 
     public List<AttributeOption> getAttributeOptions() {
@@ -56,9 +56,12 @@ public class DishAttribute {
 
     @Override
     public String toString() {
-        return "Name: " + name +
-                ", Description: " + description +
-                ", Type: " + type +
-                ", Required: " + isRequired;
+        return "DishAttribute{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", type='" + type + '\'' +
+                ", isRequired=" + isRequired +
+                ", attributeOptions=" + attributeOptions +
+                '}';
     }
 }

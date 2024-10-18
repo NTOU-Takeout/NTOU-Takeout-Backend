@@ -2,10 +2,11 @@ package com.ntoutakeout.backend.entity;
 
 public class AttributeOption {
     private String name;
-    private double extraCost;
+    private Double extraCost;
     private Boolean isChosen;
 
     public AttributeOption() {}
+
     public AttributeOption(String name, Double extraCost, Boolean isChosen) {
         this.name = name;
         this.extraCost = extraCost;
@@ -20,24 +21,28 @@ public class AttributeOption {
         this.name = name;
     }
 
-    public double getExtraCost() {
+    public Double getExtraCost() {
         return extraCost;
     }
 
-    public void setExtraCost(double extraCost) {
+    public void setExtraCost(Double extraCost) {
         this.extraCost = extraCost;
     }
 
-    public Boolean getChosen() {
+    public Boolean getIsChosen() {
         return isChosen;
     }
 
-    public void setChosen(Boolean chosen) {
-        isChosen = chosen;
+    public void setIsChosen(Boolean isChosen) {
+        this.isChosen = isChosen;
     }
 
     @Override
     public String toString() {
-        return "Name: " + name + ", ExtraCost: " + extraCost + ", IsChosen: " + isChosen;
+        return "AttributeOption{" +
+                "name='" + name + '\'' +
+                ", extraCost=" + extraCost +
+                ", isChosen=" + isChosen +
+                '}';
     }
 }

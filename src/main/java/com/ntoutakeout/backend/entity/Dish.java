@@ -4,16 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Dish {
+    private String id;
+    private String menuId;
     private String name;
     private String description;
-    private String picture;
-    private double price;
+    private Double price;
     private String category;
-    private int salesVolume;
+    private Integer salesVolume;
     private List<DishAttribute> dishAttributes;
 
     public Dish() {
-        dishAttributes = new ArrayList<DishAttribute>();
+        dishAttributes = new ArrayList<>();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getMenuId() {
+        return menuId;
+    }
+
+    public void setMenuId(String menuId) {
+        this.menuId = menuId;
     }
 
     public String getName() {
@@ -32,19 +49,11 @@ public class Dish {
         this.description = description;
     }
 
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -56,11 +65,11 @@ public class Dish {
         this.category = category;
     }
 
-    public int getSalesVolume() {
+    public Integer getSalesVolume() {
         return salesVolume;
     }
 
-    public void setSalesVolume(int salesVolume) {
+    public void setSalesVolume(Integer salesVolume) {
         this.salesVolume = salesVolume;
     }
 
@@ -74,11 +83,15 @@ public class Dish {
 
     @Override
     public String toString() {
-        return "Name: " + name +
-                "\nDescription: " + description +
-                "\nPrice: " + price +
-                "\nCategory: " + category +
-                "\nSalesVolume: " + salesVolume +
-                "\nDishAttributes: " + dishAttributes;
+        return "Dish{" +
+                "id='" + id + '\'' +
+                ", menuId='" + menuId + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", category='" + category + '\'' +
+                ", salesVolume=" + salesVolume +
+                ", dishAttributes=" + dishAttributes +
+                '}';
     }
 }
