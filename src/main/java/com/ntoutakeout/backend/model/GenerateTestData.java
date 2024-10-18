@@ -35,29 +35,29 @@ public class GenerateTestData {
         return "https://picsum.photos/seed/"+seed+"/200/300";
     }
 
-    public Dish generateDish(int i) {
-        Dish dish = new Dish();
-        dish.setName((char)('A'+i) + "dish");
-        dish.setPicture(generatePictureURL());
-        dish.setPrice(random.nextInt(100)+1);
-        return dish;
-    }
+//    public Dish generateDish(int i) {
+//        Dish dish = new Dish();
+//        dish.setName((char)('A'+i) + "dish");
+//        dish.setPicture(generatePictureURL());
+//        dish.setPrice(random.nextInt(100)+1);
+//        return dish;
+//    }
 
-    public Menu generateMenu() {
-        Menu menu = new Menu();
-        int count = random.nextInt(5) + 3;
-        ArrayList<Dish> dishes = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            dishes.add(generateDish(i));
-        }
-        menu.setDishes(dishes);
-        ArrayList<String> categories = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            categories.add((char)('a'+i) + "Category");
-        }
-        menu.setCategories(categories);
-        return menu;
-    }
+//    public Menu generateMenu() {
+//        Menu menu = new Menu();
+//        int count = random.nextInt(5) + 3;
+//        ArrayList<Dish> dishes = new ArrayList<>();
+//        for (int i = 0; i < count; i++) {
+//            dishes.add(generateDish(i));
+//        }
+//        menu.setDishes(dishes);
+//        ArrayList<String> categories = new ArrayList<>();
+//        for (int i = 0; i < count; i++) {
+//            categories.add((char)('a'+i) + "Category");
+//        }
+//        menu.setCategories(categories);
+//        return menu;
+//    }
 
     public Store generateStore(int i) {
         Store store = new Store();
@@ -77,15 +77,15 @@ public class GenerateTestData {
         return stores;
     }
 
-    public ArrayList<Menu> initMenu() {
-        menus.clear();
-        for (Store store : stores) {
-            Menu menu = generateMenu();
-            menu.setStoreId(store.getId());
-            menus.add(menu);
-        }
-        return menus;
-    }
+//    public ArrayList<Menu> initMenu() {
+//        menus.clear();
+//        for (Store store : stores) {
+//            Menu menu = generateMenu();
+//            menu.setStoreId(store.getId());
+//            menus.add(menu);
+//        }
+//        return menus;
+//    }
 
     public ArrayList<Review> initReview() {
         reviews.clear();
