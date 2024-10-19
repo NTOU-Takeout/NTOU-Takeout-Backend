@@ -39,7 +39,7 @@ public class GenerateTestData {
         Dish dish = new Dish();
         dish.setName((char)('A'+i) + "dish");
         dish.setPicture(generatePictureURL());
-        dish.setPrice(random.nextInt(100)+1);
+        dish.setPrice((double)random.nextInt(100)+1);
         return dish;
     }
 
