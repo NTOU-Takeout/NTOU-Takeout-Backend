@@ -63,8 +63,11 @@ public class GenerateTestData {
         Store store = new Store();
         store.setName((char)('A'+i) + "store");
         store.setPicture(generatePictureURL());
-        store.setRating(random.nextDouble(100));
+        store.setRating(random.nextDouble(4)+1);
         store.setAverageSpend(random.nextInt(200));
+        store.setDescription("Hello World");
+        store.setAddress("keelung");
+        store.setPhoneNumber("1234567890");
         return store;
     }
 
@@ -94,6 +97,7 @@ public class GenerateTestData {
             for (int i = 0; i < count; i++) {
                 Review review = new Review();
                 review.setStoreId(store.getId());
+                review.setRating(random.nextInt(4)+1);
                 reviews.add(review);
             }
         }
