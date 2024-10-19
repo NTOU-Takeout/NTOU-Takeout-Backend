@@ -19,21 +19,6 @@ import java.util.Optional;
 public class StoreService {
     @Autowired
     private StoreRepository storeRepository;
-    @Autowired
-    private MenuRepository menuRepository;
-    @Autowired
-    private ReviewRepository reviewRepository;
-    private final GenerateTestData generateTestData = new GenerateTestData();
-
-//    @PostConstruct
-//    public void init() {
-//        storeRepository.deleteAll();
-//        menuRepository.deleteAll();
-//        reviewRepository.deleteAll();
-//        storeRepository.saveAll(generateTestData.initStores());
-//        menuRepository.saveAll(generateTestData.initMenu());
-//        reviewRepository.saveAll(generateTestData.initReview());
-//    }
 
     public List<String> getStoresIdFilteredAndSorted(String keyword, String sortBy, String sortDir) {
         List<Store> stores;
@@ -56,23 +41,11 @@ public class StoreService {
         return stores.stream().map(Store::getId).toList();
     }
 
-    public List<Store> getStoreListByIds(List<String> ids) {
+    public List<Store> getStoreByIds(List<String> ids) {
         return ids.stream()
                 .map(storeRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-    }
-
-    public List<Review> getReviewById(String storeId){
-        return reviewRepository.findByStoreId(storeId);
-    }
-
-    public List<Menu> getMenuById(String storeId){
-        return  menuRepository.findByStoreId(storeId);
-    }
-
-    public boolean storeExist(String storeId) {
-        return storeRepository.findById(storeId).isPresent();
     }
 }

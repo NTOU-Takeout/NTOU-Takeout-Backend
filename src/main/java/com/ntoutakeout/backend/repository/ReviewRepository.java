@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends MongoRepository<Review, String> {
-    List<Review> findByStoreId(String storeId);
+    List<Review> findAllById(List<String> ids);
 }
