@@ -5,6 +5,7 @@ import com.ntoutakeout.backend.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,6 +14,10 @@ public class ReviewService {
     private ReviewRepository reviewRepository;
 
     public List<Review> getReviewByIds(List<String> ids) {
-        return reviewRepository.findAllById(ids);
+        List<Review> reviews = new ArrayList<>();
+        for (String id : ids) {
+            reviews.add(reviewRepository.findById(id).get());
+        }
+        return reviews;
     }
 }

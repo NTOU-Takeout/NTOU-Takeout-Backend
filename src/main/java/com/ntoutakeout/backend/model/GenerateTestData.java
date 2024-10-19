@@ -86,7 +86,7 @@ public class GenerateTestData {
             Review review = new Review();
             review.setAverageSpend((double)random.nextInt(100)+1);
             review.setComment((char)('a'+i) + "review");
-            review.setRating(random.nextDouble(4)+1);
+            review.setRating((double)random.nextInt(4)+1);
             reviews.add(review);
             reviewRepository.save(review);
         }
@@ -97,7 +97,7 @@ public class GenerateTestData {
         Store store = new Store();
         store.setName((char)('A'+i) + "store");
         store.setPicture(generatePictureURL());
-        store.setRating(random.nextDouble(4)+1);
+        store.setRating(random.nextInt(50)/10.0);
         store.setAverageSpend((double)random.nextInt(200));
         store.setDescription("Hello World");
         store.setAddress("keelung");
