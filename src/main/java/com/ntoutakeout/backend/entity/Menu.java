@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +15,9 @@ import java.util.List;
 public class Menu {
     @Id
     private String id;
-    private String storeId;
-    private List<String> categories;
-    private List<Dish> dishes;
+    private List<Pair<String, List<String>>> categories;
 
     public Menu() {
         categories = new ArrayList<>();
-        dishes = new ArrayList<>();
     }
 }

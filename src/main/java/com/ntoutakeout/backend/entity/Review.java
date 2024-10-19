@@ -15,10 +15,10 @@ import java.util.Date;
 public class Review {
     @Id
     private String id;
-    private String storeId;
+    private Double averageSpend;
+    private String comment;
     private String userId;
     private String userName;
-    private String comment;
     private Double rating;
     private Date date;
 }

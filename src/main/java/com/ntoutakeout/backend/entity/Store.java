@@ -6,7 +6,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.util.Pair;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,12 +20,15 @@ public class Store {
     private String picture;
     private String phoneNumber;
     private String address;
-    private double rating;
-    private double averageSpend;
+    private Double rating;
+    private List<String> reviewIdList;
+    private String menuId;
+    private Double averageSpend;
     private String description;
     private Pair<Date, Date>[][] businessHours;
 
     public Store() {
+        reviewIdList = new ArrayList<>();
         businessHours = new Pair[7][2];
     }
 }
