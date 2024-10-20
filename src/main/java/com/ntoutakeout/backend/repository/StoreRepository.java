@@ -9,12 +9,6 @@ import java.util.List;
 
 @Repository
 public interface StoreRepository extends MongoRepository<Store, String> {
-    List<Store> findByNameContainingOrderByNameAsc(String storeName);
-    List<Store> findByNameContainingOrderByNameDesc(String storeName);
-    List<Store> findByNameContainingOrderByRatingAsc(String storeName);
-    List<Store> findByNameContainingOrderByRatingDesc(String storeName);
-    List<Store> findByNameContainingOrderByAverageSpend(String storeName);
-    List<Store> findByNameContainingOrderByAverageSpendDesc(String storeName);
     @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }", sort = "{ 'name': 1 }")
     List<Store> findByNameContainingOnlyIdOrderByNameAsc(String keyword);
     @Query(value = "{ 'name': { $regex: ?0, $options: 'i' } }", fields = "{ 'id' : 1 }", sort = "{ 'name': -1 }")

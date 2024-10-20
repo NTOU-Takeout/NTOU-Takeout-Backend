@@ -85,7 +85,7 @@ public class GenerateTestData {
         for (int i = 0; i < count; i++) {
             Review review = new Review();
             review.setAverageSpend((double)random.nextInt(100)+1);
-            review.setComment((char)('a'+i) + "review");
+            review.setComment((char)('A'+i) + "review");
             review.setRating((double)random.nextInt(4)+1);
             reviews.add(review);
             reviewRepository.save(review);

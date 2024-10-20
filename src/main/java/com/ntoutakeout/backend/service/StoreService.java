@@ -42,10 +42,6 @@ public class StoreService {
     }
 
     public List<Store> getStoreByIds(List<String> ids) {
-        return ids.stream()
-                .map(storeRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        return storeRepository.findAllById(ids);
     }
 }
