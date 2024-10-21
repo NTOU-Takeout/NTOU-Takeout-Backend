@@ -180,8 +180,8 @@ public class GenerateNewTestData {
     public Menu generateMenu() {
         List<Menu> menus = new ArrayList<>(createTestMenus());
         int randomIndex = random.nextInt(menus.size());
-        Menu randomDish= menus.get(randomIndex);
-        return randomDish;
+        Menu randomMenus= menus.get(randomIndex);
+        return randomMenus;
     }
 
     public static List<Menu> createTestMenus() {
@@ -458,10 +458,10 @@ public class GenerateNewTestData {
     }
     @PostConstruct
     public void init() {
-        storeRepository.deleteAll();
-        reviewRepository.deleteAll();
-        menuRepository.deleteAll();
-        dishRepository.deleteAll();
+//        storeRepository.deleteAll();
+//        reviewRepository.deleteAll();
+//        menuRepository.deleteAll();
+//        dishRepository.deleteAll();
         generateNewStore();
     }
 //    @PostConstruct
