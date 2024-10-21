@@ -196,12 +196,10 @@ public class GenerateNewTestData {
         dishRepository.save(dish3);
         dishRepository.save(dish4);
 
-        List<Pair<String, List<String>>> sales1get1Categories = new ArrayList<>();
-        List<Pair<String, List<String>>> sales299Categories = new ArrayList<>();
-        sales1get1Categories.add(Pair.of("小比薩買1送1 Small Pizza Buy One Get One Free", Arrays.asList(dish1.getId(), dish2.getId())));
-        sales299Categories.add(Pair.of("限時優惠大比薩$299起", Arrays.asList(dish3.getId(), dish4.getId())));
-        pizzaMenu.setCategories(sales1get1Categories);
-        pizzaMenu.setCategories(sales299Categories);
+        List<Pair<String, List<String>>> pizzaCategories = new ArrayList<>();
+        pizzaCategories.add(Pair.of("小比薩買1送1 Small Pizza Buy One Get One Free", Arrays.asList(dish1.getId(), dish2.getId())));
+        pizzaCategories.add(Pair.of("限時優惠大比薩$299起", Arrays.asList(dish3.getId(), dish4.getId())));
+        pizzaMenu.setCategories(pizzaCategories);
         menuRepository.save(pizzaMenu);
         menus.add(pizzaMenu);
 
@@ -220,12 +218,11 @@ public class GenerateNewTestData {
         dishRepository.save(dish4);
 
 
-        List<Pair<String, List<String>>> seafoodCategories = new ArrayList<>();
+        List<Pair<String, List<String>>> taiwanFryCategories = new ArrayList<>();
         List<Pair<String, List<String>>> vegesCategories = new ArrayList<>();
-        seafoodCategories.add(Pair.of("海鮮類", Arrays.asList(dish5.getId(), dish6.getId())));
-        vegesCategories.add(Pair.of("蔬菜類", Arrays.asList(dish7.getId(), dish8.getId())));
-        taiwanFry.setCategories(seafoodCategories);
-        taiwanFry.setCategories(vegesCategories);
+        taiwanFryCategories.add(Pair.of("海鮮類", Arrays.asList(dish5.getId(), dish6.getId())));
+        taiwanFryCategories.add(Pair.of("蔬菜類", Arrays.asList(dish7.getId(), dish8.getId())));
+        taiwanFry.setCategories(taiwanFryCategories);
         menuRepository.save(taiwanFry);
         menus.add(taiwanFry);
 
@@ -279,7 +276,6 @@ public class GenerateNewTestData {
 
         List<Pair<String, List<String>>> beverageCategories = new ArrayList<>();
         beverageCategories.add(Pair.of("冰淇淋系列", Arrays.asList(iceCreamMilkTea.getId(),iceCreamBlackTea.getId())));
-        beverageMenu.setCategories(beverageCategories);
         beverageCategories.add(Pair.of("冬季熱飲系列", Arrays.asList(longanTea.getId(),gingerMilkTea.getId())));
         beverageMenu.setCategories(beverageCategories);
         menuRepository.save(beverageMenu);
