@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -102,10 +103,18 @@ public class GenerateNewTestData {
         return reviews;
     }
 
+    public Pair<LocalTime, LocalTime>[][] generateBusinessHours() {
+        Pair<LocalTime, LocalTime>[][] businessHours = new Pair[7][2];
+        for (int i=0; i<7; i++) {
+            businessHours[i][0] = Pair.of(LocalTime.of(9, 0), LocalTime.of(12, 0));
+            businessHours[i][1] = Pair.of(LocalTime.of(17, 0), LocalTime.of(20, 0));
+        }
+        return businessHours;
+    }
+
     public void generateNewStore() {
 
-        Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/static/stores_data_3.json")) {
+        try (Reader reader = new FileReader("src/main/resources/static/stores_data_10.json")) {
 
             // 解析 JSON 文件
             JsonArray jsonArray = JsonParser.parseReader(reader).getAsJsonArray();
@@ -121,11 +130,11 @@ public class GenerateNewTestData {
                 String picture = restaurant.get("picture").getAsString();
 
                 // 輸出每個餐廳的信息
-//                System.out.println("Name: " + name);
-//                System.out.println("Description: " + description);
-//                System.out.println("Address: " + address);
-//                System.out.println("Picture: " + picture);
-//                System.out.println("---------------");
+                System.out.println("Name: " + name);
+                System.out.println("Description: " + description);
+                System.out.println("Address: " + address);
+                System.out.println("Picture: " + picture);
+                System.out.println("---------------");
 
 
                 Store store = new Store();
@@ -142,10 +151,8 @@ public class GenerateNewTestData {
                     ids.add(review.getId());
                 }
                 store.setReviewIdList(ids);
-                store.setBusinessHours(9,22);
+                store.setBusinessHours(generateBusinessHours());
                 storeRepository.save(store);
-
-
             }
 
         } catch (IOException e) {
@@ -154,10 +161,11 @@ public class GenerateNewTestData {
 
 
     }
-    @PostConstruct
-    public void init() {
-        generateNewStore();
-    }
+//    @PostConstruct
+//    public void init() {
+//        storeRepository.deleteAll();
+//        generateNewStore();
+//    }
 //    @PostConstruct
 //    public void init() {
 //        storeRepository.deleteAll();
