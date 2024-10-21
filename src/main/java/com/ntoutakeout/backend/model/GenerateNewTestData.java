@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -90,12 +91,29 @@ public class GenerateNewTestData {
     }
 
     public List<Review> generateReviews() {
+        List<String> samplecoments = Arrays.asList(
+                "已購買，小孩很愛吃",
+                "已購買，小孩不愛吃",
+                "已購買，小孩不喜歡",
+                "已購買，小孩很喜歡",
+                "怎麼可以這麼好吃!",
+                "已購買，下次不會買",
+                "狗都不吃",
+                "已回購，小孩很喜歡",
+                "比我媽煮的還好吃",
+                "不吃粗的好粗"
+        );
+
+
         List<Review> reviews = new ArrayList<>();
         int count = random.nextInt(5) + 3;
+
         for (int i = 0; i < count; i++) {
             Review review = new Review();
             review.setAverageSpend((double)random.nextInt(100)+1);
-            review.setComment((char)('A'+i) + "review");
+            int randomIndex = random.nextInt(samplecoments.size());
+            String randomComment = samplecoments.get(randomIndex);
+            review.setComment(randomComment);
             review.setRating((double)random.nextInt(4)+1);
             reviews.add(review);
             reviewRepository.save(review);
@@ -130,11 +148,11 @@ public class GenerateNewTestData {
                 String picture = restaurant.get("picture").getAsString();
 
                 // 輸出每個餐廳的信息
-                System.out.println("Name: " + name);
-                System.out.println("Description: " + description);
-                System.out.println("Address: " + address);
-                System.out.println("Picture: " + picture);
-                System.out.println("---------------");
+//                System.out.println("Name: " + name);
+//                System.out.println("Description: " + description);
+//                System.out.println("Address: " + address);
+//                System.out.println("Picture: " + picture);
+//                System.out.println("---------------");
 
 
                 Store store = new Store();
@@ -164,6 +182,7 @@ public class GenerateNewTestData {
 //    @PostConstruct
 //    public void init() {
 //        storeRepository.deleteAll();
+//        reviewRepository.deleteAll();
 //        generateNewStore();
 //    }
 //    @PostConstruct
