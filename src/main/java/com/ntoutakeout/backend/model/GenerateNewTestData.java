@@ -142,6 +142,7 @@ public class GenerateNewTestData {
                     ids.add(review.getId());
                 }
                 store.setReviewIdList(ids);
+                store.setBusinessHours(9,22);
                 storeRepository.save(store);
 
 
