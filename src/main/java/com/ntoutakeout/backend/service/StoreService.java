@@ -1,13 +1,7 @@
 package com.ntoutakeout.backend.service;
 
-import com.ntoutakeout.backend.entity.Menu;
-import com.ntoutakeout.backend.entity.Review;
 import com.ntoutakeout.backend.entity.Store;
-import com.ntoutakeout.backend.model.GenerateTestData;
-import com.ntoutakeout.backend.repository.MenuRepository;
-import com.ntoutakeout.backend.repository.ReviewRepository;
 import com.ntoutakeout.backend.repository.StoreRepository;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +36,10 @@ public class StoreService {
     }
 
     public List<Store> getStoreByIds(List<String> ids) {
-        return storeRepository.findAllById(ids);
+        return ids.stream()
+                .map(storeRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 }
