@@ -49,7 +49,6 @@ public class DataLoader {
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -67,7 +66,6 @@ public class DataLoader {
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
         }
     }
 
