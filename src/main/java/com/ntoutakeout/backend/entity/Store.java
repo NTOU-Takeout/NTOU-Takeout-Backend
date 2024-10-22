@@ -8,8 +8,6 @@ import org.springframework.data.util.Pair;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -32,5 +30,12 @@ public class Store {
     public Store() {
         reviewIdList = new ArrayList<>();
         businessHours = new Pair[7][2];
+    }
+
+    public void setBusinessHours() {
+        for (int i = 0; i < 7; i++) {
+            businessHours[i][0] = Pair.of(LocalTime.of(9, 0), LocalTime.of(12, 0));
+            businessHours[i][1] = Pair.of(LocalTime.of(17, 0), LocalTime.of(20, 0));
+        }
     }
 }
