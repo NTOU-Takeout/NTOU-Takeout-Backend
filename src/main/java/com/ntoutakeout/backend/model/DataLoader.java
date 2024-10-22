@@ -11,6 +11,7 @@ import com.ntoutakeout.backend.repository.MenuRepository;
 import com.ntoutakeout.backend.repository.ReviewRepository;
 import com.ntoutakeout.backend.repository.StoreRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 @Component
+@Slf4j
 public class DataLoader {
     @Autowired
     private StoreRepository storeRepository;
@@ -46,6 +48,7 @@ public class DataLoader {
             System.out.println("-----------------");
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -63,6 +66,7 @@ public class DataLoader {
             System.out.println("-----------------");
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -153,6 +157,7 @@ public class DataLoader {
             }
 
         } catch (IOException e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e);
         }
     }
