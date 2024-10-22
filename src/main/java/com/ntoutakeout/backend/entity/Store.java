@@ -6,7 +6,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.util.Pair;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class Store {
     private String menuId;
     private Double averageSpend;
     private String description;
-    private Pair<Date, Date>[][] businessHours;
+    private Pair<LocalTime, LocalTime>[][] businessHours;
 
     public Store() {
         reviewIdList = new ArrayList<>();
