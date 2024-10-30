@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/getUserIdByEmail")
-    public ResponseEntity<List<String>> getIdList(
+    public ResponseEntity<String> getIdList(
             @RequestParam(value = "email", required = true, defaultValue = "") String email) {
 
         log.info("Fetch API: getUserIdByEmail Success");
@@ -46,14 +46,13 @@ public class UserController {
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        List<String> userIdList = Collections.singletonList(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(userIdList);
+        return ResponseEntity.status(HttpStatus.OK).body(userId);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Long> signUpUser(@RequestBody UserSignupRequest userSignupRequest) {
+    public ResponseEntity<String> signUpUser(@RequestBody UserSignupRequest userSignupRequest) {
         try {
-            Long userId = userService.signUpUser(userSignupRequest);
+            String userId = userService.signUpUser(userSignupRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(userId);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
