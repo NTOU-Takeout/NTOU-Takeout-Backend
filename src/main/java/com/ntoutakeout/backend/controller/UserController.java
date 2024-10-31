@@ -23,18 +23,16 @@ public class UserController {
 
     @GetMapping("/getUserIdByEmail")
     public ResponseEntity<?> getUserIdByEmail(@RequestParam("email") String email) {
+        log.info("Fetch API: getUserIdByEmail Success");
         try {
             User user = userService.findByEmail(email);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("User entity", user);
 
             if (user == null) {
                 log.error("User not found with email: " + email);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
             }
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             log.error("Error fetching user by email: " + email, e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
@@ -44,17 +42,15 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUpUser(@RequestBody User user) {
+        log.info("Fetch API: signup Success");
         try {
             User newUser = userService.signUpUser(user);
 
             String token = userService.generateToken(newUser);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("User entity", newUser);
-
             return ResponseEntity.status(HttpStatus.CREATED)
                     .header("Authorization", "Bearer " + token)
-                    .body(response);
+                    .body(newUser);
         } catch (Exception e) {
             log.error("Signup failed for user: " + .getEmail(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Signup failed: " + e.getMessage());
@@ -66,17 +62,15 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
+        log.info("Fetch API: login Success");
         try {
             User loginUser = userService.loginUser(user);
 
             String token = userService.generateToken(user);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("User entity", loginUser);
-
             return ResponseEntity.status(HttpStatus.CREATED)
                     .header("Authorization", "Bearer " + token)
-                    .body(response);
+                    .body(loginUser);
         } catch (Exception e) {
             log.error("Login failed for email: " + user.getEmail(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
@@ -84,32 +78,33 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String token,
-                                        @RequestBody Map<String, Object> userUpdates) {
+    public ResponseEntity<User> updateUser(@RequestHeader("Authorization") String token,
+                                           @RequestBody Map<String, Object> userUpdates) {
+        log.info("Fetch API: update User");
         try {
-
             String jwtToken = token.replace("Bearer ", "");
             Claims claims = validateToken(jwtToken);
-
-            String name = (String) userUpdates.get("name");
-            String password = (String) userUpdates.get("password");
-            String phoneNumber = (String) userUpdates.get("phoneNumber");
-
-            User updatedUser = userService.updateUser(name, password, phoneNumber);
-
-            if (updatedUser == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found or update failed.");
+            if (claims == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("User entity", updatedUser);
+            User updatedUser = userService.updateUser(userUpdates);
 
-            return ResponseEntity.ok()
-                    .header("Authorization", "Bearer " + jwtToken)
-                    .body(response);
+            if (updatedUser == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+
+            return ResponseEntity.ok(updatedUser);
+
+        } catch (IllegalArgumentException e) {
+            log.error("Update failed due to invalid input: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (SecurityException e) {
+            log.error("Update failed due to authorization: ", e);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (Exception e) {
-            log.error("Error updating user: ", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update user.");
+            log.error("Unexpected error updating user: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
