@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.GET,"/api/menu/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/store/**","/api/review/**","/api/menu/**","/api/user/login","/api/user/signup","/api/user/getUserIdByEmail").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

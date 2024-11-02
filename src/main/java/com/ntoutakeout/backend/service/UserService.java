@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -17,7 +19,13 @@ public class UserService {
         this.userRepository = userRepository;
     }
     public User createUser(User user) {
+        if(userRepository.findByEmail(user.getEmail()) != null) {
+            throw new RuntimeException("Email already exists");
+        }
         user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
