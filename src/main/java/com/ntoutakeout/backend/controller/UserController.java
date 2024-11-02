@@ -67,23 +67,19 @@ public class UserController {
 
 
 
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<?> loginUser(@RequestBody User user) {
-//        log.info("Fetch API: login Success");
-//        try {
-//            User loginUser = userService.loginUser(user);
-//
-//            String token = userService.generateToken(user);
-//
-//            return ResponseEntity.status(HttpStatus.CREATED)
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
+        log.info("Fetch API: login Success");
+        try {
+            User loginUser = userService.verify(user);
+            return ResponseEntity.status(HttpStatus.OK).body(loginUser);
 //                    .header("Authorization", "Bearer " + token)
 //                    .body(loginUser);
-//        } catch (Exception e) {
-//            log.error("Login failed for email: " + user.getEmail(), e);
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
-//        }
-//    }
+        } catch (Exception e) {
+            log.error("Login failed for email: {}", user.getEmail(), e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
+        }
+    }
 //
 //    @PatchMapping("/update")
 //    public ResponseEntity<User> updateUser(@RequestHeader("Authorization") String token,
