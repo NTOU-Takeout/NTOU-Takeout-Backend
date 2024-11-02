@@ -4,6 +4,7 @@ import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.entity.user.User;
 import com.ntoutakeout.backend.service.CustomUserDetailsService;
 import com.ntoutakeout.backend.service.StoreService;
+import com.ntoutakeout.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,11 @@ import java.util.Map;
 @Slf4j
 public class UserController {
 
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(CustomUserDetailsService userService) {
-        this.customUserDetailsService = userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
 //    @GetMapping("/getUserIdByEmail")
@@ -50,7 +51,7 @@ public class UserController {
     public ResponseEntity<User> signUpUser(@RequestBody User user) {
         log.info("Fetch API: signup Success");
         try {
-            User newUser = customUserDetailsService.createUser(user);
+            User newUser = userService.createUser(user);
 
 //            String token = userService.generateToken(newUser);
 
