@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.jsonwebtoken.Jwts.header;
+
 @RestController()
 @RequestMapping("/api/user")
 @Slf4j
@@ -48,33 +50,27 @@ public class UserController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUpUser(@RequestBody User user) {
+    public ResponseEntity<String> signUpUser(@RequestBody User user) {
         log.info("Fetch API: signup Success");
         try {
-            User newUser = userService.createUser(user);
-
-//            String token = userService.generateToken(newUser);
-
-            return ResponseEntity.ok(user);
-//                    .header("Authorization", "Bearer " + token)
-//                    .body(newUser);
+            userService.createUser(user);
+            return ResponseEntity.ok("Success");
         } catch (Exception e) {
             log.error("Signup failed for user: {}", user.getEmail(), e);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Signup failed: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed");
         }
     }
 
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody User user) {
+    public ResponseEntity<String> loginUser(@RequestBody User user) {
         log.info("Fetch API: login Success");
         try {
-            User loginUser = userService.verify(user);
-            return ResponseEntity.status(HttpStatus.OK).body(loginUser);
-//                    .header("Authorization", "Bearer " + token)
-//                    .body(loginUser);
+            String token = userService.verify(user);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header("Authorization", "Bearer " + token)
+                    .body(null);
         } catch (Exception e) {
             log.error("Login failed for email: {}", user.getEmail(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());

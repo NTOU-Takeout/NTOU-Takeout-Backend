@@ -16,6 +16,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private AuthenticationManager authManager;
+    private JWTService jwtService;
     private final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Autowired
@@ -28,21 +29,25 @@ public class UserService {
         this.authManager = authManager;
     }
 
-    public User createUser(User user) {
+    @Autowired
+    public void setJwtService(JWTService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    public void createUser(User user) {
         if(userRepository.findByEmail(user.getEmail()) != null) {
             throw new RuntimeException("Email already exists");
         }
         user.setPassword(encoder.encode(user.getPassword()));
-        return userRepository.save(user);
     }
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User verify(User user) {
+    public String verify(User user) {
         Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
         if(authentication.isAuthenticated()) {
-            return userRepository.findByEmail(user.getEmail());
+            return jwtService.generateToken(user.getEmail());
         } else {
             throw new RuntimeException("Authentication failed");
         }
