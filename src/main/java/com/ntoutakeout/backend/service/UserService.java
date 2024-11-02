@@ -39,7 +39,9 @@ public class UserService {
             throw new RuntimeException("Email already exists");
         }
         user.setPassword(encoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
