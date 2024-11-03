@@ -24,17 +24,40 @@ import java.util.*;
 @Component
 @Slf4j
 public class DataLoader {
-    @Autowired
-    private StoreRepository storeRepository;
-    @Autowired
-    private MenuRepository menuRepository;
-    @Autowired
-    private ReviewRepository reviewRepository;
-    @Autowired
-    private DishRepository dishRepository;
+    private final StoreRepository storeRepository;
+    private final MenuRepository menuRepository;
+    private final ReviewRepository reviewRepository;
+    private final DishRepository dishRepository;
 
-    private final Random random = new Random();
-    private final Gson gson = new Gson();
+    private final Random random;
+    private final Gson gson;
+
+    @Autowired
+    public DataLoader(StoreRepository storeRepository,
+                      MenuRepository  menuRepository,
+                      ReviewRepository reviewRepository,
+                      DishRepository dishRepository) {
+        this.storeRepository = storeRepository;
+        this.menuRepository = menuRepository;
+        this.reviewRepository = reviewRepository;
+        this.dishRepository = dishRepository;
+        this.random = new Random();
+        this.gson = new Gson();
+    }
+
+    @PostConstruct
+    public void init() {
+//        reviewRepository.deleteAll();
+//        storeRepository.deleteAll();
+//        loadStoreFromData();
+
+//        dishRepository.deleteAll();
+//        menuRepository.deleteAll();
+//        for (int i=1; i<=6; i++)
+//            loadDishesFromData(i);
+//        loadMenuFromData();
+    }
+
 
     public void loadDishesFromData(int index) {
         String filePath = String.format("src/main/resources/category%d.json", index);
@@ -158,18 +181,5 @@ public class DataLoader {
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }
-    }
-
-    @PostConstruct
-    public void init() {
-//        reviewRepository.deleteAll();
-//        storeRepository.deleteAll();
-//        loadStoreFromData();
-
-//        dishRepository.deleteAll();
-//        menuRepository.deleteAll();
-//        for (int i=1; i<=6; i++)
-//            loadDishesFromData(i);
-//        loadMenuFromData();
     }
 }

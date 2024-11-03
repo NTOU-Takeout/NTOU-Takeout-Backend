@@ -11,14 +11,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.InvalidParameterException;
 import java.util.List;
-import java.util.Map;
 
-@RestController()
+@RestController
 @RequestMapping("/api/store")
 @Slf4j
 public class StoreController {
+    private final StoreService storeService;
+
     @Autowired
-    private StoreService storeService;
+    public StoreController(StoreService storeService) {
+        this.storeService = storeService;
+    }
 
     @GetMapping("/getIdList")
     public ResponseEntity<List<String>> getIdList(
