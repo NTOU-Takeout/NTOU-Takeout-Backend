@@ -13,10 +13,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
+    private final MenuRepository menuRepository;
+    private final DishRepository dishRepository;
+
     @Autowired
-    private MenuRepository menuRepository;
-    @Autowired
-    private DishRepository dishRepository;
+    public MenuService(MenuRepository menuRepository, DishRepository dishRepository) {
+        this.menuRepository = menuRepository;
+        this.dishRepository = dishRepository;
+    }
 
     public Menu getMenuById(String id) {
         return menuRepository.findById(id).orElse(null);

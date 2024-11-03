@@ -14,8 +14,12 @@ import java.util.List;
 @RequestMapping("/api/menu")
 @Slf4j
 public class MenuController {
+    private final MenuService menuService;
+
     @Autowired
-    private MenuService menuService;
+    public MenuController(MenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Menu> getMenuById(@PathVariable String id) {
