@@ -103,7 +103,7 @@ class MenuServiceTest {
 
 
     @Test
-    void testGetDishesByIdsWithMissingDish() {
+    void testGetDishesByIdsWithSomeMissingDish() {
         // Arrange
         List<String> dishIds = List.of("dish1", "dish2");
 
@@ -128,6 +128,34 @@ class MenuServiceTest {
         assertEquals(List.of(dish1), result);
         verify(dishRepository).findById("dish1");
         verify(dishRepository).findById("dish2");
+    }
+
+    @Test
+    void testGetDishesByIdsWithMissingDish() {
+        // Arrange
+        List<String> dishIds = List.of("dish3", "dish4");
+
+        Dish dish1 = new Dish(
+                "dish1",
+                "Dish One",
+                "Description One",
+                "picture1.jpg",
+                10.0,
+                "Appetizers",
+                100,
+                List.of()
+        );
+
+        when(dishRepository.findById("dish3")).thenReturn(Optional.empty());
+        when(dishRepository.findById("dish4")).thenReturn(Optional.empty());
+
+        // Act
+        List<Dish> result = menuService.getDishesByIds(dishIds);
+
+        // Assert
+        assertEquals(List.of(), result);
+        verify(dishRepository).findById("dish3");
+        verify(dishRepository).findById("dish4");
     }
 
 
