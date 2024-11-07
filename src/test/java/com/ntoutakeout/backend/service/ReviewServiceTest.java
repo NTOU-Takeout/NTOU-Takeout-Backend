@@ -36,7 +36,7 @@ class ReviewServiceTest {
         Review review1 = new Review(
                 "review1",
                 25.0,
-                "Great place!",
+                "I've already bought it, my Children love it",
                 "user1",
                 "User One",
                 4.5,
@@ -63,14 +63,14 @@ class ReviewServiceTest {
     }
 
     @Test
-    void testGetReviewByIdsWithMissingReviews() {
+    void testGetReviewByIdsWithSomeMissingReviews() {
         // Arrange
         List<String> reviewIds = List.of("review1", "review3");
 
         Review review1 = new Review(
                 "review1",
                 25.0,
-                "Great place!",
+                "I've already bought it, my Children love it",
                 "user1",
                 "User One",
                 4.5,
@@ -84,6 +84,31 @@ class ReviewServiceTest {
 
         // Assert
         assertEquals(List.of(review1), result);
+        verify(reviewRepository).findAllById(reviewIds);
+    }
+
+    @Test
+    void testGetReviewByIdsWithMissingReviews() {
+        // Arrange
+        List<String> reviewIds = List.of("review3");
+
+        Review review1 = new Review(
+                "review1",
+                25.0,
+                "I've already bought it, my Children love it",
+                "user1",
+                "User One",
+                4.5,
+                new Date()
+        );
+
+        when(reviewRepository.findAllById(reviewIds)).thenReturn(List.of());
+
+        // Act
+        List<Review> result = reviewService.getReviewByIds(reviewIds);
+
+        // Assert
+        assertEquals(List.of(), result);
         verify(reviewRepository).findAllById(reviewIds);
     }
 
