@@ -27,8 +27,8 @@ public class StoreController {
     @GetMapping("/getIdList")
     public ResponseEntity<List<String>> getIdList(
             @RequestParam(value = "keyword", defaultValue = "") String keyword,
-            @RequestParam(value = "sortBy", defaultValue = "averageSpend") String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir) {
+            @RequestParam(value = "sortBy", defaultValue = "rating") String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir) {
 
         if(!ALLOWED_SORT_BY_FIELDS.contains(sortBy)) {
             log.error("Invalid sortBy value. Allowed values are 'averageSpend', 'rating' and 'name'.");
