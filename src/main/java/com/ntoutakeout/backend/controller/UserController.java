@@ -1,4 +1,4 @@
-package com.ntoutakeout.backend.controller;
+/*package com.ntoutakeout.backend.controller;
 
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.entity.user.User;
@@ -52,7 +52,7 @@ public class UserController {
                     .header("Authorization", "Bearer " + token)
                     .body(newUser);
         } catch (Exception e) {
-            log.error("Signup failed for user: " + .getEmail(), e);
+            log.error("Signup failed for user: " + user.getEmail(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Signup failed: " + e.getMessage());
         }
     }
@@ -110,4 +110,4 @@ public class UserController {
 
 
 
-}
+}*/
