@@ -2,33 +2,43 @@ package com.ntoutakeout.backend.controller;
 
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.service.StoreService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
-@RestController()
+@RestController
 @RequestMapping("/api/store")
 @Slf4j
 public class StoreController {
+    private final StoreService storeService;
+
     @Autowired
-    private StoreService storeService;
+    public StoreController(StoreService storeService) {
+        this.storeService = storeService;
+    }
 
     @GetMapping("/getIdList")
     public ResponseEntity<List<String>> getIdList(
-            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
-            @RequestParam(value = "sortBy", required = false, defaultValue = "averageSpend") String sortBy,
-            @RequestParam(value = "sortDir", required = false, defaultValue = "asc") String sortDir) {
+            @RequestParam(value = "keyword", defaultValue = "") String keyword,
+            @RequestParam(value = "sortBy", defaultValue = "averageSpend") String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir,
+            HttpServletRequest request) {
 
-        log.info("Fetch API: getIdList Success");
-        List<String> storeIdList = storeService.getStoresIdFilteredAndSorted(keyword, sortBy, sortDir);
-
-        if(storeIdList == null)
+        try {
+            storeService.validateParameters(request.getParameterMap());
+            List<String> storeIdList = storeService.getStoresIdFilteredAndSorted(keyword, sortBy, sortDir);
+            log.info("Fetch API: getIdList Success");
+            return ResponseEntity.status(HttpStatus.OK).body(storeIdList);
+        } catch (InvalidParameterException e) {
+            log.error("Fetch API: getIdList Failed {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        return ResponseEntity.status(HttpStatus.OK).body(storeIdList);
+        }
     }
 
     @PostMapping("/getStoresByIds")
