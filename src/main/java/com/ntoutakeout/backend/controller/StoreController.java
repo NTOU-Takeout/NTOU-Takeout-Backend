@@ -17,7 +17,7 @@ import java.util.Set;
 @Slf4j
 public class StoreController {
     private final StoreService storeService;
-    private static final Set<String> ALLOWED_SORT_BY_FIELDS = Set.of("averageSpend", "rating");
+    private static final Set<String> ALLOWED_SORT_BY_FIELDS = Set.of("averageSpend", "rating", "name");
     private static final Set<String> ALLOWED_SORT_DIR_FIELDS = Set.of("asc", "desc");
 
     @Autowired
