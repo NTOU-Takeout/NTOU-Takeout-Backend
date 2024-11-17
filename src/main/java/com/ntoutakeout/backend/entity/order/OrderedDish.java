@@ -1,15 +1,21 @@
 package com.ntoutakeout.backend.entity.order;
 
-import org.springframework.data.annotation.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 
+@Data
+@AllArgsConstructor
 public class OrderedDish {
-    @Id
     private String dishId;
     private String dishName;
-    private String price;
+    private Double price;
     private Integer quantity;
     private String note;
     private List<ChosenAttribute> chosenAttributes;
+
+
 }
