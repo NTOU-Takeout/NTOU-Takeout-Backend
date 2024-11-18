@@ -43,8 +43,9 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(createdOrderId);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{OrderId}")
     public ResponseEntity<String> updateOrder(
+            @PathVariable String OrderId,
             @RequestHeader("Authorization") String token,
             @RequestBody Map<String, Object> updateRequest) {
 
@@ -52,12 +53,11 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String customerId = jwtService.extractCustomerId(token);
+        String orderId = orderService.updateOrder(updateRequest, OrderId);
 
-        //OrderedDish updateDish = updateRequest.get("updateDish");
-
-
-        String orderId = orderService.updateOrder(updateRequest, customerId);
+        if (orderId == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
         return ResponseEntity.ok(orderId);
     }
