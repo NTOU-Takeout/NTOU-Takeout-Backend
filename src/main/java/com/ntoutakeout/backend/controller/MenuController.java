@@ -5,6 +5,7 @@ import com.ntoutakeout.backend.entity.Menu;
 import com.ntoutakeout.backend.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,23 +15,29 @@ import java.util.List;
 @RequestMapping("/api/menu")
 @Slf4j
 public class MenuController {
+    private final MenuService menuService;
+
     @Autowired
-    private MenuService menuService;
+    public MenuController(MenuService menuService) {
+        this.menuService = menuService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Menu> getMenuById(@PathVariable String id) {
-        log.info("Fetch API: getMenuById Success");
         Menu menu = menuService.getMenuById(id);
 
-        return menu == null
-                ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(menu);
+        if(menu == null) {
+            log.error("Menu not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        log.info("Fetch API: getMenuById Success");
+        return ResponseEntity.status(HttpStatus.OK).body(menu);
     }
 
     @PostMapping("/getDishesByIds")
     public ResponseEntity<List<Dish>> getDishesByIds(@RequestBody List<String> ids) {
         log.info("Fetch API: getDishesByIds Success");
         List<Dish> dishes = menuService.getDishesByIds(ids);
-        return ResponseEntity.ok(dishes);
+        return ResponseEntity.status(HttpStatus.OK).body(dishes);
     }
 }

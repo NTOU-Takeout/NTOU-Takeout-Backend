@@ -5,18 +5,22 @@ import com.ntoutakeout.backend.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service
 public class StoreService {
+    private final StoreRepository storeRepository;
+
     @Autowired
-    private StoreRepository storeRepository;
+    public StoreService(StoreRepository storeRepository) {
+        this.storeRepository = storeRepository;
+    }
 
-    public List<String> getStoresIdFilteredAndSorted(String keyword, String sortBy, String sortDir) {
+    public List<String> getStoresIdFilteredAndSorted(String keyword, String sortBy, String sortDir) throws InvalidParameterException {
         List<Store> stores;
-
         switch (sortBy) {
             case "name" -> stores = sortDir.equals("asc")
                     ? storeRepository.findByNameContainingOnlyIdOrderByNameAsc(keyword)
@@ -31,7 +35,6 @@ public class StoreService {
                 return null;
             }
         }
-
         return stores.stream().map(Store::getId).toList();
     }
 
