@@ -1,6 +1,8 @@
 package com.ntoutakeout.backend.controller.v1;
 
+import com.ntoutakeout.backend.dto.LoginRequest;
 import com.ntoutakeout.backend.entity.user.User;
+import com.ntoutakeout.backend.service.AuthService;
 import com.ntoutakeout.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class AuthController {
 
+    private final AuthService authService;
     private final UserService userService;
 
     @Autowired
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(AuthService userService, UserService authService) {
+        this.authService = userService;
+        this.userService = authService;
     }
 
 //    @GetMapping("/getUserIdByEmail")
@@ -39,12 +43,12 @@ public class AuthController {
 //    }
 
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public ResponseEntity<String> signUpUser(@RequestBody User user) {
-        log.info("Fetch API: signup Success");
+        log.info("Fetch API: register Success");
         try {
-            userService.createUser(user);
-            return ResponseEntity.ok("Success");
+            authService.createUser(user);
+            return ResponseEntity.status(HttpStatus.OK).body("Success");
         } catch (Exception e) {
             log.error("Signup failed for user: {}", user.getEmail(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed");
@@ -52,15 +56,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user) {
-        log.info("Fetch API: login Success");
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         try {
-            String token = userService.verify(user);
+            String token = authService.verify(loginRequest);
+            User user = userService.getUserByEmail(loginRequest.getEmail());
+            log.info("Fetch API: login Success");
             return ResponseEntity.status(HttpStatus.OK)
                     .header("Authorization", "Bearer " + token)
-                    .body(null);
+                    .body(user.getId());
         } catch (Exception e) {
-            log.error("Login failed for email: {}", user.getEmail(), e);
+            log.error("Login failed for email: {}", loginRequest.getEmail(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
         }
     }

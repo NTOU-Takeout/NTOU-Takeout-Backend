@@ -1,7 +1,7 @@
 package com.ntoutakeout.backend.controller.v1;
 
 import com.ntoutakeout.backend.entity.user.User;
-import com.ntoutakeout.backend.service.UserService;
+import com.ntoutakeout.backend.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +16,10 @@ import java.util.List;
 @RequestMapping("/api/v1/admin")
 @Slf4j
 public class AdminController {
-    private final UserService userService;
+    private final AuthService userService;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public AdminController(AuthService userService) {
         this.userService = userService;
     }
 
