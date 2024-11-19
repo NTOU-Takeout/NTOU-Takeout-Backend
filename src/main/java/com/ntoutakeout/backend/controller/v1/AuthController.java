@@ -24,25 +24,6 @@ public class AuthController {
         this.userService = authService;
     }
 
-//    @GetMapping("/getUserIdByEmail")
-//    public ResponseEntity<?> getUserIdByEmail(@RequestParam("email") String email) {
-//        log.info("Fetch API: getUserIdByEmail Success");
-//        try {
-//            User user = userService.findByEmail(email);
-//
-//            if (user == null) {
-//                log.error("User not found with email: " + email);
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-//            }
-//
-//            return ResponseEntity.ok(user);
-//        } catch (Exception e) {
-//            log.error("Error fetching user by email: " + email, e);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
-//        }
-//    }
-
-
     @PostMapping("/register")
     public ResponseEntity<String> signUpUser(@RequestBody User user) {
         log.info("Fetch API: register Success");
