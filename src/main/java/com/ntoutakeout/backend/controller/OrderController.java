@@ -21,8 +21,6 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private JwtService jwtService;
