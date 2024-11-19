@@ -2,7 +2,9 @@ package com.ntoutakeout.backend.controller;
 
 import com.ntoutakeout.backend.entity.Store;
 import com.ntoutakeout.backend.entity.user.User;
+import com.ntoutakeout.backend.service.CustomUserDetailsService;
 import com.ntoutakeout.backend.service.StoreService;
+import com.ntoutakeout.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,14 +16,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+import static io.jsonwebtoken.Jwts.header;
+
+@RestController()
 @RequestMapping("/api/user")
 @Slf4j
 public class UserController {
-    private final StoreService userService;
+
+    private final UserService userService;
 
     @Autowired
-    public UserController(StoreService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -42,44 +47,33 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
 //        }
 //    }
-//
-//
-//    @PostMapping("/signup")
-//    public ResponseEntity<?> signUpUser(@RequestBody User user) {
-//        log.info("Fetch API: signup Success");
-//        try {
-//            User newUser = userService.signUpUser(user);
-//
-//            String token = userService.generateToken(newUser);
-//
-//            return ResponseEntity.status(HttpStatus.CREATED)
-//                    .header("Authorization", "Bearer " + token)
-//                    .body(newUser);
-//        } catch (Exception e) {
-//            log.error("Signup failed for user: " + user.getEmail(), e);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Signup failed: " + e.getMessage());
-//        }
-//    }
-//
-//
-//
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<?> loginUser(@RequestBody User user) {
-//        log.info("Fetch API: login Success");
-//        try {
-//            User loginUser = userService.loginUser(user);
-//
-//            String token = userService.generateToken(user);
-//
-//            return ResponseEntity.status(HttpStatus.CREATED)
-//                    .header("Authorization", "Bearer " + token)
-//                    .body(loginUser);
-//        } catch (Exception e) {
-//            log.error("Login failed for email: " + user.getEmail(), e);
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
-//        }
-//    }
+
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUpUser(@RequestBody User user) {
+        log.info("Fetch API: signup Success");
+        try {
+            userService.createUser(user);
+            return ResponseEntity.ok("Success");
+        } catch (Exception e) {
+            log.error("Signup failed for user: {}", user.getEmail(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed");
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody User user) {
+        log.info("Fetch API: login Success");
+        try {
+            String token = userService.verify(user);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header("Authorization", "Bearer " + token)
+                    .body(null);
+        } catch (Exception e) {
+            log.error("Login failed for email: {}", user.getEmail(), e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
+        }
+    }
 //
 //    @PatchMapping("/update")
 //    public ResponseEntity<User> updateUser(@RequestHeader("Authorization") String token,
@@ -111,4 +105,7 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 //        }
 //    }
+
+
+
 }
