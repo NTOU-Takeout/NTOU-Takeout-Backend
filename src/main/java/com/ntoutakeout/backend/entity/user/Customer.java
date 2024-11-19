@@ -13,5 +13,5 @@ import java.util.List;
 @ToString
 public class Customer extends User{
     private List<String> storeCollection;
-    private List<Order> orderHistory;
+    private List<Order> orderList;
 }
