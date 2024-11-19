@@ -38,6 +38,10 @@ public class StoreService {
         return stores.stream().map(Store::getId).toList();
     }
 
+    public Store getStoreById(String storeId) {
+        return storeRepository.findById(storeId).orElse(null);
+    }
+
     public List<Store> getStoreByIds(List<String> ids) {
         return ids.stream()
                 .map(storeRepository::findById)

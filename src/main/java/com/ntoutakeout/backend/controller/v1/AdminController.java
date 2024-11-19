@@ -1,4 +1,4 @@
-package com.ntoutakeout.backend.controller;
+package com.ntoutakeout.backend.controller.v1;
 
 import com.ntoutakeout.backend.entity.user.User;
 import com.ntoutakeout.backend.service.UserService;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/v1/admin")
 @Slf4j
 public class AdminController {
     private final UserService userService;
@@ -23,7 +23,7 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/getAllUsers")
+    @GetMapping("/")
     public ResponseEntity<List<User>> getAllUsers() {
         log.info("Fetch API: getAllUsers Success");
         try {

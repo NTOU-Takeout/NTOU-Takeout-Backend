@@ -33,4 +33,8 @@ public class MenuService {
                 .map(Optional::get)
                 .collect(Collectors.toList());
     }
+
+    public List<Dish> getDishesByCategory(String category) {
+        return dishRepository.findAllByCategory(category);
+    }
 }
