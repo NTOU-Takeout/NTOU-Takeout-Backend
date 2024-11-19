@@ -61,8 +61,6 @@ public class UserController {
         }
     }
 
-
-
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody User user) {
         log.info("Fetch API: login Success");
