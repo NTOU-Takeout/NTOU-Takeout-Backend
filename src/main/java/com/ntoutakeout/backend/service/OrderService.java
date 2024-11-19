@@ -19,26 +19,6 @@ public class OrderService {
 
     private OrderRepository orderRepository;
 
-    public String createOrder(Map<String, Object> cartRequest, String customerId) {
-
-        Order order = new Order();
-        order.setCustomerId(customerId);
-
-        order.setStoreId((String) cartRequest.get("storeId"));
-        order.setDate(LocalDateTime.now());
-        order.setStatus(OrderedStatus.IN_CART);
-
-        List<OrderedDish> orderedDishes = (List<OrderedDish>) cartRequest.get("orderedDishes");
-        order.setOrderedDishes(orderedDishes);
-
-        order.calculateTotalCost();
-
-        Order savedOrder = orderRepository.save(order);
-
-        return savedOrder.getId();
-    }
-
-
     public String updateOrder(Map<String, Object> updateRequest, String orderId) {
 
         Order order = orderRepository.findById(orderId).orElse(null);

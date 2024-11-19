@@ -1,16 +1,17 @@
 package com.ntoutakeout.backend.controller.v1;
 
-import com.ntoutakeout.backend.entity.Cart;
-import com.ntoutakeout.backend.entity.user.Customer;
+import com.ntoutakeout.backend.entity.Dish;
+import com.ntoutakeout.backend.entity.order.Order;
+import com.ntoutakeout.backend.entity.order.OrderedDish;
 import com.ntoutakeout.backend.service.CustomerService;
-import com.ntoutakeout.backend.service.JWTService;
-import com.ntoutakeout.backend.service.OrderService;
-import com.ntoutakeout.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/customer")
@@ -25,11 +26,76 @@ public class CustomerController {
     }
 
     @GetMapping("/{customerId}/cart")
-    public ResponseEntity<?> getCart(@PathVariable("customerId") String customerId) {
+    public ResponseEntity<?> getCart(
+            @PathVariable("customerId") String customerId) {
         try {
-            Cart cart = customerService.getCart(customerId);
+            Order cartOrder = customerService.getCart(customerId);
+            if(cartOrder == null) {
+                cartOrder = customerService.createCart(customerId);
+            }
             log.info("Customer get cart successfully");
-            return ResponseEntity.status(HttpStatus.OK).body(cart);
+            return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{customerId}/cart")
+    public ResponseEntity<String> deleteCart(
+            @PathVariable("customerId") String customerId) {
+        try {
+            customerService.deleteCart(customerId, customerService.getCart(customerId));
+            log.info("Customer delete cart successfully");
+            return ResponseEntity.status(HttpStatus.OK).body("success");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{customerId}/cart/dishes")
+    public ResponseEntity<?> addNewDish(
+            @PathVariable("customerId") String customerId,
+            @RequestBody OrderedDish dish) throws Exception {
+
+        Order cartOrder = customerService.addNewDish(customerId, dish);
+        return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
+    }
+
+    @PatchMapping("/{customerId}/cart/dishes/{dishId}")
+    public ResponseEntity<?> updateDish(
+            @PathVariable("customerId") String customerId,
+            @PathVariable("dishId") String dishId,
+            @RequestBody Map<String, Object> dish) throws Exception {
+        try {
+            Order cartOrder = customerService.updateDish(customerId, dishId, dish);
+            log.info("Customer update dish successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{customerId}/cart/send")
+    public ResponseEntity<?> sendOrder(
+            @PathVariable("customerId") String customerId) throws Exception {
+        try {
+            Order cartOrder = customerService.sendOrder(customerId);
+            return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/{customerId}/cart/cancel")
+    public ResponseEntity<String> cancelDish(
+            @PathVariable("customerId") String customerId) throws Exception {
+        try {
+            customerService.cancelOrder(customerId);
+            return ResponseEntity.status(HttpStatus.OK).body("Success");
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

@@ -1,6 +1,7 @@
 package com.ntoutakeout.backend.service;
 
 import com.ntoutakeout.backend.dto.LoginRequest;
+import com.ntoutakeout.backend.entity.user.Customer;
 import com.ntoutakeout.backend.entity.user.User;
 import com.ntoutakeout.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public void createUser(User user) {
+    public void createUser(Customer user) {
         if(userRepository.findByEmail(user.getEmail()) != null) {
             throw new RuntimeException("Email already exists");
         }

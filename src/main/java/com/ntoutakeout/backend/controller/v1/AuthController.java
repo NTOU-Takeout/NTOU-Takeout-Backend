@@ -1,6 +1,7 @@
 package com.ntoutakeout.backend.controller.v1;
 
 import com.ntoutakeout.backend.dto.LoginRequest;
+import com.ntoutakeout.backend.entity.user.Customer;
 import com.ntoutakeout.backend.entity.user.User;
 import com.ntoutakeout.backend.service.AuthService;
 import com.ntoutakeout.backend.service.UserService;
@@ -25,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> signUpUser(@RequestBody User user) {
+    public ResponseEntity<String> signUpUser(@RequestBody Customer user) {
         log.info("Fetch API: register Success");
         try {
             authService.createUser(user);
