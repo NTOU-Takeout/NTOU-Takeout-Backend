@@ -38,7 +38,7 @@ public class JWTService {
                 .add(claims)
                 .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30))//for 30 minutes
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))//for 30 minutes
                 .and()
                 .signWith(getKey())
                 .compact();
@@ -55,9 +55,9 @@ public class JWTService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
-        return claimResolver.apply(claims);
+        return claimsResolver.apply(claims);
     }
 
     private Claims extractAllClaims(String token) throws MalformedJwtException {

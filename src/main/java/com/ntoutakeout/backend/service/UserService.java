@@ -15,22 +15,16 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private AuthenticationManager authManager;
-    private JWTService jwtService;
+    private final AuthenticationManager authManager;
+    private final JWTService jwtService;
     private final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+                       AuthenticationManager authManager,
+                       JWTService jwtService) {
         this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authManager) {
         this.authManager = authManager;
-    }
-
-    @Autowired
-    public void setJwtService(JWTService jwtService) {
         this.jwtService = jwtService;
     }
 
