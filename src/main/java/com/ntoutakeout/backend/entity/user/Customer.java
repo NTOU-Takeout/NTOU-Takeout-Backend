@@ -1,7 +1,7 @@
 package com.ntoutakeout.backend.entity.user;
 
 import com.ntoutakeout.backend.entity.Cart;
-import com.ntoutakeout.backend.entity.Order;
+import com.ntoutakeout.backend.entity.order.Order;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
