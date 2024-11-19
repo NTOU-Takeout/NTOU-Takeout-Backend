@@ -14,6 +14,4 @@ import java.util.List;
 public class Customer extends User{
     private List<String> storeCollection;
     private List<Order> orderHistory;
-    private Cart cart;
-    private String location;
 }
