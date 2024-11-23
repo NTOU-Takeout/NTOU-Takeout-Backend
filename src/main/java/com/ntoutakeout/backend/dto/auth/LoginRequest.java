@@ -1,4 +1,4 @@
-package com.ntoutakeout.backend.dto;
+package com.ntoutakeout.backend.dto.auth;
 
 import lombok.Data;
 

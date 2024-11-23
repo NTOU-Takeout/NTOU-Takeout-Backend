@@ -1,37 +1,34 @@
 package com.ntoutakeout.backend.controller.v1;
 
-import com.ntoutakeout.backend.entity.Dish;
+import com.ntoutakeout.backend.dto.order.OrderedDishPatchRequest;
 import com.ntoutakeout.backend.entity.order.Order;
 import com.ntoutakeout.backend.entity.order.OrderedDish;
-import com.ntoutakeout.backend.service.CustomerService;
+import com.ntoutakeout.backend.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/customer")
 @Slf4j
 public class CustomerController {
 
-    private final CustomerService customerService;
+    public final OrderService orderService;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
+    public CustomerController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @GetMapping("/{customerId}/cart")
     public ResponseEntity<?> getCart(
             @PathVariable("customerId") String customerId) {
         try {
-            Order cartOrder = customerService.getCart(customerId);
+            Order cartOrder = orderService.getCart(customerId);
             if(cartOrder == null) {
-                cartOrder = customerService.createCart(customerId);
+                cartOrder = orderService.createCart(customerId);
             }
             log.info("Customer get cart successfully");
             return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
@@ -45,7 +42,7 @@ public class CustomerController {
     public ResponseEntity<String> deleteCart(
             @PathVariable("customerId") String customerId) {
         try {
-            customerService.deleteCart(customerId, customerService.getCart(customerId));
+            orderService.deleteCart(customerId);
             log.info("Customer delete cart successfully");
             return ResponseEntity.status(HttpStatus.OK).body("success");
         } catch (Exception e) {
@@ -59,7 +56,7 @@ public class CustomerController {
             @PathVariable("customerId") String customerId,
             @RequestBody OrderedDish dish) throws Exception {
 
-        Order cartOrder = customerService.addNewDish(customerId, dish);
+        Order cartOrder = orderService.addNewDish(customerId, dish);
         return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
     }
 
@@ -67,9 +64,9 @@ public class CustomerController {
     public ResponseEntity<?> updateDish(
             @PathVariable("customerId") String customerId,
             @PathVariable("dishId") String dishId,
-            @RequestBody Map<String, Object> dish) throws Exception {
+            @RequestBody OrderedDishPatchRequest request) throws Exception {
         try {
-            Order cartOrder = customerService.updateDish(customerId, dishId, dish);
+            Order cartOrder = orderService.updateDish(customerId, dishId, request);
             log.info("Customer update dish successfully");
             return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
         } catch (Exception e) {
@@ -82,7 +79,7 @@ public class CustomerController {
     public ResponseEntity<?> sendOrder(
             @PathVariable("customerId") String customerId) throws Exception {
         try {
-            Order cartOrder = customerService.sendOrder(customerId);
+            Order cartOrder = orderService.sendOrder(customerId);
             return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -94,7 +91,7 @@ public class CustomerController {
     public ResponseEntity<String> cancelDish(
             @PathVariable("customerId") String customerId) throws Exception {
         try {
-            customerService.cancelOrder(customerId);
+            orderService.cancelOrder(customerId);
             return ResponseEntity.status(HttpStatus.OK).body("Success");
         } catch (Exception e) {
             log.error(e.getMessage());

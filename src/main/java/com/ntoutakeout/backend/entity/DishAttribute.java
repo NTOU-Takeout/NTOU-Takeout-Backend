@@ -16,6 +16,6 @@ public class DishAttribute {
     private List<AttributeOption> attributeOptions;
 
     public DishAttribute() {
-        attributeOptions = new ArrayList<AttributeOption>();
+        attributeOptions = new ArrayList<>();
     }
 }

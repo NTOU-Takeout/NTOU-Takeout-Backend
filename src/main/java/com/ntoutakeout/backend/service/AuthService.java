@@ -1,6 +1,6 @@
 package com.ntoutakeout.backend.service;
 
-import com.ntoutakeout.backend.dto.LoginRequest;
+import com.ntoutakeout.backend.dto.auth.LoginRequest;
 import com.ntoutakeout.backend.entity.user.Customer;
 import com.ntoutakeout.backend.entity.user.User;
 import com.ntoutakeout.backend.repository.UserRepository;
