@@ -51,35 +51,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
         }
     }
-//
-//    @PatchMapping("/update")
-//    public ResponseEntity<User> updateUser(@RequestHeader("Authorization") String token,
-//                                           @RequestBody Map<String, Object> userUpdates) {
-//        log.info("Fetch API: update User");
-//        try {
-//            String jwtToken = token.replace("Bearer ", "");
-//            Claims claims = validateToken(jwtToken);
-//            if (claims == null) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//            }
-//
-//            User updatedUser = userService.updateUser(userUpdates);
-//
-//            if (updatedUser == null) {
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//            }
-//
-//            return ResponseEntity.ok(updatedUser);
-//
-//        } catch (IllegalArgumentException e) {
-//            log.error("Update failed due to invalid input: ", e);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//        } catch (SecurityException e) {
-//            log.error("Update failed due to authorization: ", e);
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        } catch (Exception e) {
-//            log.error("Unexpected error updating user: ", e);
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//        }
-//    }
+
 }
