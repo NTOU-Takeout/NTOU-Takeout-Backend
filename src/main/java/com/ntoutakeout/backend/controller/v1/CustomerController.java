@@ -89,11 +89,11 @@ public class CustomerController {
         }
     }
 
-    @PatchMapping("/{customerId}/cart/cancel")
+    @PatchMapping("/cart/{orderId}/cancel")
     public ResponseEntity<String> cancelDish(
-            @PathVariable("customerId") String customerId) throws Exception {
+            @PathVariable("orderId") String orderId) throws Exception {
         try {
-            orderService.cancelOrder(customerId);
+            orderService.cancelOrder(orderId);
             return ResponseEntity.status(HttpStatus.OK).body("Success");
         } catch (Exception e) {
             log.error(e.getMessage());
