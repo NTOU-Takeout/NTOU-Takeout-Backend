@@ -25,6 +25,13 @@ public class OrderService {
         this.dishRepository = dishRepository;
     }
 
+    public Order getOrderById(String orderId) {
+        log.info("getOrderById: {}", orderId);
+        Order cart = orderRepository.findOrderById(orderId);
+        log.info("Order found: {}", cart);
+        return cart;
+    }
+
     public Order getCart(String customerId) {
         log.info("Getting cart for customer: {}", customerId);
         Order cart = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
@@ -89,8 +96,12 @@ public class OrderService {
         return orderRepository.save(cart);
     }
 
-    public void cancelOrder(String customerId) {
-        Order cart = getPendingCart(customerId);
+    public void cancelOrder(String orderId) {
+        Order cart = getOrderById(orderId);
+        if(cart.getStatus() != OrderedStatus.PENDING) {
+            log.info("order is not Pending, you can not cancel: {}", cart);
+            return;
+        }
         cart.setStatus(OrderedStatus.CANCELED);
         orderRepository.save(cart);
     }
