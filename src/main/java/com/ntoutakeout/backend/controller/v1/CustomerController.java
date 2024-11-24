@@ -53,8 +53,13 @@ public class CustomerController {
             @PathVariable("customerId") String customerId,
             @RequestBody OrderedDish dish) throws Exception {
 
-        Order cartOrder = orderService.addNewDish(customerId, dish);
-        return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
+        try {
+            Order cartOrder = orderService.addNewDish(customerId, dish);
+            return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PatchMapping("/{customerId}/cart/dishes/{dishId}")
