@@ -5,23 +5,38 @@ import com.ntoutakeout.backend.entity.order.Order;
 import com.ntoutakeout.backend.entity.order.OrderedDish;
 import com.ntoutakeout.backend.entity.order.OrderedStatus;
 import com.ntoutakeout.backend.entity.order.ChosenAttribute;
+import com.ntoutakeout.backend.repository.DishRepository;
 import com.ntoutakeout.backend.repository.OrderRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+@Slf4j
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final DishRepository dishRepository;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, DishRepository dishRepository) {
         this.orderRepository = orderRepository;
+        this.dishRepository = dishRepository;
     }
 
     public Order getCart(String customerId) {
-        return orderRepository.findByIdAndStatus(customerId, OrderedStatus.IN_CART);
+        log.info("Getting cart for customer: {}", customerId);
+        Order cart = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
+        log.info("IN_Cart Cart found: {}", cart);
+        return cart;
+    }
+
+    public Order getPendingCart(String customerId) {
+        log.info("Getting PendingCart for customer: {}", customerId);
+        Order cart = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.PENDING);
+        log.info("Pending Cart found: {}", cart);
+        return cart;
     }
 
     public Order createCart(String customerId) {
@@ -41,6 +56,8 @@ public class OrderService {
     public Order addNewDish(String customerId, OrderedDish dish) {
         Order cart = getCart(customerId);
         cart.getOrderedDishes().add(dish);
+        dish.setPrice(dishRepository.findDishById(dish.getDishId()).getPrice());
+        dish.setDishName(dishRepository.findDishById(dish.getDishId()).getName());
         updateOrderCost(cart);
         return orderRepository.save(cart);
     }
@@ -57,6 +74,9 @@ public class OrderService {
                 if (request.getNote() != null) {
                     dish.setNote(request.getNote());
                 }
+                if (request.getChosenAttributes() != null) {
+                    dish.setChosenAttributes(request.getChosenAttributes());
+                }
             });
         updateOrderCost(cart);
         return orderRepository.save(cart);
@@ -70,7 +90,7 @@ public class OrderService {
     }
 
     public void cancelOrder(String customerId) {
-        Order cart = getCart(customerId);
+        Order cart = getPendingCart(customerId);
         cart.setStatus(OrderedStatus.CANCELED);
         orderRepository.save(cart);
     }

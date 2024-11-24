@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends MongoRepository<Order, String> {
-    Order findByIdAndStatus(String id, OrderedStatus status);
+    Order findByCustomerIdAndStatus(String customerId, OrderedStatus status);
 }

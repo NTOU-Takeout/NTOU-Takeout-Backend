@@ -44,7 +44,7 @@ public class CustomerService {
     public Order getCart(String customerId) throws Exception {
         Customer customer = getCustomer(customerId);
 
-        Order cartOrder = orderRepository.findByIdAndStatus(customerId, OrderedStatus.IN_CART);
+        Order cartOrder = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
         if (cartOrder == null) {
             cartOrder = createCart(customerId);
             customer.getOrderList().add(cartOrder);
@@ -105,7 +105,7 @@ public class CustomerService {
     public Order sendOrder(String customerId) throws Exception{
         Customer customer = getCustomer(customerId);
 
-        Order cartOrder = orderRepository.findByIdAndStatus(customerId, OrderedStatus.IN_CART);
+        Order cartOrder = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
 
         if (cartOrder == null) {
             throw new Exception("Order not found");
@@ -118,7 +118,7 @@ public class CustomerService {
     public void cancelOrder(String customerId) throws Exception{
         Customer customer = getCustomer(customerId);
 
-        Order cartOrder = orderRepository.findByIdAndStatus(customerId, OrderedStatus.IN_CART);
+        Order cartOrder = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
 
         if (cartOrder == null) {
             throw new Exception("Order not found");

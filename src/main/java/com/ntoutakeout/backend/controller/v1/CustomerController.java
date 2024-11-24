@@ -28,6 +28,7 @@ public class CustomerController {
         try {
             Order cartOrder = orderService.getCart(customerId);
             if(cartOrder == null) {
+                log.info("CustomerCart is null, create cart");
                 cartOrder = orderService.createCart(customerId);
             }
             log.info("Customer get cart successfully");
@@ -65,6 +66,7 @@ public class CustomerController {
             @PathVariable("customerId") String customerId,
             @PathVariable("dishId") String dishId,
             @RequestBody OrderedDishPatchRequest request) throws Exception {
+        log.info("updateDish started");
         try {
             Order cartOrder = orderService.updateDish(customerId, dishId, request);
             log.info("Customer update dish successfully");
