@@ -27,10 +27,6 @@ public class CustomerController {
             @PathVariable("customerId") String customerId) {
         try {
             Order cartOrder = orderService.getCart(customerId);
-            if(cartOrder == null) {
-                log.info("CustomerCart is null, create cart");
-                cartOrder = orderService.createCart(customerId);
-            }
             log.info("Customer get cart successfully");
             return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
         } catch (Exception e) {

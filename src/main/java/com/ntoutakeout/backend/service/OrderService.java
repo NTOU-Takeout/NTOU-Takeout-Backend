@@ -26,24 +26,51 @@ public class OrderService {
     }
 
     public Order getOrderById(String orderId) {
-        log.info("getOrderById: {}", orderId);
-        Order cart = orderRepository.findOrderById(orderId);
-        log.info("Order found: {}", cart);
-        return cart;
+        try {
+            log.info("Attempting to retrieve order with ID: {}", orderId);
+            Order order = orderRepository.findOrderById(orderId);
+            if (order == null) {
+                log.error("Order not found with ID: {}", orderId);
+                throw new RuntimeException("Order not found");
+            }
+            log.info("Successfully retrieved order: {}", order);
+            return order;
+        } catch (Exception e) {
+            log.error("Error occurred while getting order by ID: {}", e.getMessage());
+            throw new RuntimeException("Failed to get order: " + e.getMessage());
+        }
     }
 
     public Order getCart(String customerId) {
-        log.info("Getting cart for customer: {}", customerId);
-        Order cart = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
-        log.info("IN_Cart Cart found: {}", cart);
-        return cart;
+        try {
+            log.info("Attempting to retrieve cart for customer ID: {}", customerId);
+            Order cart = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
+            if (cart == null) {
+                log.info("No existing cart found for customer ID: {}. Creating new cart.", customerId);
+                return createCart(customerId);
+            }
+            log.info("Successfully retrieved active cart: {}", cart);
+            return cart;
+        } catch (Exception e) {
+            log.error("Error occurred while getting cart: {}", e.getMessage());
+            throw new RuntimeException("Failed to get cart: " + e.getMessage());
+        }
     }
 
     public Order getPendingCart(String customerId) {
-        log.info("Getting PendingCart for customer: {}", customerId);
-        Order cart = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.PENDING);
-        log.info("Pending Cart found: {}", cart);
-        return cart;
+        try {
+            log.info("Attempting to retrieve pending cart for customer ID: {}", customerId);
+            Order cart = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.PENDING);
+            if (cart == null) {
+                log.error("No pending cart found for customer ID: {}", customerId);
+                throw new RuntimeException("No pending cart found");
+            }
+            log.info("Successfully retrieved pending cart: {}", cart);
+            return cart;
+        } catch (Exception e) {
+            log.error("Error occurred while getting pending cart: {}", e.getMessage());
+            throw new RuntimeException("Failed to get pending cart: " + e.getMessage());
+        }
     }
 
     public Order createCart(String customerId) {
@@ -61,49 +88,102 @@ public class OrderService {
     }
 
     public Order addNewDish(String customerId, OrderedDish dish) {
-        Order cart = getCart(customerId);
-        cart.getOrderedDishes().add(dish);
-        dish.setPrice(dishRepository.findDishById(dish.getDishId()).getPrice());
-        dish.setDishName(dishRepository.findDishById(dish.getDishId()).getName());
-        updateOrderCost(cart);
-        return orderRepository.save(cart);
+        try {
+            Order cart = getCart(customerId);
+            if (cart == null) {
+                log.error("Cart not found for customer: {}", customerId);
+                throw new RuntimeException("Cart not found");
+            }
+
+            var dishEntity = dishRepository.findDishById(dish.getDishId());
+            if (dishEntity == null) {
+                log.error("Dish not found with ID: {}", dish.getDishId());
+                throw new RuntimeException("Dish not found");
+            }
+
+            cart.getOrderedDishes().add(dish);
+            dish.setPrice(dishEntity.getPrice());
+            dish.setDishName(dishEntity.getName());
+            updateOrderCost(cart);
+            return orderRepository.save(cart);
+        } catch (Exception e) {
+            log.error("Error occurred while adding new dish: {}", e.getMessage());
+            throw new RuntimeException("Failed to add dish: " + e.getMessage());
+        }
     }
 
     public Order updateDish(String customerId, String dishId, OrderedDishPatchRequest request) {
-        Order cart = getCart(customerId);
-        cart.getOrderedDishes().stream()
-            .filter(dish -> dish.getDishId().equals(dishId))
-            .findFirst()
-            .ifPresent(dish -> {
-                if (request.getQuantity() != null) {
-                    dish.setQuantity(request.getQuantity());
-                }
-                if (request.getNote() != null) {
-                    dish.setNote(request.getNote());
-                }
-                if (request.getChosenAttributes() != null) {
-                    dish.setChosenAttributes(request.getChosenAttributes());
-                }
-            });
-        updateOrderCost(cart);
-        return orderRepository.save(cart);
+        try {
+            // Validate input
+            if (request == null) {
+                throw new RuntimeException("Update request cannot be null");
+            }
+            if (request.getQuantity() != null && request.getQuantity() <= 0) {
+                throw new RuntimeException("Quantity must be greater than 0");
+            }
+
+            Order cart = getCart(customerId);
+            if (cart == null) {
+                log.error("Cart not found for customer: {}", customerId);
+                throw new RuntimeException("Cart not found");
+            }
+
+            OrderedDish dishToUpdate = cart.getOrderedDishes().stream()
+                .filter(dish -> dish.getDishId().equals(dishId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Dish not found in cart"));
+
+            // Update dish details
+            if (request.getQuantity() != null) {
+                dishToUpdate.setQuantity(request.getQuantity());
+            }
+            if (request.getNote() != null) {
+                dishToUpdate.setNote(request.getNote());
+            }
+            if (request.getChosenAttributes() != null) {
+                dishToUpdate.setChosenAttributes(request.getChosenAttributes());
+            }
+
+            updateOrderCost(cart);
+            return orderRepository.save(cart);
+        } catch (Exception e) {
+            log.error("Error occurred while updating dish: {}", e.getMessage());
+            throw new RuntimeException("Failed to update dish: " + e.getMessage());
+        }
     }
 
     public Order sendOrder(String customerId) {
-        Order cart = getCart(customerId);
-        cart.setStatus(OrderedStatus.PENDING);
-        cart.setDate(LocalDateTime.now());
-        return orderRepository.save(cart);
+        try {
+            Order cart = getCart(customerId);
+            if (cart == null) {
+                throw new RuntimeException("Cart not found");
+            }
+            cart.setStatus(OrderedStatus.PENDING);
+            cart.setDate(LocalDateTime.now());
+            return orderRepository.save(cart);
+        } catch (Exception e) {
+            log.error("Error occurred while sending order: {}", e.getMessage());
+            throw new RuntimeException("Failed to send order: " + e.getMessage());
+        }
     }
 
     public void cancelOrder(String orderId) {
-        Order cart = getOrderById(orderId);
-        if(cart.getStatus() != OrderedStatus.PENDING) {
-            log.info("order is not Pending, you can not cancel: {}", cart);
-            return;
+        try {
+            Order cart = getOrderById(orderId);
+            if (cart == null) {
+                throw new RuntimeException("Order not found");
+            }
+            if(cart.getStatus() != OrderedStatus.PENDING) {
+                log.info("Cannot cancel order ID: {}. Order status is not PENDING. Current status: {}", 
+                    orderId, cart.getStatus());
+                throw new RuntimeException("Can only cancel pending orders");
+            }
+            cart.setStatus(OrderedStatus.CANCELED);
+            orderRepository.save(cart);
+        } catch (Exception e) {
+            log.error("Error occurred while canceling order: {}", e.getMessage());
+            throw new RuntimeException("Failed to cancel order: " + e.getMessage());
         }
-        cart.setStatus(OrderedStatus.CANCELED);
-        orderRepository.save(cart);
     }
 
     private void updateOrderCost(Order order) {
