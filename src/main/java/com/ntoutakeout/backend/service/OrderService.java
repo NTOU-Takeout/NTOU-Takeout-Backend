@@ -114,12 +114,8 @@ public class OrderService {
 
     public Order updateDish(String customerId, String dishId, OrderedDishPatchRequest request) {
         try {
-            // Validate input
             if (request == null) {
                 throw new RuntimeException("Update request cannot be null");
-            }
-            if (request.getQuantity() != null && request.getQuantity() <= 0) {
-                throw new RuntimeException("Quantity must be greater than 0");
             }
 
             Order cart = getCart(customerId);
@@ -128,20 +124,24 @@ public class OrderService {
                 throw new RuntimeException("Cart not found");
             }
 
-            OrderedDish dishToUpdate = cart.getOrderedDishes().stream()
-                .filter(dish -> dish.getDishId().equals(dishId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Dish not found in cart"));
+            if (request.getQuantity() != null && request.getQuantity() == 0) {
+                log.info("Removing dish {} from cart as quantity is 0", dishId);
+                cart.getOrderedDishes().removeIf(dish -> dish.getDishId().equals(dishId));
+            } else {
+                OrderedDish dishToUpdate = cart.getOrderedDishes().stream()
+                    .filter(dish -> dish.getDishId().equals(dishId))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Dish not found in cart"));
 
-            // Update dish details
-            if (request.getQuantity() != null) {
-                dishToUpdate.setQuantity(request.getQuantity());
-            }
-            if (request.getNote() != null) {
-                dishToUpdate.setNote(request.getNote());
-            }
-            if (request.getChosenAttributes() != null) {
-                dishToUpdate.setChosenAttributes(request.getChosenAttributes());
+                if (request.getQuantity() != null) {
+                    dishToUpdate.setQuantity(request.getQuantity());
+                }
+                if (request.getNote() != null) {
+                    dishToUpdate.setNote(request.getNote());
+                }
+                if (request.getChosenAttributes() != null) {
+                    dishToUpdate.setChosenAttributes(request.getChosenAttributes());
+                }
             }
 
             updateOrderCost(cart);
