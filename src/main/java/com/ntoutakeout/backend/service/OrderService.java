@@ -57,22 +57,6 @@ public class OrderService {
         }
     }
 
-    public Order getPendingCart(String customerId) {
-        try {
-            log.info("Attempting to retrieve pending cart for customer ID: {}", customerId);
-            Order cart = orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.PENDING);
-            if (cart == null) {
-                log.error("No pending cart found for customer ID: {}", customerId);
-                throw new RuntimeException("No pending cart found");
-            }
-            log.info("Successfully retrieved pending cart: {}", cart);
-            return cart;
-        } catch (Exception e) {
-            log.error("Error occurred while getting pending cart: {}", e.getMessage());
-            throw new RuntimeException("Failed to get pending cart: " + e.getMessage());
-        }
-    }
-
     public Order createCart(String customerId) {
         Order cart = new Order();
         cart.setCustomerId(customerId);
