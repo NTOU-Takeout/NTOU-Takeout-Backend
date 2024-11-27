@@ -67,7 +67,6 @@ public class CustomerController {
             @PathVariable("customerId") String customerId,
             @PathVariable("dishId") String dishId,
             @RequestBody OrderedDishPatchRequest request) throws Exception {
-        log.info("updateDish started");
         try {
             Order cartOrder = orderService.updateDish(customerId, dishId, request);
             log.info("Customer update dish successfully");
