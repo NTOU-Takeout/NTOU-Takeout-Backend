@@ -20,11 +20,11 @@ public class AuthController {
     private final UserService userService;
 
     @Autowired
-    public AuthController(AuthService userService, UserService authService) {
-        this.authService = userService;
-        this.userService = authService;
+    public AuthController(AuthService authService, UserService userService) {
+        this.authService = authService;
+        this.userService = userService;
     }
-
+    
     @PostMapping("/register")
     public ResponseEntity<String> signUpUser(@RequestBody Customer user) {
         log.info("Fetch API: register Success");
