@@ -79,12 +79,21 @@ public class OrderService {
         }
 
         validDishId(orderedDish.getDishId());
+
+        for(OrderedDish dish : cart.getOrderedDishes()) {
+            if(dish.equalsWithoutId(orderedDish)) {
+                dish.setQuantity(dish.getQuantity() + orderedDish.getQuantity());
+                updateOrderCost(cart);
+                return orderRepository.save(cart);
+            }
+        }
+
         cart.getOrderedDishes().add(orderedDish);
         updateOrderCost(cart);
         return orderRepository.save(cart);
     }
 
-    public Order updateDish(String customerId, String dishId, OrderedDishPatchRequest request)
+    public Order updateDish(String customerId, String orderedDishId, OrderedDishPatchRequest request)
             throws NoSuchElementException, IllegalArgumentException {
 
         Customer customer = customerService.getCustomerById(customerId);
@@ -98,11 +107,11 @@ public class OrderService {
         }
 
         if (request.getQuantity() != null && request.getQuantity() == 0) {
-            log.info("Removing dish {} from cart as quantity is 0", dishId);
-            cart.getOrderedDishes().removeIf(dish -> dish.getDishId().equals(dishId));
+            log.info("Removing dish {} from cart as quantity is 0", orderedDishId);
+            cart.getOrderedDishes().removeIf(dish -> dish.getId().equals(orderedDishId));
         } else {
             OrderedDish dishToUpdate = cart.getOrderedDishes().stream()
-                    .filter(dish -> dish.getDishId().equals(dishId))
+                    .filter(dish -> dish.getId().equals(orderedDishId))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Dish not found in cart"));
 

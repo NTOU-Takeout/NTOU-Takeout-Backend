@@ -62,13 +62,13 @@ public class CustomerController {
         }
     }
 
-    @PatchMapping("/{customerId}/cart/dishes/{dishId}")
+    @PatchMapping("/{customerId}/cart/dishes/{orderedDishId}")
     public ResponseEntity<?> updateDish(
             @PathVariable("customerId") String customerId,
-            @PathVariable("dishId") String dishId,
+            @PathVariable("orderedDishId") String orderedDishId,
             @RequestBody OrderedDishPatchRequest request) throws Exception {
         try {
-            Order cartOrder = orderService.updateDish(customerId, dishId, request);
+            Order cartOrder = orderService.updateDish(customerId, orderedDishId, request);
             log.info("Customer update dish successfully");
             return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
         } catch (Exception e) {
