@@ -1,5 +1,6 @@
 package com.ntoutakeout.backend.controller.v1;
 
+import com.ntoutakeout.backend.dto.ApiResponse;
 import com.ntoutakeout.backend.dto.order.OrderedDishPatchRequest;
 import com.ntoutakeout.backend.entity.order.Order;
 import com.ntoutakeout.backend.entity.order.OrderedDish;
@@ -25,81 +26,70 @@ public class CustomerController {
     }
 
     @GetMapping("/{customerId}/cart")
-    public ResponseEntity<?> getCart(
-            @PathVariable("customerId") String customerId) {
-        try {
-            Order cartOrder = orderService.getCart(customerId);
-            log.info("Customer get cart successfully");
-            return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
-        } catch (NoSuchElementException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<ApiResponse<Order>> getCart(
+            @PathVariable("customerId") String customerId)
+            throws NoSuchElementException {
+
+        Order cartOrder = orderService.getCart(customerId);
+        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        log.info("Customer get cart successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @DeleteMapping("/{customerId}/cart")
-    public ResponseEntity<String> deleteCart(
-            @PathVariable("customerId") String customerId) {
-        try {
-            orderService.deleteCart(customerId);
-            log.info("Customer delete cart successfully");
-            return ResponseEntity.status(HttpStatus.OK).body("success");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<ApiResponse<Void>> deleteCart(
+            @PathVariable("customerId") String customerId)
+            throws NoSuchElementException {
+
+        orderService.deleteCart(customerId);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Customer delete cart successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PostMapping("/{customerId}/cart/dishes")
-    public ResponseEntity<?> addNewDish(
+    public ResponseEntity<ApiResponse<Order>> addNewDish(
             @PathVariable("customerId") String customerId,
-            @RequestBody OrderedDish dish) throws Exception {
+            @RequestBody OrderedDish dish)
+            throws NoSuchElementException, IllegalArgumentException {
 
-        try {
-            Order cartOrder = orderService.addNewDish(customerId, dish);
-            return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        Order cartOrder = orderService.addNewDish(customerId, dish);
+        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PatchMapping("/{customerId}/cart/dishes/{orderedDishId}")
-    public ResponseEntity<?> updateDish(
+    public ResponseEntity<ApiResponse<Order>> updateDish(
             @PathVariable("customerId") String customerId,
             @PathVariable("orderedDishId") String orderedDishId,
-            @RequestBody OrderedDishPatchRequest request) throws Exception {
-        try {
-            Order cartOrder = orderService.updateDish(customerId, orderedDishId, request);
-            log.info("Customer update dish successfully");
-            return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+            @RequestBody OrderedDishPatchRequest request)
+            throws NoSuchElementException, IllegalArgumentException {
+
+        Order cartOrder = orderService.updateDish(customerId, orderedDishId, request);
+        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        log.info("Customer update dish successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PatchMapping("/{customerId}/cart/send")
-    public ResponseEntity<?> sendOrder(
-            @PathVariable("customerId") String customerId) throws Exception {
-        try {
-            Order cartOrder = orderService.sendOrder(customerId);
-            return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<ApiResponse<Order>> sendOrder(
+            @PathVariable("customerId") String customerId)
+            throws NoSuchElementException {
+
+        Order cartOrder = orderService.sendOrder(customerId);
+        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        log.info("Customer send order successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PatchMapping("/cart/{orderId}/cancel")
-    public ResponseEntity<String> cancelDish(
-            @PathVariable("orderId") String orderId) throws Exception {
-        try {
-            orderService.cancelOrder(orderId);
-            return ResponseEntity.status(HttpStatus.OK).body("Success");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<ApiResponse<Void>> cancelDish(
+            @PathVariable("orderId") String orderId)
+            throws NoSuchElementException {
+
+        orderService.cancelOrder(orderId);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Customer cancel dish successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }
