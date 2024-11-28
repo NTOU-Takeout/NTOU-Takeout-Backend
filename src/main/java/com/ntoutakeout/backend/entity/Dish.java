@@ -23,6 +23,6 @@ public class Dish {
     private List<DishAttribute> dishAttributes;
 
     public Dish() {
-        dishAttributes = new ArrayList<DishAttribute>();
+        dishAttributes = new ArrayList<>();
     }
 }

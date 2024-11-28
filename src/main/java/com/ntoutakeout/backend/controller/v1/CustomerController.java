@@ -1,58 +1,95 @@
 package com.ntoutakeout.backend.controller.v1;
 
-import com.ntoutakeout.backend.service.JWTService;
+import com.ntoutakeout.backend.dto.ApiResponse;
+import com.ntoutakeout.backend.dto.order.OrderedDishPatchRequest;
+import com.ntoutakeout.backend.entity.order.Order;
+import com.ntoutakeout.backend.entity.order.OrderedDish;
 import com.ntoutakeout.backend.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("api/v1/customer")
 @Slf4j
 public class CustomerController {
 
-    private final OrderService orderService;
-    private final JWTService jwtService;
+    public final OrderService orderService;
 
     @Autowired
-    private CustomerController(OrderService orderService, JWTService jwtService) {
+    public CustomerController(OrderService orderService) {
         this.orderService = orderService;
-        this.jwtService = jwtService;
     }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<String> createOrder(@RequestHeader("Authorization") String token,
-//                                                   @RequestBody Map<String, Object> cartRequest) {
-//
-//        log.info("POST API: /cart/update/dishes - Create cart dishes request received");
-//
-//        if (!jwtService.validateToken(token)) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//        String customerId = jwtService.extractCustomerId(token);
-//
-//
-//        String createdOrderId = orderService.createOrder(cartRequest, customerId);
-//        return ResponseEntity.status(HttpStatus.OK).body(createdOrderId);
-//    }
-//
-//    @PutMapping("/update/{OrderId}")
-//    public ResponseEntity<String> updateOrder(
-//            @PathVariable String OrderId,
-//            @RequestHeader("Authorization") String token,
-//            @RequestBody Map<String, Object> updateRequest) {
-//
-//        if (!jwtService.validateToken(token)) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-//
-//        String orderId = orderService.updateOrder(updateRequest, OrderId);
-//
-//        if (orderId == null) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//        }
-//
-//        return ResponseEntity.ok(orderId);
-//    }
+    @GetMapping("/{customerId}/cart")
+    public ResponseEntity<ApiResponse<Order>> getCart(
+            @PathVariable("customerId") String customerId)
+            throws NoSuchElementException {
+
+        Order cartOrder = orderService.getCart(customerId);
+        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        log.info("Customer get cart successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @DeleteMapping("/{customerId}/cart")
+    public ResponseEntity<ApiResponse<Void>> deleteCart(
+            @PathVariable("customerId") String customerId)
+            throws NoSuchElementException {
+
+        orderService.deleteCart(customerId);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Customer delete cart successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PostMapping("/{customerId}/cart/dishes")
+    public ResponseEntity<ApiResponse<Order>> addNewDish(
+            @PathVariable("customerId") String customerId,
+            @RequestBody OrderedDish dish)
+            throws NoSuchElementException, IllegalArgumentException {
+
+        Order cartOrder = orderService.addNewDish(customerId, dish);
+        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{customerId}/cart/dishes/{orderedDishId}")
+    public ResponseEntity<ApiResponse<Order>> updateDish(
+            @PathVariable("customerId") String customerId,
+            @PathVariable("orderedDishId") String orderedDishId,
+            @RequestBody OrderedDishPatchRequest request)
+            throws NoSuchElementException, IllegalArgumentException {
+
+        Order cartOrder = orderService.updateDish(customerId, orderedDishId, request);
+        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        log.info("Customer update dish successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{customerId}/cart/send")
+    public ResponseEntity<ApiResponse<Order>> sendOrder(
+            @PathVariable("customerId") String customerId)
+            throws NoSuchElementException {
+
+        Order cartOrder = orderService.sendOrder(customerId);
+        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        log.info("Customer send order successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/cart/{orderId}/cancel")
+    public ResponseEntity<ApiResponse<Void>> cancelDish(
+            @PathVariable("orderId") String orderId)
+            throws NoSuchElementException {
+
+        orderService.cancelOrder(orderId);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Customer cancel dish successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

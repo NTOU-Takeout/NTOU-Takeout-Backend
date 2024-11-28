@@ -1,80 +1,184 @@
 package com.ntoutakeout.backend.service;
 
-import com.ntoutakeout.backend.entity.order.ChosenAttribute;
+import com.ntoutakeout.backend.dto.order.OrderedDishPatchRequest;
+import com.ntoutakeout.backend.entity.Dish;
 import com.ntoutakeout.backend.entity.order.Order;
 import com.ntoutakeout.backend.entity.order.OrderedDish;
 import com.ntoutakeout.backend.entity.order.OrderedStatus;
+import com.ntoutakeout.backend.entity.order.ChosenAttribute;
+import com.ntoutakeout.backend.entity.user.Customer;
+import com.ntoutakeout.backend.repository.DishRepository;
 import com.ntoutakeout.backend.repository.OrderRepository;
-import com.ntoutakeout.backend.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.NoSuchElementException;
+
+@Slf4j
 
 @Service
 public class OrderService {
 
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final DishRepository dishRepository;
+    private final CustomerService  customerService;
 
-    public String createOrder(Map<String, Object> cartRequest, String customerId) {
-
-        Order order = new Order();
-        order.setCustomerId(customerId);
-
-        order.setStoreId((String) cartRequest.get("storeId"));
-        order.setDate(LocalDateTime.now());
-        order.setStatus(OrderedStatus.IN_CART);
-
-        List<OrderedDish> orderedDishes = (List<OrderedDish>) cartRequest.get("orderedDishes");
-        order.setOrderedDishes(orderedDishes);
-
-        order.calculateTotalCost();
-
-        Order savedOrder = orderRepository.save(order);
-
-        return savedOrder.getId();
+    @Autowired
+    public OrderService(OrderRepository orderRepository, DishRepository dishRepository, CustomerService customerService) {
+        this.orderRepository = orderRepository;
+        this.dishRepository = dishRepository;
+        this.customerService = customerService;
     }
 
-
-    public String updateOrder(Map<String, Object> updateRequest, String orderId) {
-
+    public Order getOrderAndValid(String orderId) {
         Order order = orderRepository.findById(orderId).orElse(null);
-
         if (order == null) {
-            return null;
+            throw new NoSuchElementException("Order not found with ID: " + orderId);
         }
-
-        String dishId = (String) updateRequest.get("dishId");
-        Integer quantity = (Integer) updateRequest.get("quantity");
-        String note = (String) updateRequest.get("note");
-        List<ChosenAttribute> chosenAttributes = (List<ChosenAttribute>) updateRequest.get("chosenAttributes");
-
-        OrderedDish existingDish = order.getOrderedDishes().stream()
-                .filter(dish -> Objects.equals(dish.getDishId(), dishId))
-                .findFirst()
-                .orElse(null);
-
-        if (existingDish != null) {
-            existingDish.setQuantity(quantity);
-            existingDish.setNote(note);
-            existingDish.setChosenAttributes(chosenAttributes);
-        } else {
-            OrderedDish newDish = new OrderedDish();
-            newDish.setDishId(dishId);
-            newDish.setQuantity(quantity);
-            newDish.setNote(note);
-            newDish.setChosenAttributes(chosenAttributes);
-            order.getOrderedDishes().add(newDish);
-        }
-
-        order.calculateTotalCost();
-
-        Order updatedOrder = orderRepository.save(order);
-
-        return updatedOrder.getId();
+        return order;
     }
 
+    public Order findCart(String customerId) {
+        return orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
+    }
+
+    public Order createCart(String customerId) {
+        log.info("No existing cart found for customer ID: {}. Creating new cart.", customerId);
+        Order cart = new Order(customerId);
+        return orderRepository.save(cart);
+    }
+
+    public void validDishId(String dishId) {
+        Dish dish = dishRepository.findById(dishId).orElse(null);
+        if (dish == null) {
+            throw new NoSuchElementException("Dish not found with ID: " + dishId);
+        }
+    }
+
+    public Order getCart(String customerId)
+            throws NoSuchElementException {
+
+        Customer customer = customerService.getCustomerById(customerId);
+        return findCart(customerId) == null
+                ? createCart(customerId)
+                : findCart(customerId);
+    }
+
+    public void deleteCart(String customerId)
+            throws NoSuchElementException {
+
+        Customer customer = customerService.getCustomerById(customerId);
+        Order cart = findCart(customerId);
+
+        if(cart == null) {
+            throw new NoSuchElementException("Cart not found with ID: " + customerId);
+        }
+
+        orderRepository.delete(cart);
+    }
+
+    public Order addNewDish(String customerId, OrderedDish orderedDish)
+            throws NoSuchElementException, IllegalArgumentException {
+        Customer customer = customerService.getCustomerById(customerId);
+        Order cart = findCart(customerId);
+        if (cart == null) {
+            throw new NoSuchElementException("Cart not found with Customer ID: " + customerId);
+        }
+
+        validDishId(orderedDish.getDishId());
+
+        if(cart.getStoreId() == null) {
+            cart.setStoreId(orderedDish.getStoreId());
+        }
+        else if(!cart.getStoreId().equals(orderedDish.getStoreId())) {
+            throw new IllegalArgumentException("Cart has different stores");
+        }
+
+        for(OrderedDish dish : cart.getOrderedDishes()) {
+            if(dish.equalsWithoutId(orderedDish)) {
+                dish.setQuantity(dish.getQuantity() + orderedDish.getQuantity());
+                updateOrderCost(cart);
+                return orderRepository.save(cart);
+            }
+        }
+
+        cart.getOrderedDishes().add(orderedDish);
+        updateOrderCost(cart);
+        return orderRepository.save(cart);
+    }
+
+    public Order updateDish(String customerId, String orderedDishId, OrderedDishPatchRequest request)
+            throws NoSuchElementException, IllegalArgumentException {
+
+        Customer customer = customerService.getCustomerById(customerId);
+        if (request == null) {
+            throw new IllegalArgumentException("Update request cannot be null");
+        }
+
+        Order cart = findCart(customerId);
+        if (cart == null) {
+            throw new NoSuchElementException("Cart not found");
+        }
+
+        if (request.getQuantity() != null && request.getQuantity() == 0) {
+            log.info("Removing dish {} from cart as quantity is 0", orderedDishId);
+            cart.getOrderedDishes().removeIf(dish -> dish.getId().equals(orderedDishId));
+        } else {
+            OrderedDish dishToUpdate = cart.getOrderedDishes().stream()
+                    .filter(dish -> dish.getId().equals(orderedDishId))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Dish not found in cart"));
+
+            if (request.getQuantity() != null) {
+                dishToUpdate.setQuantity(request.getQuantity());
+            }
+            if (request.getNote() != null) {
+                dishToUpdate.setNote(request.getNote());
+            }
+            if (request.getChosenAttributes() != null) {
+                dishToUpdate.setChosenAttributes(request.getChosenAttributes());
+            }
+        }
+
+        updateOrderCost(cart);
+        return orderRepository.save(cart);
+    }
+
+    public Order sendOrder(String customerId)
+            throws NoSuchElementException {
+
+        Order cart = findCart(customerId);
+        if (cart == null) {
+            throw new NoSuchElementException("Cart not found");
+        }
+
+        cart.setStatus(OrderedStatus.PENDING);
+        cart.setDate(LocalDateTime.now());
+        return orderRepository.save(cart);
+    }
+
+    public void cancelOrder(String orderId)
+            throws NoSuchElementException, IllegalStateException {
+
+        Order order = getOrderAndValid(orderId);
+        if(order.getStatus() != OrderedStatus.PENDING) {
+            throw new IllegalStateException("Order is not in PENDING status");
+        }
+        order.setStatus(OrderedStatus.CANCELED);
+        orderRepository.save(order);
+    }
+
+    private void updateOrderCost(Order order) {
+        double totalCost = order.getOrderedDishes().stream()
+            .mapToDouble(dish -> {
+                double dishTotal = dish.getPrice() * dish.getQuantity();
+                double attributesTotal = dish.getChosenAttributes().stream()
+                    .mapToDouble(ChosenAttribute::getExtraCost)
+                    .sum();
+                return dishTotal + (attributesTotal * dish.getQuantity());
+            })
+            .sum();
+        order.setCost(totalCost);
+    }
 }

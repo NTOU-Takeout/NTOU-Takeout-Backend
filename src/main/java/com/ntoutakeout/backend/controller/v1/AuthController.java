@@ -1,6 +1,7 @@
 package com.ntoutakeout.backend.controller.v1;
 
-import com.ntoutakeout.backend.dto.LoginRequest;
+import com.ntoutakeout.backend.dto.auth.LoginRequest;
+import com.ntoutakeout.backend.entity.user.Customer;
 import com.ntoutakeout.backend.entity.user.User;
 import com.ntoutakeout.backend.service.AuthService;
 import com.ntoutakeout.backend.service.UserService;
@@ -19,13 +20,13 @@ public class AuthController {
     private final UserService userService;
 
     @Autowired
-    public AuthController(AuthService userService, UserService authService) {
-        this.authService = userService;
-        this.userService = authService;
+    public AuthController(AuthService authService, UserService userService) {
+        this.authService = authService;
+        this.userService = userService;
     }
-
+    
     @PostMapping("/register")
-    public ResponseEntity<String> signUpUser(@RequestBody User user) {
+    public ResponseEntity<String> signUpUser(@RequestBody Customer user) {
         log.info("Fetch API: register Success");
         try {
             authService.createUser(user);
@@ -50,5 +51,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
         }
     }
-    
+
 }
