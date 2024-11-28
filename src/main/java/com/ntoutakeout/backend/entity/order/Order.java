@@ -17,10 +17,10 @@ public class Order {
     @Id
     private String id;
     private String customerId;
+    private String storeId;
     private Double cost;
     private LocalDateTime date;
     private OrderedStatus status;
-    private String storeId;
     private List<OrderedDish> orderedDishes;
 
     public Order() {
