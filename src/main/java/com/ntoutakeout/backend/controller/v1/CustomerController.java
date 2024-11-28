@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
 @RestController
 @RequestMapping("api/v1/customer")
 @Slf4j
@@ -29,9 +31,9 @@ public class CustomerController {
             Order cartOrder = orderService.getCart(customerId);
             log.info("Customer get cart successfully");
             return ResponseEntity.status(HttpStatus.OK).body(cartOrder);
-        } catch (Exception e) {
+        } catch (NoSuchElementException e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 

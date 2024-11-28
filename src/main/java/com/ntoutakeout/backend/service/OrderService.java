@@ -71,7 +71,8 @@ public class OrderService {
         orderRepository.delete(cart);
     }
 
-    public Order addNewDish(String customerId, OrderedDish orderedDish) throws NoSuchElementException {
+    public Order addNewDish(String customerId, OrderedDish orderedDish)
+            throws NoSuchElementException {
         Customer customer = customerService.getCustomerById(customerId);
         Order cart = findCart(customerId);
         if (cart == null) {
@@ -79,6 +80,13 @@ public class OrderService {
         }
 
         validDishId(orderedDish.getDishId());
+
+        if(cart.getStoreId() == null) {
+            cart.setStoreId(orderedDish.getStoreId());
+        }
+        else if(!cart.getStoreId().equals(orderedDish.getStoreId())) {
+            throw new NoSuchElementException("Cart has different stores");
+        }
 
         for(OrderedDish dish : cart.getOrderedDishes()) {
             if(dish.equalsWithoutId(orderedDish)) {

@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderedDish {
     private String id;
+    private String storeId;
     private String dishId;
     private String dishName;
     private Double price;
@@ -26,8 +27,9 @@ public class OrderedDish {
     }
 
     public boolean equalsWithoutId(OrderedDish o) {
-        return Objects.equals(dishId, o.dishId) &&
-                Objects.equals(dishName, o.dishName)
+        return Objects.equals(storeId, o.storeId)
+                && Objects.equals(dishId, o.dishId)
+                && Objects.equals(dishName, o.dishName)
                 && Objects.equals(price, o.price)
                 && Objects.equals(note, o.note)
                 && Objects.equals(chosenAttributes, o.chosenAttributes);
