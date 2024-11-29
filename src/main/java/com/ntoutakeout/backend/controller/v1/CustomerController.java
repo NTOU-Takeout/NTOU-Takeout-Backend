@@ -48,25 +48,25 @@ public class CustomerController {
     }
 
     @PostMapping("/{customerId}/cart/dishes")
-    public ResponseEntity<ApiResponse<Order>> addNewDish(
+    public ResponseEntity<ApiResponse<String>> addNewDish(
             @PathVariable("customerId") String customerId,
             @RequestBody OrderedDish dish)
             throws NoSuchElementException, IllegalArgumentException {
 
         Order cartOrder = orderService.addNewDish(customerId, dish);
-        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        ApiResponse<String> apiResponse = ApiResponse.success(dish.getId());
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PatchMapping("/{customerId}/cart/dishes/{orderedDishId}")
-    public ResponseEntity<ApiResponse<Order>> updateDish(
+    public ResponseEntity<ApiResponse<String>> updateDish(
             @PathVariable("customerId") String customerId,
             @PathVariable("orderedDishId") String orderedDishId,
             @RequestBody OrderedDishPatchRequest request)
             throws NoSuchElementException, IllegalArgumentException {
 
         Order cartOrder = orderService.updateDish(customerId, orderedDishId, request);
-        ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
+        ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
         log.info("Customer update dish successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
