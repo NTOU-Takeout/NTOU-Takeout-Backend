@@ -2,6 +2,7 @@ package com.ntoutakeout.backend.exception;
 
 import com.ntoutakeout.backend.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,5 +21,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleNoSuchElementException(NoSuchElementException exception) {
         ApiResponse<Void> apiResponse = ApiResponse.error(404, exception.getMessage());
         return ResponseEntity.status(404).body(apiResponse);
+    }
+
+    @ExceptionHandler(AuthenticationServiceException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationServiceException(AuthenticationServiceException exception) {
+        ApiResponse<Void> apiResponse = ApiResponse.error(401, exception.getMessage());
+        return ResponseEntity.status(401).body(apiResponse);
     }
 }

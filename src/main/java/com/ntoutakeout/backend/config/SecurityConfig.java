@@ -40,8 +40,10 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.GET, "api/v1/stores/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/stores/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/v1/stores/**","/api/v1/auth/login","/api/v1/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v2/stores/**", "/api/v2/menu/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v2/stores/**","/api/v2/auth/login","/api/v2/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
