@@ -1,5 +1,6 @@
 package com.ntoutakeout.backend.controller.v1;
 
+import com.ntoutakeout.backend.dto.ApiResponse;
 import com.ntoutakeout.backend.entity.user.User;
 import com.ntoutakeout.backend.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
+@RestController("AdminControllerV1")
 @RequestMapping("/api/v1/admin")
 @Slf4j
 public class AdminController {
@@ -24,14 +25,10 @@ public class AdminController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> getAllUsers() {
-        log.info("Fetch API: getAllUsers Success");
-        try {
-            List<User> users = userService.getAllUsers();
-            return ResponseEntity.ok(users);
-        } catch (Exception e){
-            log.error("getAllUsers Error", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
+
+        List<User> users = userService.getAllUsers();
+        ApiResponse<List<User>> apiResponse = ApiResponse.success(users);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

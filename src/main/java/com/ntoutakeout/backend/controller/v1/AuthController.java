@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController("AuthControllerV1")
 @RequestMapping("/api/v1/auth")
 @Slf4j
 public class AuthController {
