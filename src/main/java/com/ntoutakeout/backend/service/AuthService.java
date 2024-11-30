@@ -6,6 +6,7 @@ import com.ntoutakeout.backend.entity.user.User;
 import com.ntoutakeout.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,9 +31,10 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public void createUser(Customer user) {
+    public void createUser(Customer user)
+            throws IllegalArgumentException {
         if(userRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Email already exists");
+            throw new IllegalArgumentException("Email already exists");
         }
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -42,17 +44,19 @@ public class AuthService {
         return userRepository.findAll();
     }
 
-    public String verify(LoginRequest loginRequest) {
+    public String verify(LoginRequest loginRequest)
+            throws AuthenticationServiceException {
+
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
                         loginRequest.getPassword()
                 )
         );
-        if(authentication.isAuthenticated()) {
-            return jwtService.generateToken(loginRequest.getEmail());
-        } else {
-            throw new RuntimeException("Authentication failed");
+
+        if(!authentication.isAuthenticated()) {
+            throw new AuthenticationServiceException("Authentication failed");
         }
+        return jwtService.generateToken(loginRequest.getEmail());
     }
 }

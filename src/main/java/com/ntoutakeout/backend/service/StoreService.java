@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
@@ -38,8 +39,10 @@ public class StoreService {
         return stores.stream().map(Store::getId).toList();
     }
 
-    public Store getStoreById(String storeId) {
-        return storeRepository.findById(storeId).orElse(null);
+    public Store getStoreById(String storeId)
+            throws NoSuchElementException {
+        return storeRepository.findById(storeId)
+                .orElseThrow(() -> new NoSuchElementException("Store not found"));
     }
 
     public List<Store> getStoreByIds(List<String> ids) {

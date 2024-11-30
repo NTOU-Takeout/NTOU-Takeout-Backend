@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
-@RestController
+@RestController("StoreControllerV1")
 @RequestMapping("/api/v1/stores")
 @Slf4j
 public class StoreController {

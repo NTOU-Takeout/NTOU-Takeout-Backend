@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
+@RestController("AdminControllerV1")
 @RequestMapping("/api/v1/admin")
 @Slf4j
 public class AdminController {

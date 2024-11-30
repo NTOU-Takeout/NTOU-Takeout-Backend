@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
 
-@RestController
+@RestController("CustomerControllerV1")
 @RequestMapping("api/v1/customer")
 @Slf4j
 public class CustomerController {
