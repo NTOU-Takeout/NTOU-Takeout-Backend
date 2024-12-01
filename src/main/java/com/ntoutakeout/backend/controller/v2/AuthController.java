@@ -1,5 +1,8 @@
 package com.ntoutakeout.backend.controller.v2;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import com.ntoutakeout.backend.dto.ApiResponse;
 import com.ntoutakeout.backend.dto.auth.LoginRequest;
 import com.ntoutakeout.backend.entity.user.Customer;
@@ -25,11 +28,13 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
+    private final FirebaseAuth firebaseAuth;
 
     @Autowired
     public AuthController(AuthService authService, UserService userService) {
         this.authService = authService;
         this.userService = userService;
+        this.firebaseAuth = FirebaseAuth.getInstance();
     }
     
     @PostMapping("/register")
@@ -55,4 +60,6 @@ public class AuthController {
         ApiResponse<HashMap<String, String>> apiResponse = ApiResponse.success(response);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+    
+
 }
