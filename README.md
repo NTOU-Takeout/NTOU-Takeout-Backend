@@ -1,3 +1,3 @@
-# NTOU-Takeout-Backend
+# Order-Now-Backend
 
-Backend of NTOU-Takeout web app
+Backend of Order-Now web app
