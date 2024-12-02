@@ -71,9 +71,10 @@ public class MenuController {
 
     @DeleteMapping("/{menuId}/dish")
     public ResponseEntity<ApiResponse<Void>> deleteDishFromMenu(
-            @PathVariable String menuId) {
+            @PathVariable String menuId,
+            @RequestParam(value = "dishId") String dishId) {
         
-        menuService.deleteDishFromMenu(menuId);
+        menuService.deleteDishFromMenu(menuId,dishId);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Delete dish from menu successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
