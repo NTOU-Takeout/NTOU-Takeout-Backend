@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,8 +23,10 @@ public class MenuService {
         this.dishRepository = dishRepository;
     }
 
-    public Menu getMenuById(String id) {
-        return menuRepository.findById(id).orElse(null);
+    public Menu getMenuById(String id)
+            throws NoSuchElementException {
+        return menuRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Menu not found"));
     }
 
     public List<Dish> getDishesByIds(List<String> ids) {
@@ -32,5 +35,9 @@ public class MenuService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+    }
+
+    public List<Dish> getDishesByCategory(String category) {
+        return dishRepository.findAllByCategory(category);
     }
 }
