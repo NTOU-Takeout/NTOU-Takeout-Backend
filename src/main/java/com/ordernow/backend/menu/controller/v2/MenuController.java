@@ -1,10 +1,9 @@
-package com.ordernow.backend.controller.v2;
+package com.ordernow.backend.menu.controller.v2;
 
-import com.ordernow.backend.dto.ApiResponse;
-import com.ordernow.backend.entity.Dish;
-import com.ordernow.backend.entity.Menu;
-import com.ordernow.backend.entity.Store;
-import com.ordernow.backend.service.MenuService;
+import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.menu.model.entity.Dish;
+import com.ordernow.backend.menu.model.entity.Menu;
+import com.ordernow.backend.menu.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
