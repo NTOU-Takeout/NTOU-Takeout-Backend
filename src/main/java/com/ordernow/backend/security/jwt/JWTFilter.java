@@ -1,7 +1,6 @@
-package com.ordernow.backend.auth.config;
+package com.ordernow.backend.security.jwt;
 
-import com.ordernow.backend.auth.service.CustomUserDetailsService;
-import com.ordernow.backend.auth.service.JWTService;
+import com.ordernow.backend.security.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

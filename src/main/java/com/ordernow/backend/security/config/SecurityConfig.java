@@ -1,5 +1,7 @@
-package com.ordernow.backend.auth.config;
+package com.ordernow.backend.security.config;
 
+import com.ordernow.backend.security.jwt.JWTFilter;
+import com.ordernow.backend.security.provider.CustomAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

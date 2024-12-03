@@ -1,6 +1,6 @@
-package com.ordernow.backend.auth.config;
+package com.ordernow.backend.security.provider;
 
-import com.ordernow.backend.auth.service.CustomUserDetailsService;
+import com.ordernow.backend.security.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

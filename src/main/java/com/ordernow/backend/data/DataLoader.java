@@ -1,4 +1,4 @@
-package com.ordernow.backend.model;
+package com.ordernow.backend.data;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;

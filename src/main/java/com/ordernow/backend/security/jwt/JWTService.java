@@ -1,4 +1,4 @@
-package com.ordernow.backend.auth.service;
+package com.ordernow.backend.security.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Claims;

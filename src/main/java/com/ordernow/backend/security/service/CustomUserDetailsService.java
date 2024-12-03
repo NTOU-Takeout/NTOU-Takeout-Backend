@@ -1,4 +1,4 @@
-package com.ordernow.backend.auth.service;
+package com.ordernow.backend.security.service;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.auth.model.entity.User;
