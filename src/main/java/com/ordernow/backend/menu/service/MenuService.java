@@ -66,20 +66,18 @@ public class MenuService {
         menuRepository.save(menu);
     }
 
-    public void updateDishInMenu(String menuId, String dishId, Dish updatedDish)
+    public void updateDishInMenu(String menuId, Dish updatedDish) 
             throws NoSuchElementException {
         Menu menu = getMenuById(menuId);
         
-        Dish originalDish = dishRepository.findById(dishId)
+        Dish originalDish = dishRepository.findById(updatedDish.getId())
                 .orElseThrow(() -> new NoSuchElementException("Dish not found"));
-        
-        updatedDish.setId(originalDish.getId());
         
         if (!originalDish.getCategory().equals(updatedDish.getCategory())) {
             menu.getCategories().stream()
                     .filter(category -> category.getFirst().equals(originalDish.getCategory()))
                     .findFirst()
-                    .ifPresent(category -> category.getSecond().remove(dishId));
+                    .ifPresent(category -> category.getSecond().remove(updatedDish.getId()));
             
             boolean categoryFound = false;
             for (var category : menu.getCategories()) {
@@ -91,9 +89,7 @@ public class MenuService {
             }
             
             if (!categoryFound) {
-                List<String> dishIds = new ArrayList<>();
-                dishIds.add(updatedDish.getId());
-                menu.getCategories().add(Pair.of(updatedDish.getCategory(), dishIds));
+                throw new IllegalArgumentException("New category not found in menu");
             }
             
             menuRepository.save(menu);
@@ -102,7 +98,7 @@ public class MenuService {
         dishRepository.save(updatedDish);
     }
 
-    public void deleteDishFromMenu(String menuId, String dishId)
+    public void deleteDishFromMenu(String menuId, String dishId) 
             throws NoSuchElementException {
         Menu menu = getMenuById(menuId);
         Dish dish = dishRepository.findById(dishId)

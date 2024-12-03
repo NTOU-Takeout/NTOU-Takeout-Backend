@@ -58,22 +58,21 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PatchMapping("/{menuId}/dish/{dishId}")
+    @PatchMapping("/{menuId}/dish")
     public ResponseEntity<ApiResponse<Void>> updateDishInMenu(
             @PathVariable String menuId,
-            @PathVariable String dishId,
             @RequestBody Dish dish) {
         
-        menuService.updateDishInMenu(menuId, dishId, dish);
+        menuService.updateDishInMenu(menuId, dish);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Update dish in menu successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @DeleteMapping("/{menuId}/dish/{dishId}")
+    @DeleteMapping("/{menuId}/dish")
     public ResponseEntity<ApiResponse<Void>> deleteDishFromMenu(
             @PathVariable String menuId,
-            @PathVariable String dishId) {
+            @RequestParam(value = "dishId") String dishId) {
         
         menuService.deleteDishFromMenu(menuId,dishId);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
