@@ -1,6 +1,6 @@
 package com.ordernow.backend.service;
 
-import com.ordernow.backend.review.entity.Review;
+import com.ordernow.backend.review.model.entity.Review;
 import com.ordernow.backend.review.repository.ReviewRepository;
 import com.ordernow.backend.review.service.ReviewService;
 import org.junit.jupiter.api.BeforeEach;

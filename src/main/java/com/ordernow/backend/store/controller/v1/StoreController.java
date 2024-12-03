@@ -2,7 +2,7 @@ package com.ordernow.backend.store.controller.v1;
 
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.menu.model.entity.Menu;
-import com.ordernow.backend.review.entity.Review;
+import com.ordernow.backend.review.model.entity.Review;
 import com.ordernow.backend.store.model.entity.Store;
 import com.ordernow.backend.menu.service.MenuService;
 import com.ordernow.backend.review.service.ReviewService;

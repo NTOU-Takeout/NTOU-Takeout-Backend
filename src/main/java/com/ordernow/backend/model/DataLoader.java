@@ -4,7 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.menu.model.entity.Menu;
-import com.ordernow.backend.review.entity.Review;
+import com.ordernow.backend.review.model.entity.Review;
 import com.ordernow.backend.store.model.entity.Store;
 import com.ordernow.backend.menu.repository.DishRepository;
 import com.ordernow.backend.menu.repository.MenuRepository;

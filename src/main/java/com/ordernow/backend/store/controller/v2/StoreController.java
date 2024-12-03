@@ -1,9 +1,7 @@
 package com.ordernow.backend.store.controller.v2;
 
 import com.ordernow.backend.common.dto.ApiResponse;
-import com.ordernow.backend.review.entity.Review;
 import com.ordernow.backend.store.model.entity.Store;
-import com.ordernow.backend.review.service.ReviewService;
 import com.ordernow.backend.store.service.StoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +18,12 @@ import java.util.Set;
 public class StoreController {
 
     private final StoreService storeService;
-    private final ReviewService reviewService;
     private static final Set<String> ALLOWED_SORT_BY_FIELDS = Set.of("averageSpend", "rating", "name");
     private static final Set<String> ALLOWED_SORT_DIR_FIELDS = Set.of("asc", "desc");
 
     @Autowired
-    public StoreController(StoreService storeService,
-                           ReviewService reviewService) {
+    public StoreController(StoreService storeService) {
         this.storeService = storeService;
-        this.reviewService = reviewService;
     }
 
     @GetMapping("/search")
@@ -58,16 +53,6 @@ public class StoreController {
         List<Store> stores = storeService.getStoreByIds(storeIds);
         ApiResponse<List<Store>> apiResponse = ApiResponse.success(stores);
         log.info("Get stores successfully");
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
-    @PostMapping("/reviews/query")
-    public ResponseEntity<ApiResponse<List<Review>>> getReviewsByIds(
-            @RequestBody List<String> ids) {
-
-        List<Review> reviews = reviewService.getReviewByIds(ids);
-        ApiResponse<List<Review>> apiResponse = ApiResponse.success(reviews);
-        log.info("Get reviews successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }
