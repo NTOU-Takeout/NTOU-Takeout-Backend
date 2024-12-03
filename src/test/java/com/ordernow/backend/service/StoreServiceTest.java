@@ -1,7 +1,8 @@
 package com.ordernow.backend.service;
 
-import com.ordernow.backend.entity.Store;
-import com.ordernow.backend.repository.StoreRepository;
+import com.ordernow.backend.store.model.entity.Store;
+import com.ordernow.backend.store.repository.StoreRepository;
+import com.ordernow.backend.store.service.StoreService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

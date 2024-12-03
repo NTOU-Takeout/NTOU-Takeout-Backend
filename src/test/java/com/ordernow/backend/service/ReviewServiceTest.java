@@ -1,7 +1,8 @@
 package com.ordernow.backend.service;
 
-import com.ordernow.backend.entity.Review;
-import com.ordernow.backend.repository.ReviewRepository;
+import com.ordernow.backend.review.model.entity.Review;
+import com.ordernow.backend.review.repository.ReviewRepository;
+import com.ordernow.backend.review.service.ReviewService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

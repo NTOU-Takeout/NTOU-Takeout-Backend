@@ -1,9 +1,10 @@
 package com.ordernow.backend.service;
 
-import com.ordernow.backend.entity.Dish;
-import com.ordernow.backend.entity.Menu;
-import com.ordernow.backend.repository.DishRepository;
-import com.ordernow.backend.repository.MenuRepository;
+import com.ordernow.backend.menu.model.entity.Dish;
+import com.ordernow.backend.menu.model.entity.Menu;
+import com.ordernow.backend.menu.repository.DishRepository;
+import com.ordernow.backend.menu.repository.MenuRepository;
+import com.ordernow.backend.menu.service.MenuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
