@@ -1,13 +1,11 @@
 package com.ordernow.backend.order.service;
 
-import com.ordernow.backend.auth.service.CustomerService;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.order.model.entity.Order;
 import com.ordernow.backend.order.model.entity.OrderedDish;
 import com.ordernow.backend.order.model.entity.OrderedStatus;
 import com.ordernow.backend.order.model.entity.ChosenAttribute;
-import com.ordernow.backend.auth.model.entity.Customer;
 import com.ordernow.backend.menu.repository.DishRepository;
 import com.ordernow.backend.order.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +21,11 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final DishRepository dishRepository;
-    private final CustomerService customerService;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, DishRepository dishRepository, CustomerService customerService) {
+    public OrderService(OrderRepository orderRepository, DishRepository dishRepository) {
         this.orderRepository = orderRepository;
         this.dishRepository = dishRepository;
-        this.customerService = customerService;
     }
 
     public Order getOrderAndValid(String orderId) {
@@ -57,10 +53,7 @@ public class OrderService {
         }
     }
 
-    public Order getCart(String customerId)
-            throws NoSuchElementException {
-
-        Customer customer = customerService.getCustomerById(customerId);
+    public Order getCart(String customerId) {
         return findCart(customerId) == null
                 ? createCart(customerId)
                 : findCart(customerId);
@@ -69,19 +62,16 @@ public class OrderService {
     public void deleteCart(String customerId)
             throws NoSuchElementException {
 
-        Customer customer = customerService.getCustomerById(customerId);
         Order cart = findCart(customerId);
-
         if(cart == null) {
             throw new NoSuchElementException("Cart not found with ID: " + customerId);
         }
-
         orderRepository.delete(cart);
     }
 
     public Order addNewDish(String customerId, OrderedDish orderedDish)
             throws NoSuchElementException, IllegalArgumentException {
-        Customer customer = customerService.getCustomerById(customerId);
+
         Order cart = findCart(customerId);
         if (cart == null) {
             throw new NoSuchElementException("Cart not found with Customer ID: " + customerId);
@@ -112,7 +102,6 @@ public class OrderService {
     public Order updateDish(String customerId, String orderedDishId, OrderedDishPatchRequest request)
             throws NoSuchElementException, IllegalArgumentException {
 
-        Customer customer = customerService.getCustomerById(customerId);
         if (request == null) {
             throw new IllegalArgumentException("Update request cannot be null");
         }
