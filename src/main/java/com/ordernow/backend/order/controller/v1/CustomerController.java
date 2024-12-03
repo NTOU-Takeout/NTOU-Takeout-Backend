@@ -1,5 +1,7 @@
 package com.ordernow.backend.order.controller.v1;
 
+import com.ordernow.backend.auth.model.entity.CustomUserDetail;
+import com.ordernow.backend.auth.model.entity.Customer;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.order.model.entity.Order;
@@ -9,12 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
 
 @RestController("CustomerControllerV1")
-@RequestMapping("api/v1/customer")
+@RequestMapping("api/v1/order")
 @Slf4j
 public class CustomerController {
 
@@ -25,18 +29,21 @@ public class CustomerController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/{customerId}/cart")
+    @GetMapping("/cart")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<Order>> getCart(
-            @PathVariable("customerId") String customerId)
+            @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException {
 
-        Order cartOrder = orderService.getCart(customerId);
+        System.out.println(customUserDetail.getId());
+        Order cartOrder = orderService.getCart(customUserDetail.getId());
         ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
         log.info("Customer get cart successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @DeleteMapping("/{customerId}/cart")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<Void>> deleteCart(
             @PathVariable("customerId") String customerId)
             throws NoSuchElementException {
@@ -48,6 +55,7 @@ public class CustomerController {
     }
 
     @PostMapping("/{customerId}/cart/dishes")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<String>> addNewDish(
             @PathVariable("customerId") String customerId,
             @RequestBody OrderedDish dish)
@@ -59,6 +67,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/{customerId}/cart/dishes/{orderedDishId}")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<String>> updateDish(
             @PathVariable("customerId") String customerId,
             @PathVariable("orderedDishId") String orderedDishId,
