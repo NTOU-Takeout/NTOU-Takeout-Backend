@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
+import org.springframework.data.util.Pair;
 
 @Service
 public class MenuService {
@@ -29,6 +31,25 @@ public class MenuService {
                 .orElseThrow(() -> new NoSuchElementException("Menu not found"));
     }
 
+    public Dish getDishById(String id)
+        throws NoSuchElementException {
+        return dishRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Dish not found"));
+    }
+
+    public void AddDishToCategory(Menu menu, Dish dish) {
+        for (var category : menu.getCategories()) {
+            if (category.getFirst().equals(dish.getCategory())) {
+                category.getSecond().add(dish.getId());
+                return;
+            }
+        }
+
+        List<String> dishIds = new ArrayList<>();
+        dishIds.add(dish.getId());
+        menu.getCategories().add(Pair.of(dish.getCategory(), dishIds));
+    }
+
     public List<Dish> getDishesByIds(List<String> ids) {
         return ids.stream()
                 .map(dishRepository::findById)
@@ -39,5 +60,54 @@ public class MenuService {
 
     public List<Dish> getDishesByCategory(String category) {
         return dishRepository.findAllByCategory(category);
+    }
+
+    public void addDishToMenu(String menuId, Dish dish) 
+            throws NoSuchElementException {
+
+        Menu menu = getMenuById(menuId);
+        dish = dishRepository.save(dish);
+        AddDishToCategory(menu, dish);
+        menuRepository.save(menu);
+    }
+
+    public void updateDishInMenu(String menuId, String dishId, Dish updatedDish)
+            throws NoSuchElementException {
+        Menu menu = getMenuById(menuId);
+        Dish originalDish = getDishById(dishId);
+        
+        updatedDish.setId(originalDish.getId());
+        
+        if (!originalDish.getCategory().equals(updatedDish.getCategory())) {
+            menu.getCategories().stream()
+                    .filter(category -> category.getFirst().equals(originalDish.getCategory()))
+                    .findFirst()
+                    .ifPresent(category -> category.getSecond().remove(dishId));
+
+            AddDishToCategory(menu, updatedDish);
+            menuRepository.save(menu);
+        }
+        
+        dishRepository.save(updatedDish);
+    }
+
+    public void deleteDishFromMenu(String menuId, String dishId)
+            throws NoSuchElementException {
+        Menu menu = getMenuById(menuId);
+        Dish dish = getDishById(dishId);
+
+        menu.getCategories().stream()
+                .filter(category -> category.getFirst().equals(dish.getCategory()))
+                .findFirst()
+                .ifPresent(category -> {
+                    category.getSecond().remove(dishId);
+
+                    if (category.getSecond().isEmpty()) {
+                        menu.getCategories().remove(category);
+                    }
+                });
+
+        menuRepository.save(menu);
+        dishRepository.deleteById(dishId);
     }
 }
