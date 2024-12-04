@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class MenuController {
     }
 
     @PostMapping("/{menuId}/dish")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> addDishToMenu(
             @PathVariable String menuId,
             @RequestBody Dish dish) {
@@ -58,6 +60,7 @@ public class MenuController {
     }
 
     @PatchMapping("/{menuId}/dish/{dishId}")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> updateDishInMenu(
             @PathVariable String menuId,
             @PathVariable String dishId,
@@ -70,6 +73,7 @@ public class MenuController {
     }
 
     @DeleteMapping("/{menuId}/dish/{dishId}")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> deleteDishFromMenu(
             @PathVariable String menuId,
             @PathVariable String dishId) {

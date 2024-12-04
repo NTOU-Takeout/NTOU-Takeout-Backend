@@ -43,8 +43,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/*/stores/**").permitAll()
-                        .requestMatchers("/api/*/menu/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,  "/api/*/reviews/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/*/menu/**", "/api/*/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/*/auth/login","/api/*/auth/register", "/api/*/reviews/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/*/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
