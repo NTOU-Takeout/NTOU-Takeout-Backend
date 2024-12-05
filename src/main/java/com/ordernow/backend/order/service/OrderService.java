@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -57,5 +58,9 @@ public class OrderService {
 
         order.setStatus(status);
         orderRepository.save(order);
+    }
+
+    public List<Order> getOrderListByStatus(String customerId, OrderedStatus status) {
+        return orderRepository.findAllByCustomerIdAndStatus(customerId, status);
     }
 }
