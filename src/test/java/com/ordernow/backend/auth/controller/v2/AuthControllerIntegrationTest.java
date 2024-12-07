@@ -3,6 +3,7 @@ package com.ordernow.backend.auth.controller.v2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
 import com.ordernow.backend.auth.model.entity.Customer;
+import com.ordernow.backend.auth.model.entity.Role;
 import com.ordernow.backend.auth.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,6 +35,11 @@ public class AuthControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    private final String TEST_REGISTERED_MAIL = "registered@example.com";
+    private final String TEST_REGISTERED_PASSWORD = "registeredpassword";
     private final String TEST_EMAIL = "test@example.com";
     private final String TEST_PASSWORD = "password123";
 
@@ -53,34 +60,53 @@ public class AuthControllerIntegrationTest {
 
     @BeforeEach
     void setUpEach() {
-        //userRepository.deleteAll();
+        userRepository.deleteAll();
+
+        Customer registeredCustomer = new Customer();
+        registeredCustomer.setEmail(TEST_REGISTERED_MAIL);
+        registeredCustomer.setPassword(passwordEncoder.encode(TEST_REGISTERED_PASSWORD));
+        registeredCustomer.setRole(Role.CUSTOMER);
+        
+        userRepository.save(registeredCustomer);
     }
 
     @AfterEach
     void tearDown() {
-        //userRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
+    @Test
+    void testExistingUserLogin() throws Exception {
+
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail(TEST_REGISTERED_MAIL);
+        loginRequest.setPassword(TEST_REGISTERED_PASSWORD);
+
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(header().exists("Authorization"));
     }
 
     @Test
     void testRegisterAndLoginFlow() throws Exception {
-        // 準備註冊資料
+
         Customer customer = new Customer();
         customer.setEmail(TEST_EMAIL);
         customer.setPassword(TEST_PASSWORD);
+        customer.setRole(Role.CUSTOMER);
 
-        // 測試註冊
         mockMvc.perform(post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(customer)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Success"));
 
-        // 準備登入資料
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail(TEST_EMAIL);
         loginRequest.setPassword(TEST_PASSWORD);
 
-        // 測試登入
         mockMvc.perform(post("/api/v1/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
@@ -90,12 +116,11 @@ public class AuthControllerIntegrationTest {
 
     @Test
     void testRegisterWithExistingEmail() throws Exception {
-        // 準備註冊資料
+
         Customer customer = new Customer();
         customer.setEmail(TEST_EMAIL);
         customer.setPassword(TEST_PASSWORD);
 
-        // 第一次註冊
         mockMvc.perform(post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(customer)))
@@ -106,4 +131,4 @@ public class AuthControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(customer)))
                 .andExpect(status().isBadRequest());
     }
-} 
+}
