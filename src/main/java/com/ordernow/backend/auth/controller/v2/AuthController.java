@@ -1,5 +1,7 @@
 package com.ordernow.backend.auth.controller.v2;
 
+import com.ordernow.backend.auth.model.dto.LoginResponse;
+import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
 import com.ordernow.backend.auth.model.entity.Customer;
 import com.ordernow.backend.auth.model.entity.User;
@@ -9,10 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@RestController("AuthControllerV1")
-@RequestMapping("/api/v1/auth")
+import java.util.HashMap;
+
+@RestController("AuthControllerV2")
+@RequestMapping("/api/v2/auth")
 @Slf4j
 public class AuthController {
 
@@ -26,30 +34,31 @@ public class AuthController {
     }
     
     @PostMapping("/register")
-    public ResponseEntity<String> signUpUser(@RequestBody Customer user) {
-        log.info("Fetch API: register Success");
-        try {
-            authService.createUser(user);
-            return ResponseEntity.status(HttpStatus.OK).body("Success");
-        } catch (Exception e) {
-            log.error("Signup failed for user: {}", user.getEmail(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed");
-        }
+    public ResponseEntity<ApiResponse<Void>> signUpUser(
+            @RequestBody Customer user)
+            throws IllegalArgumentException {
+
+        authService.createUser(user);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
-        try {
-            String token = authService.verify(loginRequest);
-            User user = userService.getUserByEmail(loginRequest.getEmail());
-            log.info("Fetch API: login Success");
-            return ResponseEntity.status(HttpStatus.OK)
-                    .header("Authorization", "Bearer " + token)
-                    .body(user.getId());
-        } catch (Exception e) {
-            log.error("Login failed for email: {}", loginRequest.getEmail(), e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
-        }
-    }
+    public ResponseEntity<ApiResponse<LoginResponse>> loginUser(
+            @RequestBody LoginRequest loginRequest)
+            throws AuthenticationServiceException {
 
+        String token = authService.verify(loginRequest);
+        User user = userService.getUserByEmail(loginRequest.getEmail());
+        LoginResponse response = new LoginResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getAvatarUrl(),
+                user.getRole(),
+                token
+        );
+        ApiResponse<LoginResponse> apiResponse = ApiResponse.success(response);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

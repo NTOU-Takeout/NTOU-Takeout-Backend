@@ -41,10 +41,6 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
     public String verify(LoginRequest loginRequest)
             throws AuthenticationServiceException {
 

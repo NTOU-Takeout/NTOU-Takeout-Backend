@@ -27,7 +27,7 @@ public class MenuController {
     }
 
     @GetMapping("/{menuId}")
-    public ResponseEntity<ApiResponse<Menu>> getMenuByStoreId(
+    public ResponseEntity<ApiResponse<Menu>> getMenuById(
             @PathVariable String menuId)
             throws NoSuchElementException {
 
