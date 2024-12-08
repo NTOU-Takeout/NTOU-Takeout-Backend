@@ -53,6 +53,9 @@ public class MenuControllerIntegrationTest {
     private MenuRepository menuRepository;
 
     @Autowired
+    private DishRepository dishRepository;
+
+    @Autowired
     private MenuService menuService;
 
     @Autowired
@@ -62,8 +65,6 @@ public class MenuControllerIntegrationTest {
     private final String MERCHANT_PASSWORD = "password123";
     private String merchantToken;
     private Menu testMenu;
-    @Autowired
-    private DishRepository dishRepository;
 
     @BeforeAll
     static void setUp() {
@@ -126,6 +127,7 @@ public class MenuControllerIntegrationTest {
     void tearDown() {
         userRepository.deleteAll();
         menuRepository.deleteAll();
+        dishRepository.deleteAll();
     }
 
     @Test
