@@ -1,10 +1,12 @@
 package com.ordernow.backend.order.service;
 
+import com.ordernow.backend.notification.model.dto.Notification;
 import com.ordernow.backend.order.model.entity.Order;
 import com.ordernow.backend.order.model.entity.OrderedStatus;
 import com.ordernow.backend.order.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +17,12 @@ import java.util.NoSuchElementException;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, ApplicationEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Order getOrderAndValid(String orderId) {
@@ -58,6 +62,12 @@ public class OrderService {
 
         order.setStatus(status);
         orderRepository.save(order);
+        eventPublisher.publishEvent(
+                new Notification(orderId,
+                        order.getStatus(),
+                        java.time.Instant.now().toString()
+                )
+        );
     }
 
     public List<Order> getOrderListByStatus(String customerId, OrderedStatus status) {
