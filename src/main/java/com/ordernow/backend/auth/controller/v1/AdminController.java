@@ -24,7 +24,7 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
 
         List<User> users = userService.getAllUsers();
