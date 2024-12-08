@@ -1,5 +1,6 @@
 package com.ordernow.backend.auth.controller.v2;
 
+import com.ordernow.backend.auth.model.dto.LoginResponse;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
 import com.ordernow.backend.auth.model.entity.Customer;
@@ -43,16 +44,19 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<HashMap<String, String>>> loginUser(
+    public ResponseEntity<ApiResponse<LoginResponse>> loginUser(
             @RequestBody LoginRequest loginRequest)
             throws AuthenticationServiceException {
 
         String token = authService.verify(loginRequest);
         User user = userService.getUserByEmail(loginRequest.getEmail());
-        HashMap<String, String> response = new HashMap<>();
-        response.put("id", user.getId());
-        response.put("token", token);
-        ApiResponse<HashMap<String, String>> apiResponse = ApiResponse.success(response);
+        LoginResponse response = new LoginResponse(
+                user.getId(),
+                user.getName(),
+                user.getRole(),
+                token
+        );
+        ApiResponse<LoginResponse> apiResponse = ApiResponse.success(response);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }
