@@ -53,7 +53,7 @@ public class AuthControllerIntegrationTest {
         log.info(testingDbName);
         if (dbUser == null || dbPassword == null || testingDbName == null) {
             throw new IllegalStateException(
-                    "必要的環境變數未設置。請確保設置了 DB_USER, DB_PASSWORD 和 TESTING_DB_NAME"
+                    "Required environment variables not set. Please ensure DB_USER, DB_PASSWORD and TESTING_DB_NAME are set"
             );
         }
     }
