@@ -57,7 +57,11 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalArgumentException {
 
-
+        if(orderedDishRequest.getDishId() == null
+                || orderedDishRequest.getStoreId() == null
+                || orderedDishRequest.getQuantity() == null){
+            throw new NoSuchElementException("Invalid request: required fields may not be null");
+        }
         String orderedDishId = cartService.addNewDish(customUserDetail.getId(), orderedDishRequest);
         ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
