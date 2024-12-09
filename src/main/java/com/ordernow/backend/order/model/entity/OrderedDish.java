@@ -1,5 +1,7 @@
 package com.ordernow.backend.order.model.entity;
 
+import com.ordernow.backend.menu.model.entity.Dish;
+import com.ordernow.backend.order.model.dto.OrderedDishRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -26,12 +28,21 @@ public class OrderedDish {
         this.chosenAttributes = new ArrayList<>();
     }
 
-    public boolean equalsWithoutId(OrderedDish o) {
-        return Objects.equals(storeId, o.storeId)
-                && Objects.equals(dishId, o.dishId)
-                && Objects.equals(dishName, o.dishName)
-                && Objects.equals(price, o.price)
-                && Objects.equals(note, o.note)
-                && Objects.equals(chosenAttributes, o.chosenAttributes);
+    public OrderedDish(OrderedDishRequest orderedDishRequest, Dish dish) {
+        this.id = UUID.randomUUID().toString();
+        this.storeId = orderedDishRequest.getStoreId();
+        this.dishId = orderedDishRequest.getDishId();
+        this.dishName = dish.getName();
+        this.price = dish.getPrice();
+        this.quantity = orderedDishRequest.getQuantity();
+        this.note = orderedDishRequest.getNote();
+        this.chosenAttributes = orderedDishRequest.getChosenAttributes();
+    }
+
+    public boolean equals(OrderedDishRequest orderedDishRequest) {
+        return Objects.equals(dishId, orderedDishRequest.getDishId())
+                && Objects.equals(storeId, orderedDishRequest.getStoreId())
+                && Objects.equals(note, orderedDishRequest.getNote())
+                && Objects.equals(chosenAttributes, orderedDishRequest.getChosenAttributes());
     }
 }

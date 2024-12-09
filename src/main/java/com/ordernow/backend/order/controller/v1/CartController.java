@@ -3,8 +3,8 @@ package com.ordernow.backend.order.controller.v1;
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
+import com.ordernow.backend.order.model.dto.OrderedDishRequest;
 import com.ordernow.backend.order.model.entity.Order;
-import com.ordernow.backend.order.model.entity.OrderedDish;
 import com.ordernow.backend.order.service.CartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,12 +53,13 @@ public class CartController {
 
     @PostMapping("/dishes")
     public ResponseEntity<ApiResponse<String>> addNewDish(
-            @RequestBody OrderedDish dish,
+            @RequestBody OrderedDishRequest orderedDishRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalArgumentException {
 
-        Order cartOrder = cartService.addNewDish(customUserDetail.getId(), dish);
-        ApiResponse<String> apiResponse = ApiResponse.success(dish.getId());
+
+        String orderedDishId = cartService.addNewDish(customUserDetail.getId(), orderedDishRequest);
+        ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 

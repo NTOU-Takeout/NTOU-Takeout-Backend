@@ -2,6 +2,7 @@ package com.ordernow.backend.order.service;
 
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
+import com.ordernow.backend.order.model.dto.OrderedDishRequest;
 import com.ordernow.backend.order.model.entity.Order;
 import com.ordernow.backend.order.model.entity.OrderedDish;
 import com.ordernow.backend.order.model.entity.OrderedStatus;
@@ -60,7 +61,7 @@ public class CartService {
         orderRepository.delete(cart);
     }
 
-    public Order addNewDish(String customerId, OrderedDish orderedDish)
+    public String addNewDish(String customerId, OrderedDishRequest orderedDishRequest)
             throws NoSuchElementException, IllegalArgumentException {
 
         Order cart = findCart(customerId);
@@ -68,26 +69,34 @@ public class CartService {
             throw new NoSuchElementException("Cart not found with Customer ID: " + customerId);
         }
 
-        validDishId(orderedDish.getDishId());
+        validDishId(orderedDishRequest.getDishId());
 
         if(cart.getStoreId() == null) {
-            cart.setStoreId(orderedDish.getStoreId());
+            cart.setStoreId(orderedDishRequest.getStoreId());
         }
-        else if(!cart.getStoreId().equals(orderedDish.getStoreId())) {
+        else if(!cart.getStoreId().equals(orderedDishRequest.getStoreId())) {
             throw new IllegalArgumentException("Cart has different stores");
         }
 
-        for(OrderedDish dish : cart.getOrderedDishes()) {
-            if(dish.equalsWithoutId(orderedDish)) {
-                dish.setQuantity(dish.getQuantity() + orderedDish.getQuantity());
+        for(OrderedDish orderedDish : cart.getOrderedDishes()) {
+            if(orderedDish.equals(orderedDishRequest)) {
+                orderedDish.setQuantity(orderedDish.getQuantity() + orderedDishRequest.getQuantity());
                 updateOrderCost(cart);
-                return orderRepository.save(cart);
+                orderRepository.save(cart);
+                return orderedDish.getId();
             }
         }
 
+        Dish dish = dishRepository.findById(orderedDishRequest.getDishId()).orElse(null);
+        if(dish == null){
+            throw new NoSuchElementException("Dish not found with ID: " + orderedDishRequest.getDishId());
+        }
+
+        OrderedDish orderedDish = new OrderedDish(orderedDishRequest, dish);
         cart.getOrderedDishes().add(orderedDish);
         updateOrderCost(cart);
-        return orderRepository.save(cart);
+        orderRepository.save(cart);
+        return orderedDish.getId();
     }
 
     public Order updateDish(String customerId, String orderedDishId, OrderedDishPatchRequest request)
