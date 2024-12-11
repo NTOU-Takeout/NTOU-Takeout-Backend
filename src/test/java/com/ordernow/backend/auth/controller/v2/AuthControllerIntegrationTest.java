@@ -41,6 +41,7 @@ public class AuthControllerIntegrationTest {
     private final String TEST_REGISTERED_PASSWORD = "registeredpassword";
     private final String TEST_EMAIL = "test@example.com";
     private final String TEST_PASSWORD = "password123";
+    private final String TEST_NAME = "Test User";
 
     @BeforeAll
     static void setUp() {
@@ -65,6 +66,7 @@ public class AuthControllerIntegrationTest {
         registeredCustomer.setEmail(TEST_REGISTERED_MAIL);
         registeredCustomer.setPassword(passwordEncoder.encode(TEST_REGISTERED_PASSWORD));
         registeredCustomer.setRole(Role.CUSTOMER);
+        registeredCustomer.setName(TEST_NAME);
         
         userRepository.save(registeredCustomer);
     }
@@ -76,31 +78,36 @@ public class AuthControllerIntegrationTest {
 
     @Test
     void testExistingUserLogin() throws Exception {
-
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail(TEST_REGISTERED_MAIL);
         loginRequest.setPassword(TEST_REGISTERED_PASSWORD);
 
         mockMvc.perform(post("/api/v2/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect(header().exists("Authorization"));
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"))
+                .andExpect(jsonPath("$.data.email").value(TEST_REGISTERED_MAIL))
+                .andExpect(jsonPath("$.data.role").value("CUSTOMER"))
+                .andExpect(jsonPath("$.data.token").exists());
+
     }
 
     @Test
     void testRegisterAndLoginFlow() throws Exception {
-
         Customer customer = new Customer();
         customer.setEmail(TEST_EMAIL);
         customer.setPassword(TEST_PASSWORD);
         customer.setRole(Role.CUSTOMER);
+        customer.setName(TEST_NAME);
 
         mockMvc.perform(post("/api/v2/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(customer)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Success"));
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"));
 
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail(TEST_EMAIL);
@@ -110,24 +117,26 @@ public class AuthControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect(header().exists("Authorization"));
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"))
+                .andExpect(jsonPath("$.data.email").value(TEST_EMAIL))
+                .andExpect(jsonPath("$.data.role").value("CUSTOMER"))
+                .andExpect(jsonPath("$.data.token").exists());
     }
 
     @Test
     void testRegisterWithExistingEmail() throws Exception {
-
         Customer customer = new Customer();
-        customer.setEmail(TEST_EMAIL);
+        customer.setEmail(TEST_REGISTERED_MAIL);
         customer.setPassword(TEST_PASSWORD);
-
+        customer.setRole(Role.CUSTOMER);
+        customer.setName(TEST_NAME);
+        
         mockMvc.perform(post("/api/v2/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(customer)))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(post("/api/v2/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(customer)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Email already exists"));
     }
 }
