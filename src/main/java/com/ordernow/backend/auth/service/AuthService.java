@@ -2,6 +2,8 @@ package com.ordernow.backend.auth.service;
 
 import com.ordernow.backend.auth.model.dto.LoginRequest;
 import com.ordernow.backend.auth.model.entity.Customer;
+import com.ordernow.backend.auth.model.entity.Merchant;
+import com.ordernow.backend.auth.model.entity.Role;
 import com.ordernow.backend.auth.model.entity.User;
 import com.ordernow.backend.auth.repository.UserRepository;
 import com.ordernow.backend.security.jwt.JWTService;
@@ -32,17 +34,30 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public void createUser(Customer user)
-            throws IllegalArgumentException {
-        if(userRepository.findByEmail(user.getEmail()) != null) {
+    public void validateEmail(String email) {
+        if(userRepository.findByEmail(email) != null) {
             throw new IllegalArgumentException("Email already exists");
         }
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public void validateName(String name) {
+        if(name.length() > 20) {
+            throw new IllegalArgumentException("Name is too long");
+        }
+    }
+
+    public void createUser(User user)
+            throws IllegalArgumentException {
+
+        validateEmail(user.getEmail());
+        validateName(user.getName());
+        user.setPassword(encoder.encode(user.getPassword()));
+        User savedUser = switch(user.getRole()) {
+            case CUSTOMER -> new Customer(user);
+            case MERCHANT -> new Merchant(user);
+            default -> throw new IllegalArgumentException("Invalid role");
+        };
+        userRepository.save(savedUser);
     }
 
     public String verify(LoginRequest loginRequest)

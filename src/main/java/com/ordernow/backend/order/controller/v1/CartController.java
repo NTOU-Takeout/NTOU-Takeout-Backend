@@ -3,9 +3,9 @@ package com.ordernow.backend.order.controller.v1;
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
+import com.ordernow.backend.order.model.dto.OrderedDishRequest;
 import com.ordernow.backend.order.model.entity.Order;
-import com.ordernow.backend.order.model.entity.OrderedDish;
-import com.ordernow.backend.order.service.OrderService;
+import com.ordernow.backend.order.service.CartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,11 +22,11 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class CartController {
 
-    public final OrderService orderService;
+    public final CartService cartService;
 
     @Autowired
-    public CartController(OrderService orderService) {
-        this.orderService = orderService;
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
     }
 
     @GetMapping()
@@ -34,8 +34,7 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException {
 
-        System.out.println(customUserDetail.getId());
-        Order cartOrder = orderService.getCart(customUserDetail.getId());
+        Order cartOrder = cartService.getCart(customUserDetail.getId());
         ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
         log.info("Customer get cart successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -46,7 +45,7 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException {
 
-        orderService.deleteCart(customUserDetail.getId());
+        cartService.deleteCart(customUserDetail.getId());
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Customer delete cart successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -54,12 +53,17 @@ public class CartController {
 
     @PostMapping("/dishes")
     public ResponseEntity<ApiResponse<String>> addNewDish(
-            @RequestBody OrderedDish dish,
+            @RequestBody OrderedDishRequest orderedDishRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalArgumentException {
 
-        Order cartOrder = orderService.addNewDish(customUserDetail.getId(), dish);
-        ApiResponse<String> apiResponse = ApiResponse.success(dish.getId());
+        if(orderedDishRequest.getDishId() == null
+                || orderedDishRequest.getStoreId() == null
+                || orderedDishRequest.getQuantity() == null){
+            throw new NoSuchElementException("Invalid request: required fields may not be null");
+        }
+        String orderedDishId = cartService.addNewDish(customUserDetail.getId(), orderedDishRequest);
+        ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
@@ -70,7 +74,7 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalArgumentException {
 
-        Order cartOrder = orderService.updateDish(customUserDetail.getId(), orderedDishId, request);
+        Order cartOrder = cartService.updateDish(customUserDetail.getId(), orderedDishId, request);
         ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
         log.info("Customer update dish successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -81,7 +85,7 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException {
 
-        Order cartOrder = orderService.sendOrder(customUserDetail.getId());
+        Order cartOrder = cartService.sendOrder(customUserDetail.getId());
         ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
         log.info("Customer send order successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
