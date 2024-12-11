@@ -56,7 +56,6 @@ public class CartController {
             @RequestBody OrderedDishRequest orderedDishRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalArgumentException {
-
         if(orderedDishRequest.getDishId() == null
                 || orderedDishRequest.getStoreId() == null
                 || orderedDishRequest.getQuantity() == null){
@@ -64,6 +63,7 @@ public class CartController {
         }
         String orderedDishId = cartService.addNewDish(customUserDetail.getId(), orderedDishRequest);
         ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
+        log.info("Adding new dishes successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
