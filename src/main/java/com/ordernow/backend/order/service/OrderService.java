@@ -7,6 +7,8 @@ import com.ordernow.backend.order.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -70,7 +72,8 @@ public class OrderService {
         );
     }
 
-    public List<Order> getOrderListByStatus(String customerId, OrderedStatus status) {
-        return orderRepository.findAllByCustomerIdAndStatus(customerId, status);
+    public List<Order> getOrderListByStatus(String customerId, OrderedStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAllByCustomerIdAndStatus(customerId, status, pageable);
     }
 }

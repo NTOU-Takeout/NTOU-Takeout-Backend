@@ -43,7 +43,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}/accept")
-    @PreAuthorize("hasAnyRole('MERCHANT')")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> acceptOrder(
             @PathVariable("orderId") String orderId)
             throws NoSuchElementException, IllegalStateException {
@@ -55,7 +55,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}/complete")
-    @PreAuthorize("hasAnyRole('MERCHANT')")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> completeOrder(
             @PathVariable("orderId") String orderId)
             throws NoSuchElementException, IllegalStateException {
@@ -67,7 +67,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}/pickup")
-    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<Void>> pickUpOrder(
             @PathVariable("orderId") String orderId)
             throws NoSuchElementException, IllegalStateException {
@@ -81,6 +81,8 @@ public class OrderController {
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'MERCHANT')")
     public ResponseEntity<ApiResponse<List<Order>>> searchOrder(
+            @RequestParam(value="page", defaultValue = "0") int page,
+            @RequestParam(value="size", defaultValue = "10") int size,
             @RequestParam(value="status") OrderedStatus status,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalStateException {
@@ -89,7 +91,7 @@ public class OrderController {
             throw new IllegalArgumentException("Invalid order status");
         }
 
-        List<Order> orderList = orderService.getOrderListByStatus(customUserDetail.getId(), status);
+        List<Order> orderList = orderService.getOrderListByStatus(customUserDetail.getId(), status, page, size);
         ApiResponse<List<Order>> apiResponse = ApiResponse.success(orderList);
         log.info("User filter order successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
