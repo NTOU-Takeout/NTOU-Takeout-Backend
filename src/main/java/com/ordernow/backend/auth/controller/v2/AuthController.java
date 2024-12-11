@@ -35,7 +35,7 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> signUpUser(
-            @RequestBody Customer user)
+            @RequestBody User user)
             throws IllegalArgumentException {
 
         authService.createUser(user);
