@@ -20,7 +20,14 @@ public class Customer extends User{
     private List<Order> orderList;
 
     public Customer() {
-        storeCollection = new ArrayList<String>();
-        orderList = new ArrayList<Order>();
+        super();
+        storeCollection = new ArrayList<>();
+        orderList = new ArrayList<>();
+    }
+
+    public Customer(User user) {
+        super(user);
+        storeCollection = new ArrayList<>();
+        orderList = new ArrayList<>();
     }
 }
