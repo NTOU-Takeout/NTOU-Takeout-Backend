@@ -79,20 +79,19 @@ public class OrderController {
     }
 
     @GetMapping("/filter")
-    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'MERCHANT')")
     public ResponseEntity<ApiResponse<List<Order>>> filterOrder(
             @RequestParam(value="status") OrderedStatus status,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalStateException {
 
-        System.out.println(status.toString());
         if(!ALLOWED_ORDER_STATUS.contains(status.toString())) {
             throw new IllegalArgumentException("Invalid order status");
         }
 
         List<Order> orderList = orderService.getOrderListByStatus(customUserDetail.getId(), status);
         ApiResponse<List<Order>> apiResponse = ApiResponse.success(orderList);
-        log.info("Customer filter order successfully");
+        log.info("User filter order successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }
