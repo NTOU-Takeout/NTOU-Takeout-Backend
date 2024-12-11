@@ -18,4 +18,15 @@ public class User {
     private String avatarUrl;
     private Gender gender;
     private Role role;
+
+    public User(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+        this.phoneNumber = user.getPhoneNumber();
+        this.avatarUrl = user.getAvatarUrl();
+        this.gender = user.getGender();
+        this.role = user.getRole();
+    }
 }
