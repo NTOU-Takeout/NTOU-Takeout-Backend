@@ -78,9 +78,9 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @GetMapping("/filter")
+    @GetMapping("/search")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'MERCHANT')")
-    public ResponseEntity<ApiResponse<List<Order>>> filterOrder(
+    public ResponseEntity<ApiResponse<List<Order>>> searchOrder(
             @RequestParam(value="status") OrderedStatus status,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalStateException {
