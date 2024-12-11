@@ -35,8 +35,7 @@ public class AuthControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
     private final String TEST_REGISTERED_MAIL = "registered@example.com";
     private final String TEST_REGISTERED_PASSWORD = "registeredpassword";
