@@ -130,6 +130,7 @@ public class CartService {
         }
 
         OrderedDish orderedDish = new OrderedDish(orderedDishRequest, dish);
+        validOrderedDish(orderedDish);
         cart.getOrderedDishes().add(orderedDish);
         updateOrderCost(cart);
         orderRepository.save(cart);
@@ -166,6 +167,7 @@ public class CartService {
             if (request.getChosenAttributes() != null) {
                 dishToUpdate.setChosenAttributes(request.getChosenAttributes());
             }
+            validOrderedDish(dishToUpdate);
         }
 
         updateOrderCost(cart);
