@@ -1,5 +1,7 @@
 package com.ordernow.backend.order.service;
 
+import com.ordernow.backend.menu.model.entity.AttributeOption;
+import com.ordernow.backend.menu.model.entity.DishAttribute;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.order.model.dto.OrderedDishRequest;
@@ -13,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,6 +46,39 @@ public class CartService {
         Dish dish = dishRepository.findById(dishId).orElse(null);
         if (dish == null) {
             throw new NoSuchElementException("Dish not found with ID: " + dishId);
+        }
+    }
+
+    public void validOrderedDish(OrderedDish orderedDish) {
+        Dish dish = dishRepository.findById(orderedDish.getDishId()).orElse(null);
+        if (dish == null) {
+            throw new NoSuchElementException("Dish not found with ID: " + orderedDish.getDishId());
+        }
+
+        Map<String, Map<String, Double>> validAttributeOptions = dish.getDishAttributes().stream()
+                .collect(Collectors.toMap(
+                        DishAttribute::getName,
+                        attr -> attr.getAttributeOptions().stream()
+                                .collect(Collectors.toMap(
+                                        AttributeOption::getName,
+                                        AttributeOption::getExtraCost
+                                ))
+                ));
+
+        for(ChosenAttribute attribute : orderedDish.getChosenAttributes()) {
+            Map<String, Double> options = validAttributeOptions.get(attribute.getAttributeName());
+            if(options == null) {
+                throw new NoSuchElementException("Attribute not found with name: " + attribute.getAttributeName());
+            }
+
+            Double extraCost = options.get(attribute.getChosenOption());
+            if(extraCost == null) {
+                throw new NoSuchElementException("Option not found with name: " + attribute.getChosenOption());
+            }
+
+            if(!attribute.getExtraCost().equals(extraCost)) {
+                throw new NoSuchElementException("ExtraCost not found with option: " + attribute.getChosenOption());
+            }
         }
     }
 
