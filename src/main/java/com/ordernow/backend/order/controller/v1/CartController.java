@@ -34,7 +34,7 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException {
 
-        Order cartOrder = cartService.getCart(customUserDetail.getId());
+        Order cartOrder = cartService.getOrCreateCart(customUserDetail.getId());
         ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
         log.info("Customer get cart successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
