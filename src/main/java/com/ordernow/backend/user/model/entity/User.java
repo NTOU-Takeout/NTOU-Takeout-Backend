@@ -20,7 +20,8 @@ public class User {
     private Gender gender;
     private Role role;
 
-    public User(RegisterRequest user) {
+    public User(User user) {
+        this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
         this.password = user.getPassword();

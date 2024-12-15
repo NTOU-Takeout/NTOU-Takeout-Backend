@@ -35,11 +35,11 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> signUpUser(
-            @RequestBody RegisterRequest registerRequest)
+            @RequestBody User user)
             throws IllegalArgumentException, RequestValidationException {
 
-        RequestValidator.validateRequest(registerRequest);
-        authService.createUser(registerRequest);
+        RequestValidator.validateRequest(user);
+        authService.createUser(user);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

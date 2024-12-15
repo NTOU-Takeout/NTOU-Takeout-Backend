@@ -26,8 +26,8 @@ public class Customer extends User{
         orderList = new ArrayList<>();
     }
 
-    public Customer(RegisterRequest request) {
-        super(request);
+    public Customer(User user) {
+        super(user);
         storeCollection = new ArrayList<>();
         orderList = new ArrayList<>();
     }

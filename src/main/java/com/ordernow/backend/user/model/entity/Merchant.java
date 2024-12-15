@@ -25,8 +25,8 @@ public class Merchant extends User{
         orderList = new ArrayList<>();
     }
 
-    public Merchant(RegisterRequest request, String storeId) {
-        super(request);
+    public Merchant(User user, String storeId) {
+        super(user);
         this.storeId = storeId;
         orderList = new ArrayList<>();
     }

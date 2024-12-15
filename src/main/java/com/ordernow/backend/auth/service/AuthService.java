@@ -47,11 +47,12 @@ public class AuthService {
         }
     }
 
-    public void createUser(RegisterRequest user)
+    public void createUser(User user)
             throws IllegalArgumentException {
 
         validateEmail(user.getEmail());
         validateName(user.getName());
+        user.setId(null);
         user.setPassword(encoder.encode(user.getPassword()));
         User savedUser = switch(user.getRole()) {
             case CUSTOMER -> new Customer(user);
