@@ -2,6 +2,8 @@ package com.ordernow.backend.review.controller.v1;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.exception.RequestValidationException;
+import com.ordernow.backend.common.validation.RequestValidator;
 import com.ordernow.backend.review.model.dto.ReviewRequest;
 import com.ordernow.backend.review.model.entity.Review;
 import com.ordernow.backend.review.service.ReviewService;
@@ -45,8 +47,9 @@ public class ReviewController {
             @PathParam(value = "storeId") String storeId,
             @RequestBody ReviewRequest reviewRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
-            throws NoSuchElementException {
+            throws NoSuchElementException, RequestValidationException {
 
+        RequestValidator.validateRequest(reviewRequest);
         reviewService.addNewReviewToStore(
                 storeId,
                 reviewRequest,

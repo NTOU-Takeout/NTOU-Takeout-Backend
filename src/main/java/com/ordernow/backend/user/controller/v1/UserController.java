@@ -2,6 +2,8 @@ package com.ordernow.backend.user.controller.v1;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.exception.RequestValidationException;
+import com.ordernow.backend.common.validation.RequestValidator;
 import com.ordernow.backend.user.model.dto.UserProfileRequest;
 import com.ordernow.backend.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +34,9 @@ public class UserController {
     public ResponseEntity<ApiResponse<Void>> updateProfile(
             @RequestBody UserProfileRequest userProfileRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
-            throws NoSuchElementException {
+            throws NoSuchElementException, RequestValidationException {
 
+        RequestValidator.validateRequest(userProfileRequest);
         userService.updateProfile(customUserDetail.getId(), userProfileRequest);
         log.info("User profile updated successfully");
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
