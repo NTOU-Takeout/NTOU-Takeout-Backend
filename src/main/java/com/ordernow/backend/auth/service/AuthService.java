@@ -1,10 +1,9 @@
 package com.ordernow.backend.auth.service;
 
 import com.ordernow.backend.auth.model.dto.LoginRequest;
-import com.ordernow.backend.auth.model.entity.Customer;
-import com.ordernow.backend.auth.model.entity.Merchant;
-import com.ordernow.backend.auth.model.entity.Role;
-import com.ordernow.backend.auth.model.entity.User;
+import com.ordernow.backend.user.model.entity.Customer;
+import com.ordernow.backend.user.model.entity.Merchant;
+import com.ordernow.backend.user.model.entity.User;
 import com.ordernow.backend.auth.repository.UserRepository;
 import com.ordernow.backend.security.jwt.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AuthService {

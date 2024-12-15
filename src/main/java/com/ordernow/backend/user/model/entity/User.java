@@ -1,4 +1,4 @@
-package com.ordernow.backend.auth.model.entity;
+package com.ordernow.backend.user.model.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
