@@ -14,7 +14,7 @@ public class RequestValidator {
             for (Field f : obj.getClass().getDeclaredFields()) {
                 f.setAccessible(true);
                 if(f.get(obj) == null){
-                    throw new RequestValidationException("Field " + f.getName() + " is null");
+                    throw new RequestValidationException("Field " + f.getName() + " can not be null");
                 }
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
