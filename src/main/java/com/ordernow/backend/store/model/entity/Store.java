@@ -1,6 +1,7 @@
 package com.ordernow.backend.store.model.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
 @AllArgsConstructor
 @Document(collection = "store")
 public class Store {
@@ -41,15 +43,15 @@ public class Store {
     }
 
     public static Store createDefaultStore() {
-        Store store = new Store();
-        store.setName("");
-        store.setPicture("");
-        store.setPhoneNumber("");
-        store.setAddress("");
-        store.setRating(0.0);
-        store.setMenuId("");
-        store.setAverageSpend(0.0);
-        store.setDescription("");
-        return store;
+        return Store.builder()
+                .name("")
+                .picture("")
+                .phoneNumber("")
+                .address("")
+                .rating(0.0)
+                .menuId("")
+                .averageSpend(0.0)
+                .description("")
+                .build();
     }
 }
