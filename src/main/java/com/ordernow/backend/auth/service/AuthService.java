@@ -1,6 +1,7 @@
 package com.ordernow.backend.auth.service;
 
 import com.ordernow.backend.auth.model.dto.LoginRequest;
+import com.ordernow.backend.auth.model.dto.RegisterRequest;
 import com.ordernow.backend.store.service.StoreService;
 import com.ordernow.backend.user.model.entity.Customer;
 import com.ordernow.backend.user.model.entity.Merchant;
@@ -46,7 +47,7 @@ public class AuthService {
         }
     }
 
-    public void createUser(User user)
+    public void createUser(RegisterRequest user)
             throws IllegalArgumentException {
 
         validateEmail(user.getEmail());

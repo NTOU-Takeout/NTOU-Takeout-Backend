@@ -25,17 +25,17 @@ public class AuthController {
         this.userService = userService;
     }
     
-    @PostMapping("/register")
-    public ResponseEntity<String> signUpUser(@RequestBody Customer user) {
-        log.info("Fetch API: register Success");
-        try {
-            authService.createUser(user);
-            return ResponseEntity.status(HttpStatus.OK).body("Success");
-        } catch (Exception e) {
-            log.error("Signup failed for user: {}", user.getEmail(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed");
-        }
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<String> signUpUser(@RequestBody Customer user) {
+//        log.info("Fetch API: register Success");
+//        try {
+//            authService.createUser(user);
+//            return ResponseEntity.status(HttpStatus.OK).body("Success");
+//        } catch (Exception e) {
+//            log.error("Signup failed for user: {}", user.getEmail(), e);
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed");
+//        }
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {

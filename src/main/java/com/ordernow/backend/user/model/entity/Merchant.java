@@ -1,5 +1,6 @@
 package com.ordernow.backend.user.model.entity;
 
+import com.ordernow.backend.auth.model.dto.RegisterRequest;
 import com.ordernow.backend.order.model.entity.Order;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +25,8 @@ public class Merchant extends User{
         orderList = new ArrayList<>();
     }
 
-    public Merchant(User user, String storeId) {
-        super(user);
+    public Merchant(RegisterRequest request, String storeId) {
+        super(request);
         this.storeId = storeId;
         orderList = new ArrayList<>();
     }

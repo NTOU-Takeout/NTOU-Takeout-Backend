@@ -1,5 +1,6 @@
 package com.ordernow.backend.user.model.entity;
 
+import com.ordernow.backend.auth.model.dto.RegisterRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -19,8 +20,7 @@ public class User {
     private Gender gender;
     private Role role;
 
-    public User(User user) {
-        this.id = user.getId();
+    public User(RegisterRequest user) {
         this.name = user.getName();
         this.email = user.getEmail();
         this.password = user.getPassword();
