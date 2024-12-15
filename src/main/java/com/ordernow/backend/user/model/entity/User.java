@@ -1,5 +1,6 @@
 package com.ordernow.backend.user.model.entity;
 
+import com.ordernow.backend.auth.model.dto.RegisterRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;

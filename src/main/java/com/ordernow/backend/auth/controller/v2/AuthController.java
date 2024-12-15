@@ -1,8 +1,11 @@
 package com.ordernow.backend.auth.controller.v2;
 
 import com.ordernow.backend.auth.model.dto.LoginResponse;
+import com.ordernow.backend.auth.model.dto.RegisterRequest;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
+import com.ordernow.backend.common.exception.RequestValidationException;
+import com.ordernow.backend.common.validation.RequestValidator;
 import com.ordernow.backend.user.model.entity.User;
 import com.ordernow.backend.auth.service.AuthService;
 import com.ordernow.backend.user.service.UserService;
@@ -33,8 +36,9 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Void>> signUpUser(
             @RequestBody User user)
-            throws IllegalArgumentException {
+            throws IllegalArgumentException, RequestValidationException {
 
+        RequestValidator.validateRequest(user);
         authService.createUser(user);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -43,8 +47,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> loginUser(
             @RequestBody LoginRequest loginRequest)
-            throws AuthenticationServiceException {
+            throws AuthenticationServiceException, RequestValidationException {
 
+        RequestValidator.validateRequest(loginRequest);
         String token = authService.verify(loginRequest);
         User user = userService.getUserByEmail(loginRequest.getEmail());
         LoginResponse response = new LoginResponse(

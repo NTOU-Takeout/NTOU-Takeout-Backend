@@ -65,6 +65,7 @@ public class MenuService {
     public void addDishToMenu(String menuId, Dish dish) 
             throws NoSuchElementException {
 
+        dish.setId(null);
         Menu menu = getMenuById(menuId);
         dish = dishRepository.save(dish);
         AddDishToCategory(menu, dish);

@@ -1,6 +1,7 @@
 package com.ordernow.backend.auth.service;
 
 import com.ordernow.backend.auth.model.dto.LoginRequest;
+import com.ordernow.backend.auth.model.dto.RegisterRequest;
 import com.ordernow.backend.store.service.StoreService;
 import com.ordernow.backend.user.model.entity.Customer;
 import com.ordernow.backend.user.model.entity.Merchant;
@@ -51,6 +52,7 @@ public class AuthService {
 
         validateEmail(user.getEmail());
         validateName(user.getName());
+        user.setId(null);
         user.setPassword(encoder.encode(user.getPassword()));
         User savedUser = switch(user.getRole()) {
             case CUSTOMER -> new Customer(user);
