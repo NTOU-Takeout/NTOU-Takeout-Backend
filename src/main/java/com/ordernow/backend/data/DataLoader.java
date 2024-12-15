@@ -170,7 +170,6 @@ public class DataLoader {
                 store.setPhoneNumber("1234567890");
                 store.setMenuId("menu001");
                 store.setReviewIdList(generateReviews());
-                store.setBusinessHours();
                 storeRepository.save(store);
 
                 System.out.println(store);

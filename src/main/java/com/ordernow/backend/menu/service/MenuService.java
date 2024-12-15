@@ -110,4 +110,9 @@ public class MenuService {
         menuRepository.save(menu);
         dishRepository.deleteById(dishId);
     }
+
+    public String createAndSaveMenu() {
+        Menu menu = Menu.createDefaultMenu();
+        return menuRepository.save(menu).getId();
+    }
 }

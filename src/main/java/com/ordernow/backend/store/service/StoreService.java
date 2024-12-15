@@ -1,5 +1,6 @@
 package com.ordernow.backend.store.service;
 
+import com.ordernow.backend.menu.service.MenuService;
 import com.ordernow.backend.store.model.entity.Store;
 import com.ordernow.backend.store.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,12 @@ import java.util.Optional;
 @Service
 public class StoreService {
     private final StoreRepository storeRepository;
+    private final MenuService menuService;
 
     @Autowired
-    public StoreService(StoreRepository storeRepository) {
+    public StoreService(StoreRepository storeRepository, MenuService menuService) {
         this.storeRepository = storeRepository;
+        this.menuService = menuService;
     }
 
     public List<String> getStoresIdFilteredAndSorted(String keyword, String sortBy, String sortDir) throws InvalidParameterException {
@@ -51,5 +54,12 @@ public class StoreService {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+    }
+
+    public String createAndSaveStore() {
+        Store store = Store.createDefaultStore();
+        String menuId = menuService.createAndSaveMenu();
+        store.setMenuId(menuId);
+        return storeRepository.save(store).getId();
     }
 }

@@ -24,9 +24,9 @@ public class Merchant extends User{
         orderList = new ArrayList<>();
     }
 
-    public Merchant(User user) {
+    public Merchant(User user, String storeId) {
         super(user);
-        storeId = UUID.randomUUID().toString();
+        this.storeId = storeId;
         orderList = new ArrayList<>();
     }
 }

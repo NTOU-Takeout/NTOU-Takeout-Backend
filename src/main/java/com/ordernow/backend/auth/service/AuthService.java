@@ -1,6 +1,7 @@
 package com.ordernow.backend.auth.service;
 
 import com.ordernow.backend.auth.model.dto.LoginRequest;
+import com.ordernow.backend.store.service.StoreService;
 import com.ordernow.backend.user.model.entity.Customer;
 import com.ordernow.backend.user.model.entity.Merchant;
 import com.ordernow.backend.user.model.entity.User;
@@ -21,14 +22,16 @@ public class AuthService {
     private final AuthenticationManager authManager;
     private final JWTService jwtService;
     private final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final StoreService storeService;
 
     @Autowired
     public AuthService(UserRepository userRepository,
                        AuthenticationManager authManager,
-                       JWTService jwtService) {
+                       JWTService jwtService, StoreService storeService) {
         this.userRepository = userRepository;
         this.authManager = authManager;
         this.jwtService = jwtService;
+        this.storeService = storeService;
     }
 
     public void validateEmail(String email) {
@@ -51,7 +54,7 @@ public class AuthService {
         user.setPassword(encoder.encode(user.getPassword()));
         User savedUser = switch(user.getRole()) {
             case CUSTOMER -> new Customer(user);
-            case MERCHANT -> new Merchant(user);
+            case MERCHANT -> new Merchant(user, storeService.createAndSaveStore());
             default -> throw new IllegalArgumentException("Invalid role");
         };
         userRepository.save(savedUser);
