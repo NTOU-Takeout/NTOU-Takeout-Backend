@@ -39,7 +39,6 @@ public class AuthControllerIntegrationTest {
 
     private final String TEST_REGISTERED_MAIL = "registered@example.com";
     private final String TEST_REGISTERED_PASSWORD = "registeredpassword";
-    private final String TEST_EMAIL = "test@example.com";
     private final String TEST_PASSWORD = "password123";
     private final String TEST_NAME = "Test User";
 
@@ -97,6 +96,7 @@ public class AuthControllerIntegrationTest {
     @Test
     void testRegisterAndLoginFlow() throws Exception {
         Customer customer = new Customer();
+        String TEST_EMAIL = "test@example.com";
         customer.setEmail(TEST_EMAIL);
         customer.setPassword(TEST_PASSWORD);
         customer.setRole(Role.CUSTOMER);
