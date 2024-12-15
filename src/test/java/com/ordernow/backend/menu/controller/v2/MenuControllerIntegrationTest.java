@@ -58,8 +58,7 @@ public class MenuControllerIntegrationTest {
     @Autowired
     private MenuService menuService;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
     private final static String MERCHANT_EMAIL = "merchant@test.com";
     private final static String MERCHANT_PASSWORD = "password123";
