@@ -20,4 +20,8 @@ public class Menu {
     public Menu() {
         categories = new ArrayList<>();
     }
+
+    public static Menu createDefaultMenu() {
+        return new Menu();
+    }
 }

@@ -1,6 +1,6 @@
 package com.ordernow.backend.auth.model.dto;
 
-import com.ordernow.backend.auth.model.entity.Gender;
+import com.ordernow.backend.user.model.entity.Gender;
 import lombok.Data;
 
 @Data

@@ -1,6 +1,6 @@
 package com.ordernow.backend.auth.model.dto;
 
-import com.ordernow.backend.auth.model.entity.Role;
+import com.ordernow.backend.user.model.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class LoginResponse {
     private String id;
-    private String username;
+    private String name;
     private String email;
     private String avatarUrl;
     private Role role;
