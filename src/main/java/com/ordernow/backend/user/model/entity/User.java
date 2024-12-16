@@ -1,4 +1,4 @@
-package com.ordernow.backend.auth.model.entity;
+package com.ordernow.backend.user.model.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,13 +10,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "user")
 public class User {
     @Id
-    private String id;
+    private String id = "";
     private String name;
     private String email;
     private String password;
-    private String phoneNumber;
-    private String avatarUrl;
-    private Gender gender;
+    private String phoneNumber = "";
+    private String avatarUrl = "";
+    private Gender gender = Gender.OTHER;
     private Role role;
 
     public User(User user) {

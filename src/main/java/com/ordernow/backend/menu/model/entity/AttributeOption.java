@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AttributeOption {
     private String name;
-    private double extraCost;
+    private Double extraCost;
     private Boolean isChosen;
 }

@@ -1,7 +1,7 @@
 package com.ordernow.backend.security.service;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
-import com.ordernow.backend.auth.model.entity.User;
+import com.ordernow.backend.user.model.entity.User;
 import com.ordernow.backend.auth.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

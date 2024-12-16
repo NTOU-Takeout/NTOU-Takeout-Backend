@@ -1,10 +1,10 @@
 package com.ordernow.backend.auth.service;
 
 import com.ordernow.backend.auth.model.dto.LoginRequest;
-import com.ordernow.backend.auth.model.entity.Customer;
-import com.ordernow.backend.auth.model.entity.Merchant;
-import com.ordernow.backend.auth.model.entity.Role;
-import com.ordernow.backend.auth.model.entity.User;
+import com.ordernow.backend.store.service.StoreService;
+import com.ordernow.backend.user.model.entity.Customer;
+import com.ordernow.backend.user.model.entity.Merchant;
+import com.ordernow.backend.user.model.entity.User;
 import com.ordernow.backend.auth.repository.UserRepository;
 import com.ordernow.backend.security.jwt.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class AuthService {
 
@@ -24,14 +22,16 @@ public class AuthService {
     private final AuthenticationManager authManager;
     private final JWTService jwtService;
     private final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final StoreService storeService;
 
     @Autowired
     public AuthService(UserRepository userRepository,
                        AuthenticationManager authManager,
-                       JWTService jwtService) {
+                       JWTService jwtService, StoreService storeService) {
         this.userRepository = userRepository;
         this.authManager = authManager;
         this.jwtService = jwtService;
+        this.storeService = storeService;
     }
 
     public void validateEmail(String email) {
@@ -51,10 +51,11 @@ public class AuthService {
 
         validateEmail(user.getEmail());
         validateName(user.getName());
+        user.setId(null);
         user.setPassword(encoder.encode(user.getPassword()));
         User savedUser = switch(user.getRole()) {
             case CUSTOMER -> new Customer(user);
-            case MERCHANT -> new Merchant(user);
+            case MERCHANT -> new Merchant(user, storeService.createAndSaveStore());
             default -> throw new IllegalArgumentException("Invalid role");
         };
         userRepository.save(savedUser);

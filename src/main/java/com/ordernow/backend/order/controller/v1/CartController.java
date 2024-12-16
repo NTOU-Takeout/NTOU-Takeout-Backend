@@ -2,11 +2,14 @@ package com.ordernow.backend.order.controller.v1;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.exception.RequestValidationException;
+import com.ordernow.backend.common.validation.RequestValidator;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.order.model.dto.OrderedDishRequest;
 import com.ordernow.backend.order.model.entity.Order;
 import com.ordernow.backend.order.service.CartService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +37,7 @@ public class CartController {
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException {
 
-        Order cartOrder = cartService.getCart(customUserDetail.getId());
+        Order cartOrder = cartService.getOrCreateCart(customUserDetail.getId());
         ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
         log.info("Customer get cart successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
@@ -55,15 +58,12 @@ public class CartController {
     public ResponseEntity<ApiResponse<String>> addNewDish(
             @RequestBody OrderedDishRequest orderedDishRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
-            throws NoSuchElementException, IllegalArgumentException {
+            throws NoSuchElementException, IllegalArgumentException, RequestValidationException {
 
-        if(orderedDishRequest.getDishId() == null
-                || orderedDishRequest.getStoreId() == null
-                || orderedDishRequest.getQuantity() == null){
-            throw new NoSuchElementException("Invalid request: required fields may not be null");
-        }
+        RequestValidator.validateRequest(orderedDishRequest);
         String orderedDishId = cartService.addNewDish(customUserDetail.getId(), orderedDishRequest);
         ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
+        log.info("Adding new dishes successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
