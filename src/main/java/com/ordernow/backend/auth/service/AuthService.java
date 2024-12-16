@@ -4,6 +4,7 @@ import com.ordernow.backend.auth.model.dto.LoginRequest;
 import com.ordernow.backend.store.service.StoreService;
 import com.ordernow.backend.user.model.entity.Customer;
 import com.ordernow.backend.user.model.entity.Merchant;
+import com.ordernow.backend.user.model.entity.Role;
 import com.ordernow.backend.user.model.entity.User;
 import com.ordernow.backend.auth.repository.UserRepository;
 import com.ordernow.backend.security.jwt.JWTService;
@@ -53,9 +54,14 @@ public class AuthService {
         validateName(user.getName());
         user.setId(null);
         user.setPassword(encoder.encode(user.getPassword()));
+
+        if(user.getRole() == Role.MERCHANT && user.getPhoneNumber().isEmpty()){
+            throw new IllegalArgumentException("Merchant phone number can not be empty");
+        }
+
         User savedUser = switch(user.getRole()) {
             case CUSTOMER -> new Customer(user);
-            case MERCHANT -> new Merchant(user, storeService.createAndSaveStore());
+            case MERCHANT -> new Merchant(user, storeService.createAndSaveStore(user.getPhoneNumber()));
             default -> throw new IllegalArgumentException("Invalid role");
         };
         userRepository.save(savedUser);

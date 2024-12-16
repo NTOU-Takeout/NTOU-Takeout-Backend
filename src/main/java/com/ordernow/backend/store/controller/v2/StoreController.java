@@ -3,15 +3,18 @@ package com.ordernow.backend.store.controller.v2;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.common.exception.RequestValidationException;
 import com.ordernow.backend.common.validation.RequestValidator;
+import com.ordernow.backend.store.model.dto.StoreUpdateRequest;
 import com.ordernow.backend.store.model.entity.Store;
 import com.ordernow.backend.store.service.StoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 @RestController("StoreControllerV2")
@@ -53,10 +56,39 @@ public class StoreController {
             @RequestBody List<String> storeIds)
             throws RequestValidationException {
 
-        RequestValidator.validateRequest(storeIds);
+        if(storeIds == null || storeIds.isEmpty()) {
+            throw new RequestValidationException("Invalid store ids.");
+        }
+
         List<Store> stores = storeService.getStoreByIds(storeIds);
         ApiResponse<List<Store>> apiResponse = ApiResponse.success(stores);
         log.info("Get stores successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PutMapping("/{storeId}")
+    @PreAuthorize("hasRole('MERCHANT')")
+    public ResponseEntity<ApiResponse<Void>> updateStore(
+            @PathVariable String storeId,
+            @RequestBody StoreUpdateRequest request)
+            throws NoSuchElementException, RequestValidationException {
+
+        RequestValidator.validateRequest(request);
+        storeService.updateStore(storeId, request);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Update store successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{storeId}/isBusiness")
+    @PreAuthorize("hasRole('MERCHANT')")
+    public ResponseEntity<ApiResponse<Boolean>> changeBusinessStatus(
+            @PathVariable String storeId)
+            throws NoSuchElementException {
+
+        Boolean response =  storeService.changeBusinessStatus(storeId);
+        ApiResponse<Boolean> apiResponse = ApiResponse.success(response);
+        log.info("Change business status successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

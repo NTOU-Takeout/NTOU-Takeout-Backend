@@ -27,6 +27,7 @@ public class Store {
     private String menuId;
     private Double averageSpend;
     private String description;
+    private Boolean isBusiness;
     private Pair<LocalTime, LocalTime>[][] businessHours;
 
     public Store() {
@@ -52,6 +53,7 @@ public class Store {
                 .menuId("")
                 .averageSpend(0.0)
                 .description("")
+                .isBusiness(false)
                 .build();
     }
 }
