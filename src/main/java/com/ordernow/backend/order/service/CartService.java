@@ -1,5 +1,7 @@
 package com.ordernow.backend.order.service;
 
+import com.ordernow.backend.menu.model.entity.AttributeOption;
+import com.ordernow.backend.menu.model.entity.DishAttribute;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.order.model.dto.OrderedDishRequest;
@@ -11,9 +13,17 @@ import com.ordernow.backend.menu.repository.DishRepository;
 import com.ordernow.backend.order.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,21 +31,17 @@ public class CartService {
 
     private final OrderRepository orderRepository;
     private final DishRepository dishRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public CartService(OrderRepository orderRepository, DishRepository dishRepository) {
+    public CartService(OrderRepository orderRepository, DishRepository dishRepository, MongoTemplate mongoTemplate) {
         this.orderRepository = orderRepository;
         this.dishRepository = dishRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     public Order findCart(String customerId) {
         return orderRepository.findByCustomerIdAndStatus(customerId, OrderedStatus.IN_CART);
-    }
-
-    public Order createCart(String customerId) {
-        log.info("No existing cart found for customer ID: {}. Creating new cart.", customerId);
-        Order cart = new Order(customerId);
-        return orderRepository.save(cart);
     }
 
     public void validDishId(String dishId) {
@@ -45,10 +51,55 @@ public class CartService {
         }
     }
 
-    public Order getCart(String customerId) {
-        return findCart(customerId) == null
-                ? createCart(customerId)
-                : findCart(customerId);
+    public void validOrderedDish(OrderedDish orderedDish) {
+        Dish dish = dishRepository.findById(orderedDish.getDishId()).orElse(null);
+        if (dish == null) {
+            throw new NoSuchElementException("Dish not found with ID: " + orderedDish.getDishId());
+        }
+
+        Map<String, Map<String, Double>> validAttributeOptions = dish.getDishAttributes().stream()
+                .collect(Collectors.toMap(
+                        DishAttribute::getName,
+                        attr -> attr.getAttributeOptions().stream()
+                                .collect(Collectors.toMap(
+                                        AttributeOption::getName,
+                                        AttributeOption::getExtraCost
+                                ))
+                ));
+
+        for(ChosenAttribute attribute : orderedDish.getChosenAttributes()) {
+            Map<String, Double> options = validAttributeOptions.get(attribute.getAttributeName());
+            if(options == null) {
+                throw new NoSuchElementException("Attribute not found with name: " + attribute.getAttributeName());
+            }
+
+            Double extraCost = options.get(attribute.getChosenOption());
+            if(extraCost == null) {
+                throw new NoSuchElementException("Option not found with name: " + attribute.getChosenOption());
+            }
+
+            if(!attribute.getExtraCost().equals(extraCost)) {
+                throw new NoSuchElementException("ExtraCost not found with option: " + attribute.getChosenOption());
+            }
+        }
+    }
+
+    public Order getOrCreateCart(String customerId) {
+        Query query = new Query(
+                Criteria.where("customerId").is(customerId)
+                        .and("status").is(OrderedStatus.IN_CART));
+        Update update = new Update()
+                .setOnInsert("customerId", customerId)
+                .setOnInsert("cost", 0.0)
+                .setOnInsert("date", LocalDateTime.now())
+                .setOnInsert("status", OrderedStatus.IN_CART)
+                .setOnInsert("orderedDishes", new ArrayList<>());
+
+        return mongoTemplate.findAndModify(
+                query,
+                update,
+                FindAndModifyOptions.options().returnNew(true).upsert(true),
+                Order.class);
     }
 
     public void deleteCart(String customerId)
@@ -93,6 +144,7 @@ public class CartService {
         }
 
         OrderedDish orderedDish = new OrderedDish(orderedDishRequest, dish);
+        validOrderedDish(orderedDish);
         cart.getOrderedDishes().add(orderedDish);
         updateOrderCost(cart);
         orderRepository.save(cart);
@@ -129,6 +181,7 @@ public class CartService {
             if (request.getChosenAttributes() != null) {
                 dishToUpdate.setChosenAttributes(request.getChosenAttributes());
             }
+            validOrderedDish(dishToUpdate);
         }
 
         updateOrderCost(cart);

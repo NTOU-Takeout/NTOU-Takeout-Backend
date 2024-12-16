@@ -1,10 +1,10 @@
 package com.ordernow.backend.auth.controller.v1;
 
 import com.ordernow.backend.auth.model.dto.LoginRequest;
-import com.ordernow.backend.auth.model.entity.Customer;
-import com.ordernow.backend.auth.model.entity.User;
+import com.ordernow.backend.user.model.entity.Customer;
+import com.ordernow.backend.user.model.entity.User;
 import com.ordernow.backend.auth.service.AuthService;
-import com.ordernow.backend.auth.service.UserService;
+import com.ordernow.backend.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -140,7 +141,7 @@ public class DataLoader {
             review.setUserName(name);
             review.setUserId(String.format("user%d", nameId));
             review.setRating((double)random.nextInt(4)+1);
-            review.setDate(new Date());
+            review.setDate(LocalDateTime.now());
             reviewRepository.save(review);
             reviewsId.add(review.getId());
         }
@@ -170,7 +171,6 @@ public class DataLoader {
                 store.setPhoneNumber("1234567890");
                 store.setMenuId("menu001");
                 store.setReviewIdList(generateReviews());
-                store.setBusinessHours();
                 storeRepository.save(store);
 
                 System.out.println(store);
