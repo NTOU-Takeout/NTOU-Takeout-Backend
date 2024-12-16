@@ -1,6 +1,8 @@
 package com.ordernow.backend.store.controller.v2;
 
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.exception.RequestValidationException;
+import com.ordernow.backend.common.validation.RequestValidator;
 import com.ordernow.backend.store.model.entity.Store;
 import com.ordernow.backend.store.service.StoreService;
 import lombok.extern.slf4j.Slf4j;
@@ -48,8 +50,10 @@ public class StoreController {
 
     @PostMapping("/query")
     public ResponseEntity<ApiResponse<List<Store>>> getStoresByIds(
-            @RequestBody List<String> storeIds) {
+            @RequestBody List<String> storeIds)
+            throws RequestValidationException {
 
+        RequestValidator.validateRequest(storeIds);
         List<Store> stores = storeService.getStoreByIds(storeIds);
         ApiResponse<List<Store>> apiResponse = ApiResponse.success(stores);
         log.info("Get stores successfully");

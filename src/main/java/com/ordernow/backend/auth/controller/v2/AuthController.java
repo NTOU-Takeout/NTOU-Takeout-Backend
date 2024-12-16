@@ -1,7 +1,6 @@
 package com.ordernow.backend.auth.controller.v2;
 
 import com.ordernow.backend.auth.model.dto.LoginResponse;
-import com.ordernow.backend.auth.model.dto.RegisterRequest;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
 import com.ordernow.backend.common.exception.RequestValidationException;
