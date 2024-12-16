@@ -36,7 +36,10 @@ public class ReviewController {
             @RequestBody List<String> ids)
             throws RequestValidationException {
 
-        RequestValidator.validateRequest(ids);
+        if(ids == null || ids.isEmpty()) {
+            throw new RequestValidationException("Review id list is empty");
+        }
+
         List<Review> reviews = reviewService.getReviewByIds(ids);
         ApiResponse<List<Review>> apiResponse = ApiResponse.success(reviews);
         log.info("Get reviews successfully");
