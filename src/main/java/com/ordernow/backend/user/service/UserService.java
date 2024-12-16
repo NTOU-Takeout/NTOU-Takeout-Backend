@@ -39,12 +39,14 @@ public class UserService {
             throw new NoSuchElementException("User not found");
         }
 
-        if(user.getName() == null || !user.getName().equals(userProfileRequest.getName()))
+        if(!user.getName().equals(userProfileRequest.getName()))
             user.setName(userProfileRequest.getName());
         if(!user.getPhoneNumber().equals(userProfileRequest.getPhoneNumber()))
             user.setPhoneNumber(userProfileRequest.getPhoneNumber());
         if(!user.getAvatarUrl().equals(userProfileRequest.getAvatarUrl()))
             user.setAvatarUrl(userProfileRequest.getAvatarUrl());
+        if(!user.getGender().equals(userProfileRequest.getGender()))
+            user.setGender(userProfileRequest.getGender());
 
         userRepository.save(user);
     }
