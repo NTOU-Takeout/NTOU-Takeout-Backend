@@ -173,12 +173,14 @@ public class AuthControllerIntegrationTest {
         String testEmail = "merchant@example.com";
         String testPassword = "password123";
         String testName = "Test Merchant";
+        String testPhone = "0912345678";
 
         User user = new User();
         user.setName(testName);
         user.setEmail(testEmail);
         user.setPassword(testPassword);
         user.setRole(Role.MERCHANT);
+        user.setPhoneNumber(testPhone);
 
         mockMvc.perform(post("/api/v2/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -192,6 +194,7 @@ public class AuthControllerIntegrationTest {
         assertEquals(testName, savedUser.getName());
         assertEquals(testEmail, savedUser.getEmail());
         assertEquals(Role.MERCHANT, savedUser.getRole());
+        assertEquals(testPhone, savedUser.getPhoneNumber());
         assertTrue(passwordEncoder.matches(testPassword, savedUser.getPassword()));
         assertInstanceOf(Merchant.class, savedUser);
     }
@@ -287,5 +290,28 @@ public class AuthControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterMerchantWithoutPhoneNumber() throws Exception {
+        String testEmail = "merchant@example.com";
+        String testPassword = "password123";
+        String testName = "Test Merchant";
+
+        User user = new User();
+        user.setName(testName);
+        user.setEmail(testEmail);
+        user.setPassword(testPassword);
+        user.setRole(Role.MERCHANT);
+        user.setPhoneNumber("");
+
+        mockMvc.perform(post("/api/v2/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Merchant phone number can not be empty"));
+
+        assertNull(userRepository.findByEmail(testEmail));
     }
 }
