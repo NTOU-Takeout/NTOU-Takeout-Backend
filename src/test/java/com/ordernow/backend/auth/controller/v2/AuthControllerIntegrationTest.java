@@ -2,10 +2,10 @@ package com.ordernow.backend.auth.controller.v2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
-import com.ordernow.backend.auth.model.entity.Customer;
-import com.ordernow.backend.auth.model.entity.Merchant;
-import com.ordernow.backend.auth.model.entity.Role;
-import com.ordernow.backend.auth.model.entity.User;
+import com.ordernow.backend.user.model.entity.Customer;
+import com.ordernow.backend.user.model.entity.Merchant;
+import com.ordernow.backend.user.model.entity.Role;
+import com.ordernow.backend.user.model.entity.User;
 import com.ordernow.backend.auth.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,7 +110,10 @@ public class AuthControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Success"))
+                .andExpect(jsonPath("$.data.id").exists())
+                .andExpect(jsonPath("$.data.name").value(testName))
                 .andExpect(jsonPath("$.data.email").value(testEmail))
+                .andExpect(jsonPath("$.data.avatarUrl").exists())
                 .andExpect(jsonPath("$.data.role").value("CUSTOMER"))
                 .andExpect(jsonPath("$.data.token").exists());
     }
@@ -219,7 +222,7 @@ public class AuthControllerIntegrationTest {
     void testRegisterWithInvalidRole() throws Exception {
         String testEmail = "test@example.com";
         String testPassword = "password123";
-        String testName = "test Unknown Role";
+        String testName = "Test User";
 
         User user = new User();
         user.setName(testName);
@@ -228,11 +231,11 @@ public class AuthControllerIntegrationTest {
         user.setRole(null);
 
         mockMvc.perform(post("/api/v2/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value("Invalid role"));
+                .andExpect(jsonPath("$.message").value("Field role can not be null"));
 
         assertNull(userRepository.findByEmail(testEmail));
     }
@@ -274,5 +277,15 @@ public class AuthControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testLoginWithInvalidRequest() throws Exception {
+        LoginRequest loginRequest = new LoginRequest();
+
+        mockMvc.perform(post("/api/v2/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isBadRequest());
     }
 }
