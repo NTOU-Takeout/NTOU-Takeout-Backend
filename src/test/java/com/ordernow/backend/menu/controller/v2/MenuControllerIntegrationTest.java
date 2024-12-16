@@ -2,9 +2,9 @@ package com.ordernow.backend.menu.controller.v2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
-import com.ordernow.backend.auth.model.entity.Customer;
-import com.ordernow.backend.auth.model.entity.Merchant;
-import com.ordernow.backend.auth.model.entity.Role;
+import com.ordernow.backend.user.model.entity.Customer;
+import com.ordernow.backend.user.model.entity.Merchant;
+import com.ordernow.backend.user.model.entity.Role;
 import com.ordernow.backend.auth.repository.UserRepository;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.menu.model.entity.*;
