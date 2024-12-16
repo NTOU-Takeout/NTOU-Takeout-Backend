@@ -35,6 +35,7 @@ public class ReviewController {
     public ResponseEntity<ApiResponse<List<Review>>> getReviewsByIds(
             @RequestBody List<String> ids) {
 
+        RequestValidator.validateRequest(ids);
         List<Review> reviews = reviewService.getReviewByIds(ids);
         ApiResponse<List<Review>> apiResponse = ApiResponse.success(reviews);
         log.info("Get reviews successfully");

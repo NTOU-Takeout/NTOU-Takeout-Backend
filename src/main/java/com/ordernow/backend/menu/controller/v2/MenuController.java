@@ -1,6 +1,8 @@
 package com.ordernow.backend.menu.controller.v2;
 
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.exception.RequestValidationException;
+import com.ordernow.backend.common.validation.RequestValidator;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.menu.model.entity.Menu;
 import com.ordernow.backend.menu.service.MenuService;
@@ -51,21 +53,24 @@ public class MenuController {
     @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> addDishToMenu(
             @PathVariable String menuId,
-            @RequestBody Dish dish) {
-        
+            @RequestBody Dish dish)
+            throws RequestValidationException {
+
+        RequestValidator.validateRequest(dish);
         menuService.addDishToMenu(menuId, dish);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Add dish to menu successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PatchMapping("/{menuId}/dish/{dishId}")
+    @PutMapping("/{menuId}/dish/{dishId}")
     @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> updateDishInMenu(
             @PathVariable String menuId,
             @PathVariable String dishId,
             @RequestBody Dish dish) {
-        
+
+        RequestValidator.validateRequest(dish);
         menuService.updateDishInMenu(menuId, dishId, dish);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Update dish in menu successfully");
