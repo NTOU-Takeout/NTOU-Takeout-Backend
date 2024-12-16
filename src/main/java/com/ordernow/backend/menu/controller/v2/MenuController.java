@@ -68,7 +68,8 @@ public class MenuController {
     public ResponseEntity<ApiResponse<Void>> updateDishInMenu(
             @PathVariable String menuId,
             @PathVariable String dishId,
-            @RequestBody Dish dish) {
+            @RequestBody Dish dish)
+            throws RequestValidationException {
 
         RequestValidator.validateRequest(dish);
         menuService.updateDishInMenu(menuId, dishId, dish);
