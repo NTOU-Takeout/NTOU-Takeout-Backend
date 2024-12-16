@@ -72,9 +72,8 @@ public class CartController {
             @PathVariable("orderedDishId") String orderedDishId,
             @RequestBody OrderedDishPatchRequest request,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
-            throws NoSuchElementException, IllegalArgumentException, RequestValidationException {
+            throws NoSuchElementException, IllegalArgumentException {
 
-        RequestValidator.validateRequest(request);
         Order cartOrder = cartService.updateDish(customUserDetail.getId(), orderedDishId, request);
         ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
         log.info("Customer update dish successfully");
