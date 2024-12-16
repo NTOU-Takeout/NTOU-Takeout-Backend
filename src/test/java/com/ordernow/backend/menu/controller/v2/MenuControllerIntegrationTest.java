@@ -237,7 +237,7 @@ public class MenuControllerIntegrationTest {
                         .header("Authorization", merchantToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dish)))
-                .andExpect(status().isOk());
+                        .andExpect(status().isOk());
 
         List<Dish> dishes = menuService.getDishesByCategory("test冰淇淋系列");
         String dishId = dishes.get(0).getId();
