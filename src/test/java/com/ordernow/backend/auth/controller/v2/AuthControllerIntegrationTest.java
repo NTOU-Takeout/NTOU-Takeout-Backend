@@ -215,10 +215,27 @@ public class AuthControllerIntegrationTest {
         assertNull(userRepository.findByEmail(testEmail));
     }
 
-//    @Test
-//    void testRegisterWithInvalidRole() throws Exception {
-//
-//    }
+    @Test
+    void testRegisterWithInvalidRole() throws Exception {
+        String testEmail = "test@example.com";
+        String testPassword = "password123";
+        String testName = "test Unknown Role";
+
+        User user = new User();
+        user.setName(testName);
+        user.setEmail(testEmail);
+        user.setPassword(testPassword);
+        user.setRole(null);
+
+        mockMvc.perform(post("/api/v2/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Invalid role"));
+
+        assertNull(userRepository.findByEmail(testEmail));
+    }
 
     @Test
     void testLoginWithNonExistingEmail() throws Exception {
