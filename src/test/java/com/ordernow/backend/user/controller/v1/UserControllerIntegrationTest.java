@@ -191,5 +191,25 @@ public class UserControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(profileRequest)))
                 .andExpect(status().isBadRequest());
     }
-    
+
+    @Test
+    void testUpdateProfileWithNonExistentUser() throws Exception {
+        String customerToken = setupCustomer("customer3@test.com", "password123");
+        Customer customer = (Customer) userRepository.findByEmail("customer3@test.com");
+        userRepository.deleteById(customer.getId());
+
+        UserProfileRequest profileRequest = new UserProfileRequest();
+        profileRequest.setName("測試名稱");
+        profileRequest.setPhoneNumber("0912345678");
+        profileRequest.setAvatarUrl("https://example.com/avatar.jpg");
+        profileRequest.setGender(Gender.MALE);
+
+        mockMvc.perform(put("/api/v1/user")
+                .header("Authorization", customerToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(profileRequest)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("User not found"));
+    }
 }
