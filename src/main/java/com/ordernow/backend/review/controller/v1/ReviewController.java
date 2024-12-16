@@ -33,7 +33,8 @@ public class ReviewController {
 
     @PostMapping("/query")
     public ResponseEntity<ApiResponse<List<Review>>> getReviewsByIds(
-            @RequestBody List<String> ids) {
+            @RequestBody List<String> ids)
+            throws RequestValidationException {
 
         RequestValidator.validateRequest(ids);
         List<Review> reviews = reviewService.getReviewByIds(ids);
