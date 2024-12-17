@@ -1,5 +1,6 @@
 package com.ordernow.backend.auth.model.entity;
 
+import com.ordernow.backend.user.model.entity.Role;
 import com.ordernow.backend.user.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,6 +28,14 @@ public class CustomUserDetail implements UserDetails {
 
     public String getName() {
         return user.getName();
+    }
+
+    public Role getRole() {
+        return user.getRole();
+    }
+
+    public User getUser() {
+        return user;
     }
 
     @Override
