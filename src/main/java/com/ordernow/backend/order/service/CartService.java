@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -91,9 +91,9 @@ public class CartService {
         Update update = new Update()
                 .setOnInsert("customerId", customerId)
                 .setOnInsert("cost", 0.0)
-                .setOnInsert("date", LocalDateTime.now())
                 .setOnInsert("status", OrderedStatus.IN_CART)
-                .setOnInsert("orderedDishes", new ArrayList<>());
+                .setOnInsert("orderedDishes", new ArrayList<>())
+                .setOnInsert("orderTime", LocalTime.now());
 
         return mongoTemplate.findAndModify(
                 query,
@@ -197,7 +197,7 @@ public class CartService {
         }
 
         cart.setStatus(OrderedStatus.PENDING);
-        cart.setDate(LocalDateTime.now());
+        cart.setOrderTime(LocalTime.now());
         return orderRepository.save(cart);
     }
 
