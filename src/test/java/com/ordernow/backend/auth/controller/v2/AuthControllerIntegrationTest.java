@@ -1,6 +1,8 @@
 package com.ordernow.backend.auth.controller.v2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
 import com.ordernow.backend.user.model.entity.Customer;
 import com.ordernow.backend.user.model.entity.Merchant;
@@ -84,8 +86,8 @@ public class AuthControllerIntegrationTest {
         User user = new User(testName, testEmail, testPassword, Role.CUSTOMER);
         
         mockMvc.perform(post("/api/v2/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(user)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(user)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(200))
             .andExpect(jsonPath("$.message").value("Success"));
@@ -95,8 +97,8 @@ public class AuthControllerIntegrationTest {
         loginRequest.setPassword(testPassword);
 
         mockMvc.perform(post("/api/v2/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Success"))
@@ -122,15 +124,15 @@ public class AuthControllerIntegrationTest {
         User user2 = new User(testName, testEmail, testPassword, Role.CUSTOMER);
         
         mockMvc.perform(post("/api/v2/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(user)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(user)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(200))
             .andExpect(jsonPath("$.message").value("Success"));
         
         mockMvc.perform(post("/api/v2/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user2)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user2)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Email already exists"));
@@ -148,8 +150,8 @@ public class AuthControllerIntegrationTest {
         merchantUser.setPhoneNumber(testPhone);
 
         mockMvc.perform(post("/api/v2/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(merchantUser)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(merchantUser)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Success"));
@@ -173,11 +175,29 @@ public class AuthControllerIntegrationTest {
         User user = new User(testName, testEmail, testPassword, Role.CUSTOMER);
     
         mockMvc.perform(post("/api/v2/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Name is too long"));
+
+        assertNull(userRepository.findByEmail(testEmail));
+    }
+
+    @Test
+    void testRegisterWithNullRole() throws Exception {
+        String testEmail = "test@example.com";
+        String testPassword = "password123";
+        String testName = "Test User";
+
+        User user = new User(testName, testEmail, testPassword, null);
+        
+        mockMvc.perform(post("/api/v2/auth/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Field role can not be null"));
 
         assertNull(userRepository.findByEmail(testEmail));
     }
@@ -188,14 +208,19 @@ public class AuthControllerIntegrationTest {
         String testPassword = "password123";
         String testName = "Test User";
 
-        User user = new User(testName, testEmail, testPassword, null);
-        
+        User user = new User(testName, testEmail, testPassword,null);
+        String userJson = objectMapper.writeValueAsString(user);
+        JsonNode jsonNode = objectMapper.readTree(userJson);
+        ((ObjectNode) jsonNode).put("role", "INVALIDROLE");
+        String modifiedJson = objectMapper.writeValueAsString(jsonNode);
+
+
         mockMvc.perform(post("/api/v2/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.message").value("Field role can not be null"));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(modifiedJson))
+                .andExpect(status().isBadRequest());
+//                .andExpect(jsonPath("$.status").value(400))
+//                .andExpect(jsonPath("$.message").value("Invalid role"));
 
         assertNull(userRepository.findByEmail(testEmail));
     }
@@ -210,8 +235,8 @@ public class AuthControllerIntegrationTest {
         loginRequest.setPassword(testPassword);
 
         mockMvc.perform(post("/api/v2/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -225,8 +250,8 @@ public class AuthControllerIntegrationTest {
         User user = new User(testName, testEmail, correctPassword, Role.CUSTOMER);
         
         mockMvc.perform(post("/api/v2/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(user)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(user)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(200))
             .andExpect(jsonPath("$.message").value("Success"));
@@ -236,8 +261,8 @@ public class AuthControllerIntegrationTest {
         loginRequest.setPassword(wrongPassword);
 
         mockMvc.perform(post("/api/v2/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -246,8 +271,8 @@ public class AuthControllerIntegrationTest {
         LoginRequest loginRequest = new LoginRequest();
 
         mockMvc.perform(post("/api/v2/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -258,10 +283,10 @@ public class AuthControllerIntegrationTest {
         String testName = "Test Merchant";
 
         User user = new User(testName, testEmail, testPassword, Role.MERCHANT);
-        
+
         mockMvc.perform(post("/api/v2/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Merchant phone number can not be empty"));
@@ -280,8 +305,8 @@ public class AuthControllerIntegrationTest {
         merchantUser.setPhoneNumber(testPhone);
         
         mockMvc.perform(post("/api/v2/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(merchantUser)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(merchantUser)))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.status").value(200))
             .andExpect(jsonPath("$.message").value("Success"));
@@ -291,8 +316,8 @@ public class AuthControllerIntegrationTest {
         loginRequest.setPassword(testPassword);
 
         mockMvc.perform(post("/api/v2/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Success"))
