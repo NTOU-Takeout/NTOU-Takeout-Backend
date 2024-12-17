@@ -2,18 +2,14 @@ package com.ordernow.backend.menu.controller.v2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
-import com.ordernow.backend.user.model.entity.Customer;
-import com.ordernow.backend.user.model.entity.Merchant;
 import com.ordernow.backend.user.model.entity.Role;
 import com.ordernow.backend.auth.repository.UserRepository;
-import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.menu.model.entity.*;
 import com.ordernow.backend.menu.repository.DishRepository;
 import com.ordernow.backend.menu.repository.MenuRepository;
 import com.ordernow.backend.menu.service.MenuService;
-import lombok.extern.log4j.Log4j;
+import com.ordernow.backend.user.model.entity.User;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +54,6 @@ public class MenuControllerIntegrationTest {
     @Autowired
     private MenuService menuService;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
-    
     @BeforeEach
     void setUpEach() throws Exception {
         userRepository.deleteAll();
@@ -74,22 +68,39 @@ public class MenuControllerIntegrationTest {
         dishRepository.deleteAll();
     }
 
-    private String setupMerchant(String email, String password) throws Exception {
+    private String setupMerchant() throws Exception {
 
-        Merchant merchant = new Merchant();
-        merchant.setEmail(email);
-        merchant.setPassword(passwordEncoder.encode(password));
-        merchant.setRole(Role.MERCHANT);
-        userRepository.save(merchant);
+        String testEmail = "merchant@example.com";
+        String testPassword = "password123";
+        String testName = "測試商家";
+        String testPhone = "0912345678";
+
+        User merchantUser = new User(testName, testEmail, testPassword, Role.MERCHANT);
+        merchantUser.setPhoneNumber(testPhone);
+
+        mockMvc.perform(post("/api/v2/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(merchantUser)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"));
 
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail(email);
-        loginRequest.setPassword(password);
+        loginRequest.setEmail(testEmail);
+        loginRequest.setPassword(testPassword);
 
         String responseBody = mockMvc.perform(post("/api/v2/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"))
+                .andExpect(jsonPath("$.data.id").exists())
+                .andExpect(jsonPath("$.data.name").value(testName))
+                .andExpect(jsonPath("$.data.email").value(testEmail))
+                .andExpect(jsonPath("$.data.avatarUrl").exists())
+                .andExpect(jsonPath("$.data.role").value("MERCHANT"))
+                .andExpect(jsonPath("$.data.token").exists())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -137,23 +148,63 @@ public class MenuControllerIntegrationTest {
         return dish;
     }
 
-    private Menu createTestMenu() {
-        Menu testMenu = new Menu();
-        testMenu.setId("testmenu001");
-        List<Pair<String, List<String>>> categories = new ArrayList<>();
-
-        categories.add(Pair.of(
+    private Menu createTestMenu() throws Exception {
+        String merchantToken = setupMerchant();
+        
+        Dish dish1 = createTestDish(
+            "冰淇淋系列測試餐點1",
+            100.0,
             "test冰淇淋系列",
-            Arrays.asList("testdish001", "testdish002")
-        ));
-
-        categories.add(Pair.of(
+            "這是冰淇淋系列的第一個測試餐點"
+        );
+        
+        Dish dish2 = createTestDish(
+            "冰淇淋系列測試餐點2",
+            120.0,
+            "test冰淇淋系列",
+            "這是冰淇淋系列的第二個測試餐點"
+        );
+        
+        // 創建並添加第二個類別的餐點
+        Dish dish3 = createTestDish(
+            "冬季熱飲系列測試餐點1",
+            80.0,
             "test冬季熱飲系列",
-            Arrays.asList("testdish003", "testdish004")
-        ));
-
-        testMenu.setCategories(categories);
-        return menuRepository.save(testMenu);
+            "這是冬季熱飲系列的第一個測試餐點"
+        );
+        
+        Dish dish4 = createTestDish(
+            "冬季熱飲系列測試餐點2",
+            90.0,
+            "test冬季熱飲系列",
+            "這是冬季熱飲系列的第二個測試餐點"
+        );
+        
+        mockMvc.perform(post("/api/v2/menu/" + testMenu.getId() + "/dish")
+                .header("Authorization", merchantToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dish1)))
+                .andExpect(status().isOk());
+                
+        mockMvc.perform(post("/api/v2/menu/" + testMenu.getId() + "/dish")
+                .header("Authorization", merchantToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dish2)))
+                .andExpect(status().isOk());
+                
+        mockMvc.perform(post("/api/v2/menu/" + testMenu.getId() + "/dish")
+                .header("Authorization", merchantToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dish3)))
+                .andExpect(status().isOk());
+                
+        mockMvc.perform(post("/api/v2/menu/" + testMenu.getId() + "/dish")
+                .header("Authorization", merchantToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dish4)))
+                .andExpect(status().isOk());
+        
+        return menuRepository.findById(testMenu.getId()).orElseThrow();
     }
 
     @Test
@@ -181,7 +232,7 @@ public class MenuControllerIntegrationTest {
     @Test
     void testAddDishToMenu() throws Exception {
         Menu testMenu = createTestMenu();
-        String merchantToken = setupMerchant("merchant1@test.com", "password123");
+        String merchantToken = setupMerchant();
         
         Dish dish = createTestDish(
             "AddDishToMenu測試餐點",
@@ -224,7 +275,7 @@ public class MenuControllerIntegrationTest {
     @Test
     void testUpdateDishInMenu() throws Exception {
         Menu testMenu = createTestMenu();
-        String merchantToken = setupMerchant("merchant2@test.com", "password123");
+        String merchantToken = setupMerchant();
         
         Dish dish = createTestDish(
             "原始測試餐點",
@@ -283,7 +334,7 @@ public class MenuControllerIntegrationTest {
     @Test
     void testDeleteDishFromMenu() throws Exception {
         Menu testMenu = createTestMenu();
-        String merchantToken = setupMerchant("merchant3@test.com", "password123");
+        String merchantToken = setupMerchant();
         
         Dish dish = createTestDish(
             "待刪除測試餐點",
