@@ -3,6 +3,7 @@ package com.ordernow.backend.review.controller.v1;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
 import com.ordernow.backend.user.model.entity.Customer;
+import com.ordernow.backend.user.model.entity.Merchant;
 import com.ordernow.backend.user.model.entity.Role;
 import com.ordernow.backend.auth.repository.UserRepository;
 import com.ordernow.backend.review.model.dto.ReviewRequest;
@@ -10,6 +11,7 @@ import com.ordernow.backend.review.model.entity.Review;
 import com.ordernow.backend.review.repository.ReviewRepository;
 import com.ordernow.backend.store.model.entity.Store;
 import com.ordernow.backend.store.repository.StoreRepository;
+import com.ordernow.backend.user.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -67,22 +70,37 @@ public class ReviewControllerIntegrationTest {
         storeRepository.deleteAll();
     }
 
-    private String setupCustomer(String email, String password) throws Exception {
-        Customer customer = new Customer();
-        customer.setEmail(email);
-        customer.setPassword(passwordEncoder.encode(password));
-        customer.setRole(Role.CUSTOMER);
-        customer.setName("測試顧客");
-        userRepository.save(customer);
+    private String setupCustomer() throws Exception {
+
+        String testEmail = "customer@test.com";
+        String testPassword = "password123";
+        String testName = "測試顧客";
+
+        User merchantUser = new User(testName, testEmail, testPassword, Role.CUSTOMER);
+
+        mockMvc.perform(post("/api/v2/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(merchantUser)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"));
 
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail(email);
-        loginRequest.setPassword(password);
+        loginRequest.setEmail(testEmail);
+        loginRequest.setPassword(testPassword);
 
         String responseBody = mockMvc.perform(post("/api/v2/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"))
+                .andExpect(jsonPath("$.data.id").exists())
+                .andExpect(jsonPath("$.data.name").value(testName))
+                .andExpect(jsonPath("$.data.email").value(testEmail))
+                .andExpect(jsonPath("$.data.avatarUrl").exists())
+                .andExpect(jsonPath("$.data.role").value("Customer"))
+                .andExpect(jsonPath("$.data.token").exists())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -95,11 +113,60 @@ public class ReviewControllerIntegrationTest {
         return "Bearer " + token;
     }
 
-    private Store createTestStore() {
-        Store store = new Store();
-        store.setId("teststore001");
-        store.setName("測試商店");
-        return storeRepository.save(store);
+    private Store RegisterMerchantStore() throws Exception {
+        String testEmail = "merchant@example.com";
+        String testPassword = "password123";
+        String testName = "Test Merchant";
+        String testPhone = "0912345678";
+
+        User merchantUser = new User(testName, testEmail, testPassword, Role.MERCHANT);
+        merchantUser.setPhoneNumber(testPhone);
+
+        mockMvc.perform(post("/api/v2/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(merchantUser)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"));
+
+        User savedUser = userRepository.findByEmail(testEmail);
+        assertNotNull(savedUser);
+        assertEquals(testName, savedUser.getName());
+        assertEquals(testEmail, savedUser.getEmail());
+        assertEquals(Role.MERCHANT, savedUser.getRole());
+        assertEquals(testPhone, savedUser.getPhoneNumber());
+        assertTrue(passwordEncoder.matches(testPassword, savedUser.getPassword()));
+        assertInstanceOf(Merchant.class, savedUser);
+
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail(testEmail);
+        loginRequest.setPassword(testPassword);
+
+        String responseBody = mockMvc.perform(post("/api/v2/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Success"))
+                .andExpect(jsonPath("$.data.id").exists())
+                .andExpect(jsonPath("$.data.name").value(testName))
+                .andExpect(jsonPath("$.data.email").value(testEmail))
+                .andExpect(jsonPath("$.data.avatarUrl").exists())
+                .andExpect(jsonPath("$.data.role").value("MERCHANT"))
+                .andExpect(jsonPath("$.data.token").exists())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String storeId = objectMapper.readTree(responseBody)
+                .path("data")
+                .path("id")
+                .asText();
+
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NoSuchElementException("Store not found"));
+                
+        return store;
     }
 
     private Void createTestReviews(String userId, String userName) {
