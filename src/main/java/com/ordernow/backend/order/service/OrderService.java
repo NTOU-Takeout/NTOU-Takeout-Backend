@@ -46,10 +46,11 @@ public class OrderService {
         return order;
     }
 
-    public void updateStatus(Role role, String orderId, OrderedStatus status)
-            throws NoSuchElementException, IllegalStateException {
+    public void updateStatus(CustomUserDetail userDetail, String orderId, OrderedStatus status)
+            throws NoSuchElementException, IllegalStateException { // Bug
 
         Order order = getOrderAndValid(orderId);
+        Role role = userDetail.getRole();
 
         if(status == OrderedStatus.PENDING) {
             throw new IllegalStateException("Order status can not be PENDING");

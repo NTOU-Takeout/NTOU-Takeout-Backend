@@ -40,7 +40,7 @@ public class OrderController {
             throw new IllegalArgumentException("Invalid order status");
         }
 
-        orderService.updateStatus(customUserDetail.getRole(), orderId, status);
+        orderService.updateStatus(customUserDetail, orderId, status);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Update order status to {} successfully", status);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
