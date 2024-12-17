@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -74,6 +75,10 @@ public class OrderService {
         }
 
         order.setStatus(status);
+        if(status == OrderedStatus.PROCESSING) {
+            order.setAcceptTime(LocalTime.now());
+        }
+
         orderRepository.save(order);
         eventPublisher.publishEvent(
                 new Notification(orderId,
