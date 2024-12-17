@@ -27,12 +27,4 @@ public class Order {
     public Order() {
         orderedDishes = new ArrayList<>();
     }
-
-    public Order(String customerId) {
-        this.customerId = customerId;
-        cost = 0.0;
-        orderTime = LocalTime.now();
-        status = OrderedStatus.IN_CART;
-        orderedDishes = new ArrayList<>();
-    }
 }
