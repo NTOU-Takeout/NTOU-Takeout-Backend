@@ -76,36 +76,6 @@ public class AuthControllerIntegrationTest {
     }
 
     @Test
-    void testExistingUserLogin() throws Exception {
-        String testEmail = "registered@example.com";
-        String testPassword = "registeredpassword";
-        String testName = "Test User";
-
-        User user = new User(testName, testEmail, testPassword, Role.CUSTOMER);
-        
-        mockMvc.perform(post("/api/v2/auth/register")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(user)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").value(200))
-            .andExpect(jsonPath("$.message").value("Success"));
-
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail(testEmail);
-        loginRequest.setPassword(testPassword);
-
-        mockMvc.perform(post("/api/v2/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(200))
-                .andExpect(jsonPath("$.message").value("Success"))
-                .andExpect(jsonPath("$.data.email").value(testEmail))
-                .andExpect(jsonPath("$.data.role").value("CUSTOMER"))
-                .andExpect(jsonPath("$.data.token").exists());
-    }
-
-    @Test
     void testRegisterAndLoginFlow() throws Exception {
         String testEmail = "test@example.com";
         String testPassword = "password123";
