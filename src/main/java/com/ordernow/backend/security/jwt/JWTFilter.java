@@ -42,7 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
-
+        System.out.println("requet: " + request.getRequestURI());
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             username = jwtService.extractUserName(token);
@@ -60,4 +60,13 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // 排除 WebSocket 相關的路徑
+        return path.startsWith("/websocket") || path.startsWith("/websocket/**");
+    }
+
+
 }
