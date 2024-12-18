@@ -47,7 +47,7 @@ public class OrderService {
     }
 
     public void updateStatus(CustomUserDetail userDetail, String orderId, OrderedStatus status)
-            throws NoSuchElementException, IllegalStateException { // Bug
+            throws NoSuchElementException, IllegalStateException {
 
         Order order = getOrderAndValid(orderId);
         Role role = userDetail.getRole();

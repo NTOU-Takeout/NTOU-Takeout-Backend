@@ -34,7 +34,7 @@ public class OrderController {
             @PathVariable("orderId") String orderId,
             @RequestParam(value = "status") OrderedStatus status,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
-            throws NoSuchElementException, IllegalStateException {
+            throws NoSuchElementException, IllegalArgumentException, IllegalStateException {
 
         if(!ALLOWED_ORDER_STATUS.contains(status.toString())) {
             throw new IllegalArgumentException("Invalid order status");
