@@ -18,7 +18,7 @@ import java.util.List;
 public class Customer extends User{
     private List<String> storeCollection;
 
-    public Customer() {
+    public Customer() {// Springboot need it
         super();
         storeCollection = new ArrayList<>();
     }
