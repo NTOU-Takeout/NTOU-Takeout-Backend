@@ -22,6 +22,7 @@ public class Order {
     private List<OrderedDish> orderedDishes;
     private LocalTime orderTime;
     private LocalTime acceptTime;
+    private Boolean isReserved = false;
     private Integer estimatedPrepTime;
 
     public Order() {

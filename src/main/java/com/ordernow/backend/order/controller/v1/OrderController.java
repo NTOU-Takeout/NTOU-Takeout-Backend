@@ -46,6 +46,18 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @PatchMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<Void>> updatePickupTime(
+            @PathVariable("orderId") String orderId,
+            @RequestParam(value = "pickupTime") int pickupTime)
+            throws NoSuchElementException {
+
+        orderService.updatePickupTime(orderId, pickupTime);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Update order pickup time to {} successfully", pickupTime);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<Order>>> searchOrder(
             @RequestParam(value="page", defaultValue = "0") int page,

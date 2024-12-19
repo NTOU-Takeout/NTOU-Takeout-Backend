@@ -202,7 +202,7 @@ public class CartService {
         return orderRepository.save(cart);
     }
 
-    private void updateOrderCostAndPrepTime(Order order) {
+    public void updateOrderCostAndPrepTime(Order order) {
         double totalCost = order.getOrderedDishes().stream()
             .mapToDouble(dish -> {
                 double dishTotal = dish.getPrice() * dish.getQuantity();
@@ -213,6 +213,9 @@ public class CartService {
             })
             .sum();
         order.setCost(totalCost);
+
+        if(order.getIsReserved())
+            return;
 
         int totalQuantity = order.getOrderedDishes().stream()
                 .mapToInt(OrderedDish::getQuantity)
