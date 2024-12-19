@@ -38,9 +38,22 @@ public class UserControllerIntegrationTest {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
+    String testCustomerEmail = "customer@example.com";
+    String testCustomerPassword = "password123";
+    String testCustomerName = "測試顧客";
+    String testCustomerPhone = "0912745678";
+
+    String testMerchantEmail = "merchant@example.com";
+    String testMerchantPassword = "password123";
+    String testMerchantName = "測試商家";
+    String testMerchantPhone = "0912345678";
+    String customerToken;
+    String merchantToken;
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         userRepository.deleteAll();
+        customerToken = setupCustomer();
+        merchantToken = setupMerchant();
     }
 
     @AfterEach
@@ -48,69 +61,94 @@ public class UserControllerIntegrationTest {
         userRepository.deleteAll();
     }
 
-    private String setupCustomer(String email, String password) throws Exception {
-        Customer customer = new Customer();
-        customer.setEmail(email);
-        customer.setPassword(passwordEncoder.encode(password));
-        customer.setRole(Role.CUSTOMER);
-        customer.setName("測試顧客");
-        userRepository.save(customer);
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail(email);
-        loginRequest.setPassword(password);
 
-        String responseBody = mockMvc.perform(post("/api/v2/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+   private String setupCustomer() throws Exception {
 
-        String token = objectMapper.readTree(responseBody)
-                .path("data")
-                .path("token")
-                .asText();
+       User customerUser = new User(testCustomerName, testCustomerEmail, testCustomerPassword, Role.CUSTOMER);
+       customerUser.setPhoneNumber(testCustomerPhone);
 
-        return "Bearer " + token;
-    }
+       mockMvc.perform(post("/api/v2/auth/register")
+               .contentType(MediaType.APPLICATION_JSON)
+               .content(objectMapper.writeValueAsString(customerUser)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.status").value(200))
+               .andExpect(jsonPath("$.message").value("Success"));
 
-    private String setupMerchant(String email, String password) throws Exception {
-        Merchant merchant = new Merchant();
-        merchant.setEmail(email);
-        merchant.setPassword(passwordEncoder.encode(password));
-        merchant.setRole(Role.MERCHANT);
-        merchant.setName("測試商家");
-        merchant.setPhoneNumber("0912345678");
-        userRepository.save(merchant);
+       LoginRequest loginRequest = new LoginRequest();
+       loginRequest.setEmail(testCustomerEmail);
+       loginRequest.setPassword(testCustomerPassword);
 
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail(email);
-        loginRequest.setPassword(password);
+       String responseBody = mockMvc.perform(post("/api/v2/auth/login")
+               .contentType(MediaType.APPLICATION_JSON)
+               .content(objectMapper.writeValueAsString(loginRequest)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.status").value(200))
+               .andExpect(jsonPath("$.message").value("Success"))
+               .andExpect(jsonPath("$.data.id").exists())
+               .andExpect(jsonPath("$.data.name").value(testCustomerName))
+               .andExpect(jsonPath("$.data.email").value(testCustomerEmail))
+               .andExpect(jsonPath("$.data.avatarUrl").exists())
+               .andExpect(jsonPath("$.data.role").value("CUSTOMER"))
+               .andExpect(jsonPath("$.data.token").exists())
+               .andReturn()
+               .getResponse()
+               .getContentAsString();
 
-        String responseBody = mockMvc.perform(post("/api/v2/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
+       String token = objectMapper.readTree(responseBody)
+               .path("data")
+               .path("token")
+               .asText();
 
-        String token = objectMapper.readTree(responseBody)
-                .path("data")
-                .path("token")
-                .asText();
+       return "Bearer " + token;
+   }
 
-        return "Bearer " + token;
-    }
+   private String setupMerchant() throws Exception {
+
+       User merchantUser = new User(testMerchantName, testMerchantEmail, testMerchantPassword, Role.MERCHANT);
+       merchantUser.setPhoneNumber(testMerchantPhone);
+
+       mockMvc.perform(post("/api/v2/auth/register")
+               .contentType(MediaType.APPLICATION_JSON)
+               .content(objectMapper.writeValueAsString(merchantUser)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.status").value(200))
+               .andExpect(jsonPath("$.message").value("Success"));
+
+       LoginRequest loginRequest = new LoginRequest();
+       loginRequest.setEmail(testMerchantEmail);
+       loginRequest.setPassword(testMerchantPassword);
+
+       String responseBody = mockMvc.perform(post("/api/v2/auth/login")
+               .contentType(MediaType.APPLICATION_JSON)
+               .content(objectMapper.writeValueAsString(loginRequest)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.status").value(200))
+               .andExpect(jsonPath("$.message").value("Success"))
+               .andExpect(jsonPath("$.data.id").exists())
+               .andExpect(jsonPath("$.data.name").value(testMerchantName))
+               .andExpect(jsonPath("$.data.email").value(testMerchantEmail))
+               .andExpect(jsonPath("$.data.avatarUrl").exists())
+               .andExpect(jsonPath("$.data.role").value("MERCHANT"))
+               .andExpect(jsonPath("$.data.token").exists())
+               .andReturn()
+               .getResponse()
+               .getContentAsString();
+
+       String token = objectMapper.readTree(responseBody)
+               .path("data")
+               .path("token")
+               .asText();
+
+       return "Bearer " + token;
+   }
 
     @Test
     void testUpdateCustomerProfile() throws Exception {
-        String customerToken = setupCustomer("customer1@test.com", "password123");
-        Customer customer = (Customer) userRepository.findByEmail("customer1@test.com");
+
+        Customer customer = (Customer) userRepository.findByEmail(testCustomerEmail);
         assertNotNull(customer);
-        assertEquals("測試顧客", customer.getName());
+        assertEquals(testCustomerName, customer.getName());
 
         UserProfileRequest profileRequest = new UserProfileRequest();
         profileRequest.setName("更新後的顧客名稱");
@@ -136,8 +174,8 @@ public class UserControllerIntegrationTest {
 
     @Test
     void testUpdateMerchantProfile() throws Exception {
-        String merchantToken = setupMerchant("merchant1@test.com", "password123");
-        Merchant merchant = (Merchant) userRepository.findByEmail("merchant1@test.com");
+
+        Merchant merchant = (Merchant) userRepository.findByEmail(testMerchantEmail);
         assertNotNull(merchant);
         assertEquals("測試商家", merchant.getName());
         assertEquals("0912345678", merchant.getPhoneNumber());
@@ -178,7 +216,6 @@ public class UserControllerIntegrationTest {
 
     @Test
     void testUpdateProfileWithInvalidRequest() throws Exception {
-        String customerToken = setupCustomer("customer2@test.com", "password123");
 
         UserProfileRequest profileRequest = new UserProfileRequest();
 
@@ -194,9 +231,14 @@ public class UserControllerIntegrationTest {
 
     @Test
     void testUpdateProfileWithNonExistentUser() throws Exception {
-        String customerToken = setupCustomer("customer3@test.com", "password123");
-        Customer customer = (Customer) userRepository.findByEmail("customer3@test.com");
+
+        Customer customer = (Customer) userRepository.findByEmail(testCustomerEmail);
+        assertNotNull(customer, "Customer should exist before deletion");
+        
         userRepository.deleteById(customer.getId());
+        
+        Customer deletedCustomer = (Customer) userRepository.findByEmail(testCustomerEmail);
+        assertNull(deletedCustomer, "Customer should be deleted");
 
         UserProfileRequest profileRequest = new UserProfileRequest();
         profileRequest.setName("測試名稱");
