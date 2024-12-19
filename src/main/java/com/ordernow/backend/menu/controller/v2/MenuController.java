@@ -49,16 +49,13 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PostMapping("/{menuId}/dish")
+    @GetMapping("/{menuId}/dish/create")
     @PreAuthorize("hasRole('MERCHANT')")
-    public ResponseEntity<ApiResponse<Void>> addDishToMenu(
-            @PathVariable String menuId,
-            @RequestBody Dish dish)
-            throws RequestValidationException {
+    public ResponseEntity<ApiResponse<String>> addDishToMenu(
+            @PathVariable String menuId) {
 
-        RequestValidator.validateRequest(dish);
-        menuService.addDishToMenu(menuId, dish);
-        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        String dishId = menuService.createDishInMenu(menuId);
+        ApiResponse<String> apiResponse = ApiResponse.success(dishId);
         log.info("Add dish to menu successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
