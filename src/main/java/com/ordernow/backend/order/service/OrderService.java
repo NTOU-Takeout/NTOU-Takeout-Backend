@@ -101,4 +101,13 @@ public class OrderService {
         }
         return null;
     }
+
+    public void updatePickupTime(String orderId, int pickupTime)
+            throws NoSuchElementException {
+
+        Order order = getOrderAndValid(orderId);
+        order.setIsReserved(true);
+        order.setEstimatedPrepTime(pickupTime);
+        orderRepository.save(order);
+    }
 }
