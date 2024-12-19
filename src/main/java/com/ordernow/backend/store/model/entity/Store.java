@@ -56,4 +56,10 @@ public class Store {
                 .isBusiness(false)
                 .build();
     }
+
+    public void addReview(String reviewId, double rating, double averageSpend) {
+        reviewIdList.add(reviewId);
+        this.rating = reviewIdList.size()*this.rating + rating;
+        this.averageSpend = reviewIdList.size()*this.averageSpend + averageSpend;
+    }
 }
