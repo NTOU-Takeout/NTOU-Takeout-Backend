@@ -8,11 +8,9 @@ import com.ordernow.backend.menu.repository.MenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
+
 import org.springframework.data.util.Pair;
 
 @Service
@@ -76,7 +74,22 @@ public class MenuService {
         throw new NoSuchElementException("Category not found");
     }
 
-    public void changeDishesOrder(){
+    public void updateDishesOrder(String menuId, String category, List<String> dishIds) {
+
+        Menu menu = getMenuById(menuId);
+        for(Category c : menu.getCategories()) {
+            if(c.getCategoryName().equals(category)){
+                if(new HashSet<>(c.getDishIds()).containsAll(dishIds)) {
+                    c.setDishIds(dishIds);
+                    menuRepository.save(menu);
+                    return;
+                } else {
+                    throw new NoSuchElementException("DishId List is wrong");
+                }
+            }
+        }
+
+        throw new NoSuchElementException("Category not found");
     }
 
     public String createDishInMenu(String menuId) {

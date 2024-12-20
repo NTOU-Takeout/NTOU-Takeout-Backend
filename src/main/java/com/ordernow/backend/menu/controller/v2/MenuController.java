@@ -51,6 +51,19 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @PutMapping("/{menuId}/dishes")
+    public ResponseEntity<ApiResponse<Void>> updateDishesOrderInCategory(
+            @PathVariable String menuId,
+            @RequestParam(value = "category") String category,
+            @RequestBody List<String> dishIds)
+            throws NoSuchElementException {
+
+        menuService.updateDishesOrder(menuId, category, dishIds);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Update dishes successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @GetMapping("/{menuId}/dish/create")
     @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<String>> addDishToMenu(
