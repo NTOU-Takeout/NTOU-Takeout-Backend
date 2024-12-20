@@ -30,7 +30,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PatchMapping("/{orderId}")
+    @PatchMapping("/{orderId}/status")
     public ResponseEntity<ApiResponse<Void>> updateOrderStatus(
             @PathVariable("orderId") String orderId,
             @RequestParam(value = "status") OrderedStatus status,
@@ -47,7 +47,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PatchMapping("/{orderId}")
+    @PatchMapping("/{orderId}/pickup-time")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<Void>> updatePickupTime(
             @PathVariable("orderId") String orderId,
