@@ -39,11 +39,13 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @GetMapping("/dishes")
+    @GetMapping("/{menuId}/dishes")
     public ResponseEntity<ApiResponse<List<Dish>>> getDishesByCategory(
-            @RequestParam(value = "category") String category) {
+            @PathVariable String menuId,
+            @RequestParam(value = "category") String category)
+            throws NoSuchElementException {
 
-        List<Dish> dishes = menuService.getDishesByCategory(category);
+        List<Dish> dishes = menuService.getCategoryDishesByMenuId(menuId, category);
         ApiResponse<List<Dish>> apiResponse = ApiResponse.success(dishes);
         log.info("Get dishes successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
