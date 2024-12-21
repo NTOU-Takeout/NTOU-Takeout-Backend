@@ -31,17 +31,15 @@ public class ReviewService {
     public void addNewReviewToStore(String storeId, ReviewRequest reviewRequest, String userId, String userName)
             throws NoSuchElementException {
 
-        System.out.println(storeId);
         Store store = storeRepository.findById(storeId).orElse(null);
         if(store == null) {
-
             throw new NoSuchElementException("Store not found");
         }
 
         Review review = Review.createReview(reviewRequest, userId, userName);
         reviewRepository.save(review);
 
-        store.getReviewIdList().add(review.getId());
+        store.addReview(review.getId(), review.getRating(), review.getAverageSpend());
         storeRepository.save(store);
     }
 }

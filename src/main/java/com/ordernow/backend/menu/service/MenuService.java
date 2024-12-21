@@ -37,7 +37,7 @@ public class MenuService {
                 .orElseThrow(() -> new NoSuchElementException("Dish not found"));
     }
 
-    public void AddDishToCategory(Menu menu, Dish dish) {
+    public void addDishToCategory(Menu menu, Dish dish) {
         for (var category : menu.getCategories()) {
             if (category.getFirst().equals(dish.getCategory())) {
                 category.getSecond().add(dish.getId());
@@ -62,14 +62,18 @@ public class MenuService {
         return dishRepository.findAllByCategory(category);
     }
 
-    public void addDishToMenu(String menuId, Dish dish) 
-            throws NoSuchElementException {
+    public void changeDishesOrder(){
+    }
 
-        dish.setId(null);
+    public String createDishInMenu(String menuId) {
+
+        Dish dish = Dish.createDefaultDish();
+        dishRepository.save(dish);
+
         Menu menu = getMenuById(menuId);
-        dish = dishRepository.save(dish);
-        AddDishToCategory(menu, dish);
+        addDishToCategory(menu, dish);
         menuRepository.save(menu);
+        return dish.getId();
     }
 
     public void updateDishInMenu(String menuId, String dishId, Dish updatedDish)
@@ -85,7 +89,7 @@ public class MenuService {
                     .findFirst()
                     .ifPresent(category -> category.getSecond().remove(dishId));
 
-            AddDishToCategory(menu, updatedDish);
+            addDishToCategory(menu, updatedDish);
             menuRepository.save(menu);
         }
         
