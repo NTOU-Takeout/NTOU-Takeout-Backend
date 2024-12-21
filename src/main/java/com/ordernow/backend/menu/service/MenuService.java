@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.springframework.data.util.Pair;
-
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
@@ -70,7 +68,6 @@ public class MenuService {
                 return getDishesByIds(c.getDishIds());
             }
         }
-
         throw new NoSuchElementException("Category not found");
     }
 
@@ -151,5 +148,11 @@ public class MenuService {
     public String createAndSaveMenu() {
         Menu menu = Menu.createDefaultMenu();
         return menuRepository.save(menu).getId();
+    }
+
+    public void updateSalesVolume(String dishId, int quantity) {
+        Dish dish = getDishById(dishId);
+        dish.setSalesVolume(dish.getSalesVolume() + quantity);
+        dishRepository.save(dish);
     }
 }
