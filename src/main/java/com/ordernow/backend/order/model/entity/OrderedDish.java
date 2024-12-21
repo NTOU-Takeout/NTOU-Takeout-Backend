@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 public class OrderedDish {
     private String id;
     private String dishId;
