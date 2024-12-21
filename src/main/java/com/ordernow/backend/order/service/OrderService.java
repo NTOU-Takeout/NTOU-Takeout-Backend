@@ -93,11 +93,17 @@ public class OrderService {
         Pageable pageable = PageRequest.of(page, size);
 
         if(userDetail.getRole() == Role.CUSTOMER) {
-            return orderRepository.findAllByCustomerIdAndStatus(userDetail.getId(), status, pageable);
+            if(status == null)
+                return orderRepository.findAllByCustomerIdAndStatusNot(userDetail.getId(), OrderedStatus.IN_CART, pageable);
+            else
+                return orderRepository.findAllByCustomerIdAndStatus(userDetail.getId(), status, pageable);
         }
         if(userDetail.getRole() == Role.MERCHANT) {
             Merchant merchant = (Merchant) userDetail.getUser();
-            return orderRepository.findAllByStoreIdAndStatus(merchant.getStoreId(), status, pageable);
+            if(status == null)
+                return orderRepository.findAllByStoreIdAndStatusNot(merchant.getStoreId(), OrderedStatus.IN_CART, pageable);
+            else
+                return orderRepository.findAllByStoreIdAndStatus(merchant.getStoreId(), status, pageable);
         }
         return null;
     }
