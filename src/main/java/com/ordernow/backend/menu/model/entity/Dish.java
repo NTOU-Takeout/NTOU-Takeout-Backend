@@ -15,7 +15,7 @@ import java.util.List;
 @Document(collection = "dish")
 public class Dish {
     @Id
-    private String id = "";
+    private String id ;
     private String name;
     private String description;
     private String picture;

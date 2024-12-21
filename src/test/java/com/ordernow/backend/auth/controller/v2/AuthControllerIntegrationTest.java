@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ordernow.backend.auth.model.dto.LoginRequest;
+import com.ordernow.backend.store.repository.StoreRepository;
 import com.ordernow.backend.user.model.entity.Customer;
 import com.ordernow.backend.user.model.entity.Merchant;
 import com.ordernow.backend.user.model.entity.Role;
@@ -38,6 +39,9 @@ public class AuthControllerIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    private StoreRepository storeRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
@@ -46,11 +50,13 @@ public class AuthControllerIntegrationTest {
     @BeforeEach
     void setUpEach() {
         userRepository.deleteAll();
+        storeRepository.deleteAll();
     }   
 
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
+        storeRepository.deleteAll();
     }
 
     @Test
