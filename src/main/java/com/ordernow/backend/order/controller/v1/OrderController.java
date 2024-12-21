@@ -2,6 +2,7 @@ package com.ordernow.backend.order.controller.v1;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.dto.PageResponse;
 import com.ordernow.backend.order.model.entity.Order;
 import com.ordernow.backend.order.model.entity.OrderedStatus;
 import com.ordernow.backend.order.service.OrderService;
@@ -61,7 +62,7 @@ public class OrderController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Order>>> searchOrder(
+    public ResponseEntity<ApiResponse<PageResponse<Order>>> searchOrder(
             @RequestParam(value="page", defaultValue = "0") int page,
             @RequestParam(value="size", defaultValue = "10") int size,
             @RequestParam(value="status", required = false) OrderedStatus status,
@@ -74,8 +75,11 @@ public class OrderController {
 
         List<Order> orderList = orderService.getOrderListByStatus(
                 customUserDetail, status, page, size);
-        ApiResponse<List<Order>> apiResponse = ApiResponse.success(orderList);
-        log.info("User filter order successfully");
+        int totalElements = orderService.countOrderListByStatus(customUserDetail, status);
+        PageResponse<Order> pageResponse = PageResponse.createPageResponse(totalElements, page, size, orderList);
+
+        ApiResponse<PageResponse<Order>> apiResponse = ApiResponse.success(pageResponse);
+        log.info("User search order successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

@@ -108,6 +108,23 @@ public class OrderService {
         return null;
     }
 
+    public int countOrderListByStatus(CustomUserDetail userDetail, OrderedStatus status) {
+        if(userDetail.getRole() == Role.CUSTOMER) {
+            if(status == null)
+                return orderRepository.countByCustomerIdAndStatusNot(userDetail.getId(), OrderedStatus.IN_CART);
+            else
+                return orderRepository.countByCustomerIdAndStatus(userDetail.getId(), status);
+        }
+        if(userDetail.getRole() == Role.MERCHANT) {
+            Merchant merchant = (Merchant) userDetail.getUser();
+            if(status == null)
+                return orderRepository.countByStoreIdAndStatusNot(merchant.getStoreId(), OrderedStatus.IN_CART);
+            else
+                return orderRepository.countByStoreIdAndStatus(merchant.getStoreId(), status);
+        }
+        return 0;
+    }
+
     public void updatePickupTime(String orderId, int pickupTime)
             throws NoSuchElementException {
 
