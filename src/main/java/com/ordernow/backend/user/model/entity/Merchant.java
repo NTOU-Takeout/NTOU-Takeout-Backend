@@ -17,15 +17,13 @@ import java.util.List;
 @TypeAlias("merchant")
 public class Merchant extends User{
     private String storeId;
-    private List<Order> orderList;
 
-    public Merchant() {
-        orderList = new ArrayList<>();
+    public Merchant() {// Springboot need it
+        super();
     }
 
     public Merchant(User user, String storeId) {
         super(user);
         this.storeId = storeId;
-        orderList = new ArrayList<>();
     }
 }
