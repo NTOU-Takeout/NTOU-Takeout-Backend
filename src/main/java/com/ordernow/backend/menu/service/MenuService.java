@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.springframework.data.util.Pair;
-
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
@@ -70,7 +68,6 @@ public class MenuService {
                 return getDishesByIds(c.getDishIds());
             }
         }
-
         throw new NoSuchElementException("Category not found");
     }
 
