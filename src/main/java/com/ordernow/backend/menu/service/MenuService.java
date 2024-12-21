@@ -149,4 +149,10 @@ public class MenuService {
         Menu menu = Menu.createDefaultMenu();
         return menuRepository.save(menu).getId();
     }
+
+    public void updateSalesVolume(String dishId, int quantity) {
+        Dish dish = getDishById(dishId);
+        dish.setSalesVolume(dish.getSalesVolume() + quantity);
+        dishRepository.save(dish);
+    }
 }
