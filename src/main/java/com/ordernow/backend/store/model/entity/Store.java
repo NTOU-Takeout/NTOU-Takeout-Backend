@@ -58,8 +58,8 @@ public class Store {
     }
 
     public void addReview(String reviewId, double rating, double averageSpend) {
+        this.rating = (reviewIdList.size()*this.rating + rating) / (reviewIdList.size()+1);
+        this.averageSpend = (reviewIdList.size()*this.averageSpend + averageSpend) / (reviewIdList.size()+1);
         reviewIdList.add(reviewId);
-        this.rating = reviewIdList.size()*this.rating + rating;
-        this.averageSpend = reviewIdList.size()*this.averageSpend + averageSpend;
     }
 }
