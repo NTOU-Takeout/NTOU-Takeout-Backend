@@ -3,6 +3,7 @@ name: Deploy
 on:
   push:
     branches:
+      - main
       - develop
     paths-ignore:
       - "**/*.md"
@@ -16,6 +17,7 @@ jobs:
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
+      TESTING_DB_NAME: ${{ secrets.TESTING_DB_NAME }}
       PORT: ${{ secrets.PORT }}
       ALLOWED_ORIGIN: ${{ secrets.ALLOWED_ORIGIN }}
 
@@ -34,8 +36,8 @@ jobs:
         with:
           gradle-version: 7.6.4
 
-      - name: Run tests
-        run: ./gradlew test
-
       - name: Build project
         run: ./gradlew build
+
+      - name: Run tests
+        run: ./gradlew test
