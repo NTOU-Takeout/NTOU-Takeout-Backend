@@ -1,6 +1,5 @@
 package com.ordernow.backend.user.model.entity;
 
-import com.ordernow.backend.order.model.entity.Order;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

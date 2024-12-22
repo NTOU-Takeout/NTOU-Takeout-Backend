@@ -2,6 +2,7 @@ package com.ordernow.backend.order.controller.v1;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.dto.PageResponse;
 import com.ordernow.backend.order.model.entity.Order;
 import com.ordernow.backend.order.model.entity.OrderedStatus;
 import com.ordernow.backend.order.service.OrderService;
@@ -23,7 +24,7 @@ import java.util.Set;
 public class OrderController {
 
     private final OrderService orderService;
-    private static final Set<String> ALLOWED_ORDER_STATUS = Set.of("PENDING", "PROCESSING", "COMPLETED", "PICKED_UP", "CANCELED");
+    private static final Set<String> ALLOWED_ORDER_STATUS = Set.of("PENDING", "PROCESSING", "COMPLETED", "PICKED_UP", "CANCELED", "");
 
     @Autowired
     public OrderController(OrderService orderService) {
@@ -61,21 +62,24 @@ public class OrderController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Order>>> searchOrder(
+    public ResponseEntity<ApiResponse<PageResponse<Order>>> searchOrder(
             @RequestParam(value="page", defaultValue = "0") int page,
             @RequestParam(value="size", defaultValue = "10") int size,
-            @RequestParam(value="status") OrderedStatus status,
+            @RequestParam(value="status", required = false) OrderedStatus status,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, IllegalArgumentException {
 
-        if(!ALLOWED_ORDER_STATUS.contains(status.toString())) {
+        if(status != null && !ALLOWED_ORDER_STATUS.contains(status.toString())) {
             throw new IllegalArgumentException("Invalid order status");
         }
 
         List<Order> orderList = orderService.getOrderListByStatus(
                 customUserDetail, status, page, size);
-        ApiResponse<List<Order>> apiResponse = ApiResponse.success(orderList);
-        log.info("User filter order successfully");
+        int totalElements = orderService.countOrderListByStatus(customUserDetail, status);
+        PageResponse<Order> pageResponse = PageResponse.createPageResponse(totalElements, page, size, orderList);
+
+        ApiResponse<PageResponse<Order>> apiResponse = ApiResponse.success(pageResponse);
+        log.info("User search order successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }
