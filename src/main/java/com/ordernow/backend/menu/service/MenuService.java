@@ -71,7 +71,8 @@ public class MenuService {
         throw new NoSuchElementException("Category not found");
     }
 
-    public void updateDishesOrder(String menuId, String category, List<String> dishIds) {
+    public void updateDishesOrder(String menuId, String category, List<String> dishIds)
+            throws NoSuchElementException {
 
         Menu menu = getMenuById(menuId);
         for(Category c : menu.getCategories()) {
@@ -85,7 +86,26 @@ public class MenuService {
                 }
             }
         }
+        throw new NoSuchElementException("Category not found");
+    }
 
+    public void updateCategoryName(String menuId, String category, String newName)
+            throws NoSuchElementException {
+
+        Menu menu = getMenuById(menuId);
+        for(Category c : menu.getCategories()) {
+            System.out.println(c.getCategoryName());
+            if(c.getCategoryName().equals(category)){
+                c.setCategoryName(newName);
+                List<Dish> dishes = getCategoryDishesByMenuId(menu.getId(), category);
+                for(Dish d : dishes) {
+                    d.setCategory(newName);
+                }
+                menuRepository.save(menu);
+                dishRepository.saveAll(dishes);
+                return;
+            }
+        }
         throw new NoSuchElementException("Category not found");
     }
 

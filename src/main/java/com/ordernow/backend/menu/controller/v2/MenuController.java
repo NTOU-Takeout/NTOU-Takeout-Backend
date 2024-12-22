@@ -3,6 +3,7 @@ package com.ordernow.backend.menu.controller.v2;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.common.exception.RequestValidationException;
 import com.ordernow.backend.common.validation.RequestValidator;
+import com.ordernow.backend.menu.model.entity.CategoryPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.menu.model.entity.Menu;
 import com.ordernow.backend.menu.service.MenuService;
@@ -52,6 +53,7 @@ public class MenuController {
     }
 
     @PutMapping("/{menuId}/dishes")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> updateDishesOrderInCategory(
             @PathVariable String menuId,
             @RequestParam(value = "category") String category,
@@ -61,6 +63,21 @@ public class MenuController {
         menuService.updateDishesOrder(menuId, category, dishIds);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Update dishes successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{menuId}/dishes")
+    @PreAuthorize("hasRole('MERCHANT')")
+    public ResponseEntity<ApiResponse<Void>> updateCategoryName(
+            @PathVariable String menuId,
+            @RequestParam(value = "category") String category,
+            @RequestBody CategoryPatchRequest request)
+            throws NoSuchElementException {
+
+        RequestValidator.validateRequest(request);
+        menuService.updateCategoryName(menuId, category, request.getCategoryName());
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Update category name successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
