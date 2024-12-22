@@ -1,8 +1,10 @@
 package com.ordernow.backend.order.service;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
+import com.ordernow.backend.menu.service.MenuService;
 import com.ordernow.backend.notification.model.dto.Notification;
 import com.ordernow.backend.order.model.entity.Order;
+import com.ordernow.backend.order.model.entity.OrderedDish;
 import com.ordernow.backend.order.model.entity.OrderedStatus;
 import com.ordernow.backend.order.repository.OrderRepository;
 import com.ordernow.backend.user.model.entity.Merchant;
@@ -27,12 +29,14 @@ public class OrderService {
     private final ApplicationEventPublisher eventPublisher;
     private static final Set<String> CUSTOMER_ALLOWED_TO_UPDATED_STATUS = Set.of("CANCELED", "PICKED_UP");
     private static final Set<String> MERCHANT_ALLOWED_TO_UPDATED_STATUS = Set.of("CANCELED", "PROCESSING", "COMPLETED");
+    private final MenuService menuService;
 
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, ApplicationEventPublisher eventPublisher) {
+    public OrderService(OrderRepository orderRepository, ApplicationEventPublisher eventPublisher, MenuService menuService) {
         this.orderRepository = orderRepository;
         this.eventPublisher = eventPublisher;
+        this.menuService = menuService;
     }
 
     public Order getOrderAndValid(String orderId)
@@ -78,6 +82,9 @@ public class OrderService {
         order.setStatus(status);
         if(status == OrderedStatus.PROCESSING) {
             order.setAcceptTime(LocalTime.now());
+        }
+        if(status == OrderedStatus.PICKED_UP) {
+            updateSalesVolume(order.getOrderedDishes());
         }
 
         orderRepository.save(order);
@@ -132,5 +139,11 @@ public class OrderService {
         order.setIsReserved(true);
         order.setEstimatedPrepTime(pickupTime);
         orderRepository.save(order);
+    }
+
+    public void updateSalesVolume(List<OrderedDish> dishes) {
+        for(OrderedDish dish : dishes) {
+            menuService.updateSalesVolume(dish.getDishId(), dish.getQuantity());
+        }
     }
 }

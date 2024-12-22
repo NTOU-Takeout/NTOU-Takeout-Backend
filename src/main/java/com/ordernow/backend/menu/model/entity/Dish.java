@@ -22,7 +22,7 @@ public class Dish {
     private String picture;
     private Double price;
     private String category;
-    private Integer salesVolume;
+    private Integer salesVolume = 0;
     private List<DishAttribute> dishAttributes;
 
     public Dish() {

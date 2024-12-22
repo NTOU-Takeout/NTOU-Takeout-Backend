@@ -2,8 +2,10 @@ package com.ordernow.backend.data;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.ordernow.backend.auth.repository.UserRepository;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.menu.model.entity.Menu;
+import com.ordernow.backend.order.repository.OrderRepository;
 import com.ordernow.backend.review.model.entity.Review;
 import com.ordernow.backend.store.model.entity.Store;
 import com.ordernow.backend.menu.repository.DishRepository;
@@ -32,31 +34,32 @@ public class DataLoader {
 
     private final Random random;
     private final Gson gson;
+    private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     @Autowired
     public DataLoader(StoreRepository storeRepository,
                       MenuRepository  menuRepository,
                       ReviewRepository reviewRepository,
-                      DishRepository dishRepository) {
+                      DishRepository dishRepository, UserRepository userRepository, OrderRepository orderRepository) {
         this.storeRepository = storeRepository;
         this.menuRepository = menuRepository;
         this.reviewRepository = reviewRepository;
         this.dishRepository = dishRepository;
         this.random = new Random();
         this.gson = new Gson();
+        this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
     }
 
     @PostConstruct
     public void init() {
 //        reviewRepository.deleteAll();
 //        storeRepository.deleteAll();
-//        loadStoreFromData();
-
 //        dishRepository.deleteAll();
 //        menuRepository.deleteAll();
-//        for (int i=1; i<=6; i++)
-//            loadDishesFromData(i);
-//        loadMenuFromData();
+//        userRepository.deleteAll();
+//        orderRepository.deleteAll();
     }
 
 
