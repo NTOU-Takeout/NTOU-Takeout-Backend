@@ -2,6 +2,7 @@ package com.ordernow.backend.order.service;
 
 import com.ordernow.backend.menu.model.entity.AttributeOption;
 import com.ordernow.backend.menu.model.entity.DishAttribute;
+import com.ordernow.backend.order.model.dto.NoteRequest;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.order.model.dto.OrderedDishRequest;
@@ -189,13 +190,14 @@ public class CartService {
         return orderRepository.save(cart);
     }
 
-    public Order sendOrder(String customerId)
+    public Order sendOrder(String customerId, String note)
             throws NoSuchElementException {
 
         Order cart = findCart(customerId);
         if (cart == null) {
             throw new NoSuchElementException("Cart not found");
         }
+        cart.setNote(note);
 
         cart.setStatus(OrderedStatus.PENDING);
         cart.setOrderTime(LocalTime.now());
