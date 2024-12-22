@@ -35,6 +35,12 @@ public class ReviewService {
         if(store == null) {
             throw new NoSuchElementException("Store not found");
         }
+        if(reviewRequest.getRating() <= 0 || reviewRequest.getRating() > 5) {
+            throw new NoSuchElementException("Invalid rating");
+        }
+        if(reviewRequest.getAverageSpend() <= 0) {
+            throw new NoSuchElementException("Invalid average spend");
+        }
 
         Review review = Review.createReview(reviewRequest, userId, userName);
         reviewRepository.save(review);
