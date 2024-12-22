@@ -46,10 +46,10 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PostMapping()
+    @PostMapping("/{storeId}")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<Void>> AddReviewToStore(
-            @PathParam(value = "storeId") String storeId,
+            @PathVariable(value = "storeId") String storeId,
             @RequestBody ReviewRequest reviewRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException, RequestValidationException {
