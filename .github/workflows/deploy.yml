@@ -22,18 +22,18 @@ jobs:
       ALLOWED_ORIGIN: ${{ secrets.ALLOWED_ORIGIN }}
 
     steps:
-      - name: Debug Environment Variables
-        run: |
-          echo "Checking environment variables..."
-          echo "DB_USER is set: ${{ ! env.DB_USER == '' }}"
-          echo "DB_PASSWORD is set: ${{ ! env.DB_PASSWORD == '' }}"
-          echo "DB_NAME is set: ${{ ! env.DB_NAME == '' }}"
-          echo "TESTING_DB_NAME is set: ${{ ! env.TESTING_DB_NAME == '' }}"
-          echo "PORT is set: ${{ ! env.PORT == '' }}"
-          echo "ALLOWED_ORIGIN is set: ${{ ! env.ALLOWED_ORIGIN == '' }}"
-          
-          echo "PORT: ${{ env.PORT }}"
-          echo "ALLOWED_ORIGIN: ${{ env.ALLOWED_ORIGIN }}"
+#      - name: Debug Environment Variables
+#        run: |
+#          echo "Checking environment variables..."
+#          echo "DB_USER is set: ${{ ! env.DB_USER == '' }}"
+#          echo "DB_PASSWORD is set: ${{ ! env.DB_PASSWORD == '' }}"
+#          echo "DB_NAME is set: ${{ ! env.DB_NAME == '' }}"
+#          echo "TESTING_DB_NAME is set: ${{ ! env.TESTING_DB_NAME == '' }}"
+#          echo "PORT is set: ${{ ! env.PORT == '' }}"
+#          echo "ALLOWED_ORIGIN is set: ${{ ! env.ALLOWED_ORIGIN == '' }}"
+#
+#          echo "PORT: ${{ env.PORT }}"
+#          echo "ALLOWED_ORIGIN: ${{ env.ALLOWED_ORIGIN }}"
 
       - name: Checkout repo
         uses: actions/checkout@v3
