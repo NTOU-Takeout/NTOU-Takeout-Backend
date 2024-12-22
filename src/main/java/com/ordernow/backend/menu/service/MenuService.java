@@ -112,6 +112,7 @@ public class MenuService {
     public String createDishInMenu(String menuId) {
 
         Dish dish = Dish.createDefaultDish();
+        dish.setId(null);
         dishRepository.save(dish);
 
         Menu menu = getMenuById(menuId);

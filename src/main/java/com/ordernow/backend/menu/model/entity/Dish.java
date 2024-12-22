@@ -15,7 +15,6 @@ import java.util.List;
 @Document(collection = "dish")
 public class Dish {
     @Id
-    @Builder.Default
     private String id = "";
     private String name;
     private String description;
