@@ -1,5 +1,6 @@
 package com.ordernow.backend.menu.service;
 
+import com.ordernow.backend.menu.model.dto.DishUpdateRequest;
 import com.ordernow.backend.menu.model.entity.Category;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.menu.model.entity.Menu;
@@ -121,14 +122,15 @@ public class MenuService {
         return dish.getId();
     }
 
-    public void updateDishInMenu(String menuId, String dishId, Dish updatedDish)
+    public void updateDishInMenu(String menuId, String dishId, DishUpdateRequest request)
             throws NoSuchElementException {
 
         Menu menu = getMenuById(menuId);
         Dish originalDish = getDishById(dishId);
 
-        updatedDish.setId(originalDish.getId());
-        updatedDish.setSalesVolume(originalDish.getSalesVolume());
+        Dish updatedDish = request.convertToEntity(
+                originalDish.getId(),
+                originalDish.getSalesVolume());
         
         if (!originalDish.getCategory().equals(updatedDish.getCategory())) {
             menu.getCategories().stream()

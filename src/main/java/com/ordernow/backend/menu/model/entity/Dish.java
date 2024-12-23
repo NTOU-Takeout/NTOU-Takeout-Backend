@@ -15,13 +15,13 @@ import java.util.List;
 @Document(collection = "dish")
 public class Dish {
     @Id
-    private String id = "";
+    private String id;
     private String name;
     private String description;
     private String picture;
     private Double price;
     private String category;
-    private Integer salesVolume = 0;
+    private Integer salesVolume;
     private List<DishAttribute> dishAttributes;
 
     public Dish() {

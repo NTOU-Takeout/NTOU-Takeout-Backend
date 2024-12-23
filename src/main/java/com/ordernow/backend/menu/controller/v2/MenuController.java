@@ -3,6 +3,7 @@ package com.ordernow.backend.menu.controller.v2;
 import com.ordernow.backend.common.dto.ApiResponse;
 import com.ordernow.backend.common.exception.RequestValidationException;
 import com.ordernow.backend.common.validation.RequestValidator;
+import com.ordernow.backend.menu.model.dto.DishUpdateRequest;
 import com.ordernow.backend.menu.model.entity.CategoryPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.menu.model.entity.Menu;
@@ -97,11 +98,11 @@ public class MenuController {
     public ResponseEntity<ApiResponse<Void>> updateDishInMenu(
             @PathVariable String menuId,
             @PathVariable String dishId,
-            @RequestBody Dish dish)
+            @RequestBody DishUpdateRequest request)
             throws RequestValidationException {
 
-        RequestValidator.validateRequest(dish);
-        menuService.updateDishInMenu(menuId, dishId, dish);
+        RequestValidator.validateRequest(request);
+        menuService.updateDishInMenu(menuId, dishId, request);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Update dish in menu successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
