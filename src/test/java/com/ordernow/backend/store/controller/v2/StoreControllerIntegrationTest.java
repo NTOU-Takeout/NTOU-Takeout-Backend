@@ -185,10 +185,10 @@ public class StoreControllerIntegrationTest {
         Store store = merchantResult.store();
 
         StoreUpdateRequest updateRequest = new StoreUpdateRequest(
-            "更新後的店名",
+            "Updated Store Name",
             "https://example.com/avatar.jpg",
-            "更新後的地址",
-            "更新後的店家描述",
+            "Updated Address",
+            "Updated Store Description",
             businessHours
         );
 
@@ -215,9 +215,9 @@ public class StoreControllerIntegrationTest {
         );
 
         assertNotNull(updatedStore);
-        assertEquals("更新後的店名", updatedStore.getName());
-        assertEquals("更新後的店家描述", updatedStore.getDescription());
-        assertEquals("更新後的地址", updatedStore.getAddress());
+        assertEquals("Updated Store Name", updatedStore.getName());
+        assertEquals("Updated Store Description", updatedStore.getDescription());
+        assertEquals("Updated Address", updatedStore.getAddress());
         assertEquals("https://example.com/avatar.jpg", updatedStore.getPicture());
         assertArrayEquals(businessHours, updatedStore.getBusinessHours());
     }
