@@ -35,6 +35,9 @@ public class SecurityConfig {
     private final CustomAuthenticationProvider authenticationProvider;
     private final JWTFilter jwtFilter;
 
+    @Value("${ALLOWED_ORIGIN}")
+    private String allowedOrigin;
+
     @Autowired
     public SecurityConfig(JWTFilter jwtFilter, CustomAuthenticationProvider authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
