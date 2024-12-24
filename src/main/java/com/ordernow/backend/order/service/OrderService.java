@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -97,15 +98,18 @@ public class OrderService {
     }
 
     public List<Order> getOrderListByStatus(CustomUserDetail userDetail, OrderedStatus status, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
 
         if(userDetail.getRole() == Role.CUSTOMER) {
+            Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");
+            Pageable pageable = PageRequest.of(page, size, sort);
             if(status == null)
                 return orderRepository.findAllByCustomerIdAndStatusNot(userDetail.getId(), OrderedStatus.IN_CART, pageable);
             else
                 return orderRepository.findAllByCustomerIdAndStatus(userDetail.getId(), status, pageable);
         }
         if(userDetail.getRole() == Role.MERCHANT) {
+            Sort sort = Sort.by(Sort.Direction.ASC, "orderTime");
+            Pageable pageable = PageRequest.of(page, size, sort);
             Merchant merchant = (Merchant) userDetail.getUser();
             if(status == null)
                 return orderRepository.findAllByStoreIdAndStatusNot(merchant.getStoreId(), OrderedStatus.IN_CART, pageable);
