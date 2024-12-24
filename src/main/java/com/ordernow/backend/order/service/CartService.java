@@ -2,6 +2,7 @@ package com.ordernow.backend.order.service;
 
 import com.ordernow.backend.menu.model.entity.AttributeOption;
 import com.ordernow.backend.menu.model.entity.DishAttribute;
+import com.ordernow.backend.order.model.dto.NoteRequest;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.order.model.dto.OrderedDishRequest;
@@ -19,7 +20,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -91,9 +92,10 @@ public class CartService {
         Update update = new Update()
                 .setOnInsert("customerId", customerId)
                 .setOnInsert("cost", 0.0)
-                .setOnInsert("date", LocalDateTime.now())
                 .setOnInsert("status", OrderedStatus.IN_CART)
-                .setOnInsert("orderedDishes", new ArrayList<>());
+                .setOnInsert("orderedDishes", new ArrayList<>())
+                .setOnInsert("orderTime", LocalTime.now())
+                .setOnInsert("estimatedPrepTime", 0);
 
         return mongoTemplate.findAndModify(
                 query,
@@ -132,7 +134,7 @@ public class CartService {
         for(OrderedDish orderedDish : cart.getOrderedDishes()) {
             if(orderedDish.equals(orderedDishRequest)) {
                 orderedDish.setQuantity(orderedDish.getQuantity() + orderedDishRequest.getQuantity());
-                updateOrderCost(cart);
+                updateOrderCostAndPrepTime(cart);
                 orderRepository.save(cart);
                 return orderedDish.getId();
             }
@@ -146,7 +148,7 @@ public class CartService {
         OrderedDish orderedDish = new OrderedDish(orderedDishRequest, dish);
         validOrderedDish(orderedDish);
         cart.getOrderedDishes().add(orderedDish);
-        updateOrderCost(cart);
+        updateOrderCostAndPrepTime(cart);
         orderRepository.save(cart);
         return orderedDish.getId();
     }
@@ -184,24 +186,25 @@ public class CartService {
             validOrderedDish(dishToUpdate);
         }
 
-        updateOrderCost(cart);
+        updateOrderCostAndPrepTime(cart);
         return orderRepository.save(cart);
     }
 
-    public Order sendOrder(String customerId)
+    public Order sendOrder(String customerId, String note)
             throws NoSuchElementException {
 
         Order cart = findCart(customerId);
         if (cart == null) {
             throw new NoSuchElementException("Cart not found");
         }
+        cart.setNote(note);
 
         cart.setStatus(OrderedStatus.PENDING);
-        cart.setDate(LocalDateTime.now());
+        cart.setOrderTime(LocalTime.now());
         return orderRepository.save(cart);
     }
 
-    private void updateOrderCost(Order order) {
+    public void updateOrderCostAndPrepTime(Order order) {
         double totalCost = order.getOrderedDishes().stream()
             .mapToDouble(dish -> {
                 double dishTotal = dish.getPrice() * dish.getQuantity();
@@ -212,5 +215,20 @@ public class CartService {
             })
             .sum();
         order.setCost(totalCost);
+
+        if(order.getIsReserved())
+            return;
+
+        int totalQuantity = order.getOrderedDishes().stream()
+                .mapToInt(OrderedDish::getQuantity)
+                .sum();
+        int time = 10 * totalQuantity;
+        if(time > 150 && time < 300) {
+            time = (int) Math.floor(time * 0.7);
+        }
+        else if(time > 300) {
+            time = (int) Math.floor(time * 0.5);
+        }
+        order.setEstimatedPrepTime(time);
     }
 }

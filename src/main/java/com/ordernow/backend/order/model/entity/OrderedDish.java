@@ -14,7 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderedDish {
     private String id;
-    private String storeId;
     private String dishId;
     private String dishName;
     private Double price;
@@ -30,7 +29,6 @@ public class OrderedDish {
 
     public OrderedDish(OrderedDishRequest orderedDishRequest, Dish dish) {
         this.id = UUID.randomUUID().toString();
-        this.storeId = orderedDishRequest.getStoreId();
         this.dishId = orderedDishRequest.getDishId();
         this.dishName = dish.getName();
         this.price = dish.getPrice();
@@ -41,8 +39,12 @@ public class OrderedDish {
 
     public boolean equals(OrderedDishRequest orderedDishRequest) {
         return Objects.equals(dishId, orderedDishRequest.getDishId())
-                && Objects.equals(storeId, orderedDishRequest.getStoreId())
                 && Objects.equals(note, orderedDishRequest.getNote())
                 && Objects.equals(chosenAttributes, orderedDishRequest.getChosenAttributes());
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

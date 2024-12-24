@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,19 +18,15 @@ public class Order {
     private String customerId;
     private String storeId;
     private Double cost;
-    private LocalDateTime date;
+    private String note;
     private OrderedStatus status;
     private List<OrderedDish> orderedDishes;
+    private LocalTime orderTime;
+    private LocalTime acceptTime;
+    private Boolean isReserved = false;
+    private Integer estimatedPrepTime;
 
     public Order() {
-        orderedDishes = new ArrayList<>();
-    }
-
-    public Order(String customerId) {
-        this.customerId = customerId;
-        cost = 0.0;
-        date = LocalDateTime.now();
-        status = OrderedStatus.IN_CART;
         orderedDishes = new ArrayList<>();
     }
 }

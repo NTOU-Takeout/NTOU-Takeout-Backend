@@ -1,6 +1,10 @@
 package com.ordernow.backend.menu.controller.v2;
 
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.exception.RequestValidationException;
+import com.ordernow.backend.common.validation.RequestValidator;
+import com.ordernow.backend.menu.model.dto.DishUpdateRequest;
+import com.ordernow.backend.menu.model.entity.CategoryPatchRequest;
 import com.ordernow.backend.menu.model.entity.Dish;
 import com.ordernow.backend.menu.model.entity.Menu;
 import com.ordernow.backend.menu.service.MenuService;
@@ -37,36 +41,68 @@ public class MenuController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @GetMapping("/dishes")
+    @GetMapping("/{menuId}/dishes")
     public ResponseEntity<ApiResponse<List<Dish>>> getDishesByCategory(
-            @RequestParam(value = "category") String category) {
+            @PathVariable String menuId,
+            @RequestParam(value = "category") String category)
+            throws NoSuchElementException {
 
-        List<Dish> dishes = menuService.getDishesByCategory(category);
+        List<Dish> dishes = menuService.getCategoryDishesByMenuId(menuId, category);
         ApiResponse<List<Dish>> apiResponse = ApiResponse.success(dishes);
         log.info("Get dishes successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PostMapping("/{menuId}/dish")
+    @PutMapping("/{menuId}/dishes")
     @PreAuthorize("hasRole('MERCHANT')")
-    public ResponseEntity<ApiResponse<Void>> addDishToMenu(
+    public ResponseEntity<ApiResponse<Void>> updateDishesOrderInCategory(
             @PathVariable String menuId,
-            @RequestBody Dish dish) {
-        
-        menuService.addDishToMenu(menuId, dish);
+            @RequestParam(value = "category") String category,
+            @RequestBody List<String> dishIds)
+            throws NoSuchElementException {
+
+        menuService.updateDishesOrder(menuId, category, dishIds);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Update dishes successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{menuId}/dishes")
+    @PreAuthorize("hasRole('MERCHANT')")
+    public ResponseEntity<ApiResponse<Void>> updateCategoryName(
+            @PathVariable String menuId,
+            @RequestParam(value = "category") String category,
+            @RequestBody CategoryPatchRequest request)
+            throws NoSuchElementException {
+
+        RequestValidator.validateRequest(request);
+        menuService.updateCategoryName(menuId, category, request.getCategoryName());
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Update category name successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/{menuId}/dish/create")
+    @PreAuthorize("hasRole('MERCHANT')")
+    public ResponseEntity<ApiResponse<String>> addDishToMenu(
+            @PathVariable String menuId) {
+
+        String dishId = menuService.createDishInMenu(menuId);
+        ApiResponse<String> apiResponse = ApiResponse.success(dishId);
         log.info("Add dish to menu successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PatchMapping("/{menuId}/dish/{dishId}")
+    @PutMapping("/{menuId}/dish/{dishId}")
     @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<ApiResponse<Void>> updateDishInMenu(
             @PathVariable String menuId,
             @PathVariable String dishId,
-            @RequestBody Dish dish) {
-        
-        menuService.updateDishInMenu(menuId, dishId, dish);
+            @RequestBody DishUpdateRequest request)
+            throws RequestValidationException {
+
+        RequestValidator.validateRequest(request);
+        menuService.updateDishInMenu(menuId, dishId, request);
         ApiResponse<Void> apiResponse = ApiResponse.success(null);
         log.info("Update dish in menu successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);

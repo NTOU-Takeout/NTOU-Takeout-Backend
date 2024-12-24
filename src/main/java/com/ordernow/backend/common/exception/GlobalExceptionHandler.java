@@ -28,4 +28,16 @@ public class GlobalExceptionHandler {
         ApiResponse<Void> apiResponse = ApiResponse.error(401, exception.getMessage());
         return ResponseEntity.status(401).body(apiResponse);
     }
+
+    @ExceptionHandler(RequestValidationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRequestValidationException(RequestValidationException exception) {
+        ApiResponse<Void> apiResponse = ApiResponse.error(400, exception.getMessage());
+        return ResponseEntity.status(400).body(apiResponse);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException exception) {
+        ApiResponse<Void> apiResponse = ApiResponse.error(400, exception.getMessage());
+        return ResponseEntity.status(400).body(apiResponse);
+    }
 }

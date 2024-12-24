@@ -1,9 +1,8 @@
 package com.ordernow.backend.auth.controller.v1;
 
-import com.ordernow.backend.auth.service.UserService;
+import com.ordernow.backend.user.service.UserService;
 import com.ordernow.backend.common.dto.ApiResponse;
-import com.ordernow.backend.auth.model.entity.User;
-import com.ordernow.backend.auth.service.AuthService;
+import com.ordernow.backend.user.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
 
         List<User> users = userService.getAllUsers();
@@ -31,7 +30,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @DeleteMapping("")
+    @DeleteMapping()
     public ResponseEntity<ApiResponse<Void>> deleteUser(
             @RequestParam("id") String id) {
 

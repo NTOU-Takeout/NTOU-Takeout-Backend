@@ -2,6 +2,7 @@ package com.ordernow.backend.order.controller.v1;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.dto.PageResponse;
 import com.ordernow.backend.order.model.entity.Order;
 import com.ordernow.backend.order.model.entity.OrderedStatus;
 import com.ordernow.backend.order.service.OrderService;
@@ -23,77 +24,62 @@ import java.util.Set;
 public class OrderController {
 
     private final OrderService orderService;
-    private static final Set<String> ALLOWED_ORDER_STATUS = Set.of("PENDING", "PROCESSING", "COMPLETED", "PICKED_UP", "CANCELED");
+    private static final Set<String> ALLOWED_ORDER_STATUS = Set.of("PENDING", "PROCESSING", "COMPLETED", "PICKED_UP", "CANCELED", "");
 
     @Autowired
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
-    @PatchMapping("/{orderId}/cancel")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'MERCHANT')")
-    public ResponseEntity<ApiResponse<Void>> cancelOrder(
-            @PathVariable("orderId") String orderId)
-            throws NoSuchElementException, IllegalStateException {
-
-        orderService.cancelOrder(orderId);
-        ApiResponse<Void> apiResponse = ApiResponse.success(null);
-        log.info("Cancel order successfully");
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
-    @PatchMapping("/{orderId}/accept")
-    @PreAuthorize("hasRole('MERCHANT')")
-    public ResponseEntity<ApiResponse<Void>> acceptOrder(
-            @PathVariable("orderId") String orderId)
-            throws NoSuchElementException, IllegalStateException {
-
-        orderService.updateStatus(orderId, OrderedStatus.PROCESSING);
-        ApiResponse<Void> apiResponse = ApiResponse.success(null);
-        log.info("Merchant accept order successfully");
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
-    @PatchMapping("/{orderId}/complete")
-    @PreAuthorize("hasRole('MERCHANT')")
-    public ResponseEntity<ApiResponse<Void>> completeOrder(
-            @PathVariable("orderId") String orderId)
-            throws NoSuchElementException, IllegalStateException {
-
-        orderService.updateStatus(orderId, OrderedStatus.COMPLETED);
-        ApiResponse<Void> apiResponse = ApiResponse.success(null);
-        log.info("Merchant complete order successfully");
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
-    @PatchMapping("/{orderId}/pickup")
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<ApiResponse<Void>> pickUpOrder(
-            @PathVariable("orderId") String orderId)
-            throws NoSuchElementException, IllegalStateException {
-
-        orderService.updateStatus(orderId, OrderedStatus.PICKED_UP);
-        ApiResponse<Void> apiResponse = ApiResponse.success(null);
-        log.info("Customer picked up order successfully");
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
-    @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'MERCHANT')")
-    public ResponseEntity<ApiResponse<List<Order>>> searchOrder(
-            @RequestParam(value="page", defaultValue = "0") int page,
-            @RequestParam(value="size", defaultValue = "10") int size,
-            @RequestParam(value="status") OrderedStatus status,
+    @PatchMapping("/{orderId}/status")
+    public ResponseEntity<ApiResponse<Void>> updateOrderStatus(
+            @PathVariable("orderId") String orderId,
+            @RequestParam(value = "status") OrderedStatus status,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
-            throws NoSuchElementException, IllegalStateException {
+            throws NoSuchElementException, IllegalArgumentException, IllegalStateException {
 
         if(!ALLOWED_ORDER_STATUS.contains(status.toString())) {
             throw new IllegalArgumentException("Invalid order status");
         }
 
-        List<Order> orderList = orderService.getOrderListByStatus(customUserDetail.getId(), status, page, size);
-        ApiResponse<List<Order>> apiResponse = ApiResponse.success(orderList);
-        log.info("User filter order successfully");
+        orderService.updateStatus(customUserDetail, orderId, status);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Update order status to {} successfully", status);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{orderId}/pickup-time")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<Void>> updatePickupTime(
+            @PathVariable("orderId") String orderId,
+            @RequestParam(value = "pickupTime") int pickupTime)
+            throws NoSuchElementException {
+
+        orderService.updatePickupTime(orderId, pickupTime);
+        ApiResponse<Void> apiResponse = ApiResponse.success(null);
+        log.info("Update order pickup time to {} successfully", pickupTime);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<PageResponse<Order>>> searchOrder(
+            @RequestParam(value="page", defaultValue = "0") int page,
+            @RequestParam(value="size", defaultValue = "10") int size,
+            @RequestParam(value="status", required = false) OrderedStatus status,
+            @AuthenticationPrincipal CustomUserDetail customUserDetail)
+            throws NoSuchElementException, IllegalArgumentException {
+
+        if(status != null && !ALLOWED_ORDER_STATUS.contains(status.toString())) {
+            throw new IllegalArgumentException("Invalid order status");
+        }
+
+        List<Order> orderList = orderService.getOrderListByStatus(
+                customUserDetail, status, page, size);
+        int totalElements = orderService.countOrderListByStatus(customUserDetail, status);
+        PageResponse<Order> pageResponse = PageResponse.createPageResponse(totalElements, page, size, orderList);
+
+        ApiResponse<PageResponse<Order>> apiResponse = ApiResponse.success(pageResponse);
+        log.info("User search order successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

@@ -1,5 +1,7 @@
 package com.ordernow.backend.auth.model.entity;
 
+import com.ordernow.backend.user.model.entity.Role;
+import com.ordernow.backend.user.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,18 @@ public class CustomUserDetail implements UserDetails {
         return user.getId();
     }
 
+    public String getName() {
+        return user.getName();
+    }
+
+    public Role getRole() {
+        return user.getRole();
+    }
+
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public String getPassword() {
         return user.getPassword();
@@ -32,25 +46,5 @@ public class CustomUserDetail implements UserDetails {
     @Override
     public String getUsername() {
         return user.getEmail();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }

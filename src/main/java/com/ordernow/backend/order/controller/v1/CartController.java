@@ -2,6 +2,9 @@ package com.ordernow.backend.order.controller.v1;
 
 import com.ordernow.backend.auth.model.entity.CustomUserDetail;
 import com.ordernow.backend.common.dto.ApiResponse;
+import com.ordernow.backend.common.exception.RequestValidationException;
+import com.ordernow.backend.common.validation.RequestValidator;
+import com.ordernow.backend.order.model.dto.NoteRequest;
 import com.ordernow.backend.order.model.dto.OrderedDishPatchRequest;
 import com.ordernow.backend.order.model.dto.OrderedDishRequest;
 import com.ordernow.backend.order.model.entity.Order;
@@ -55,12 +58,9 @@ public class CartController {
     public ResponseEntity<ApiResponse<String>> addNewDish(
             @RequestBody OrderedDishRequest orderedDishRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
-            throws NoSuchElementException, IllegalArgumentException {
-        if(orderedDishRequest.getDishId() == null
-                || orderedDishRequest.getStoreId() == null
-                || orderedDishRequest.getQuantity() == null){
-            throw new NoSuchElementException("Invalid request: required fields may not be null");
-        }
+            throws NoSuchElementException, IllegalArgumentException, RequestValidationException {
+
+        RequestValidator.validateRequest(orderedDishRequest);
         String orderedDishId = cartService.addNewDish(customUserDetail.getId(), orderedDishRequest);
         ApiResponse<String> apiResponse = ApiResponse.success(orderedDishId);
         log.info("Adding new dishes successfully");
@@ -82,10 +82,12 @@ public class CartController {
 
     @PatchMapping("/send")
     public ResponseEntity<ApiResponse<Order>> sendOrder(
+            @RequestBody NoteRequest noteRequest,
             @AuthenticationPrincipal CustomUserDetail customUserDetail)
             throws NoSuchElementException {
 
-        Order cartOrder = cartService.sendOrder(customUserDetail.getId());
+        RequestValidator.validateRequest(noteRequest);
+        Order cartOrder = cartService.sendOrder(customUserDetail.getId(), noteRequest.getNote());
         ApiResponse<Order> apiResponse = ApiResponse.success(cartOrder);
         log.info("Customer send order successfully");
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);

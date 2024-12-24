@@ -1,4 +1,4 @@
-package com.ordernow.backend.auth.model.entity;
+package com.ordernow.backend.user.model.entity;
 
 import com.ordernow.backend.order.model.entity.Order;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,15 +17,13 @@ import java.util.UUID;
 @TypeAlias("merchant")
 public class Merchant extends User{
     private String storeId;
-    private List<Order> orderList;
 
-    public Merchant() {
-        orderList = new ArrayList<>();
+    public Merchant() {// Springboot need it
+        super();
     }
 
-    public Merchant(User user) {
+    public Merchant(User user, String storeId) {
         super(user);
-        storeId = UUID.randomUUID().toString();
-        orderList = new ArrayList<>();
+        this.storeId = storeId;
     }
 }
